@@ -1,0 +1,7 @@
+name: Check the branch name and issue link
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+jobs:
+  conventions:
+    uses: healthtransformationlab/pipeline-doctor/.github/workflows/pr-conventions.yml@main
