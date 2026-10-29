@@ -20,18 +20,22 @@ contributes.
 Coding-agent benchmarks are built from web libraries, where a bug is a code change. In data platforms, what
 pages people is more often a configuration-management failure: a setting that differs between environments,
 a credential that expired, a model or dependency that was deprecated, a vulnerability advisory. These are
-invisible in logs until the damage is done and visible in tables before it. We ask whether a small local
-agent (Gemma 4 E4B, the competition's harness tools) fixes such issues better when the repository publishes
-that metadata in a typed, consistent form, and when the agent is told to read it first.
+invisible in logs until the damage is done and visible in tables before it. We identify five ingredients
+that make a repository operable by an agent (a metadata-driven framework, consistent conventions including
+every change traced to an issue, configuration management with a credential register and a dependency
+inventory, OpenTelemetry on every call with timing and cost, and the forecasting the first four enable), and
+we ask whether a small local agent (Gemma 4 E4B, the competition's tools) fixes such issues better when a
+repository has them, and when the agent is told to read the tables first.
 
 We contribute (1) a DataOps task set in the competition's format, built from a public synthetic-data
 project's own history (196 merged changes, 115 of which change code and tests; every one traced to an issue,
 67 of them by backfilled records that quote the original text verbatim), each with a problem statement, a
 pre-fix snapshot, a reference patch and validation tests, and a fidelity tier that says where the statement
 came from; (2) `pipeline-doctor`, an ADK skill and library that classifies a failure by rules over four
-metadata tables (pipeline config, run log with OpenTelemetry timing and cost, lineage, runbook) and
-recommends only actions on the runbook's allow-list; and (3) a switch-off test that hides each table in turn
-and measures what the rules can still do. We report pass rate for the same agent on the competition's
+metadata tables (pipeline config, run log with OpenTelemetry timing and cost, lineage, runbook), recommends
+only actions on the runbook's allow-list, and forecasts credential expiry, deprecation and cost, duration,
+volume and schema trends with dates; and (3) a switch-off test that hides each ingredient in turn and
+measures what the rules can still do. We report pass rate for the same agent on the competition's
 development set and on the DataOps set, with and without the skill. [Results to be filled from runs.]
 
 ## Sections (word budget in brackets)
