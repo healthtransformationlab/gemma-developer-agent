@@ -10,10 +10,11 @@ bugs?**
 
 | Folder | What |
 |---|---|
-| `agent.yaml`, `prompts/`, `sub_agents/`, `configs/` | the `submission.zip` layout: a root coder agent and a read-only analyzer, on `gemma-4-e4b` (small-model bonus) |
+| `agent.yaml`, `prompts/`, `sub_agents/`, `configs/`, `eval_config.yaml` | the `submission.zip` layout: a root coder agent and a read-only analyzer, on `gemma-4-e4b` (small-model bonus); to be rebased on the dataset's `sample_submission/` once copied in |
 | `skills/pipeline-doctor/` | the [pipeline-doctor](https://github.com/healthtransformationlab/pipeline-doctor) method as an ADK skill: classify the issue from the repository's metadata tables before reading code |
 | `tasks/` | the DataOps task set in the competition's format, built from a real project's incident history |
 | `paper/` | the paper-track writeup (3,000 words, due November 12, 2026) |
+| `docs/` | what the starter notebook and the rules tell us about the evaluation |
 
 ## The experiment
 
