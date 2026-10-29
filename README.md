@@ -1,8 +1,11 @@
 # gemma-developer-agent
 
 An entry for the Gemma 4 Developer Agent Competition and its paper track, and the experiment behind it:
-**do metadata-driven repository conventions make a small local coding agent better at fixing data-pipeline
-bugs?**
+**do five ingredients — a metadata-driven framework, consistent conventions with every change traced to an
+issue, configuration management (a credential register, a dependency inventory, one declaration per
+setting), OpenTelemetry on every call with timing and cost, and the forecasting those four enable — make a
+small local coding agent better at fixing data-pipeline bugs?** Each ingredient is switched off in turn and
+its contribution measured; nothing is asserted.
 
 > Personal learning project. Not affiliated with or endorsed by any employer, institution or vendor.
 
@@ -25,9 +28,10 @@ Same agent, two task sets, two conditions:
 | Agent without the skill | pass rate | pass rate |
 | Agent with the pipeline-doctor skill | pass rate | pass rate |
 
-Plus the offline switch-off test from pipeline-doctor on the same incidents: what each metadata table contributes. If the
-skill helps on the DataOps set and not on the web libraries, the conventions are doing the work, not the
-prompt.
+Plus the offline switch-off test from pipeline-doctor on the same incidents: what each of the five
+ingredients contributes (hide the config table, the naming conventions, lineage, the telemetry metrics, or
+the run history, and measure what the rules can still do). If the skill helps on the DataOps set and not on
+the web libraries, the ingredients are doing the work, not the prompt.
 
 ## Status
 
