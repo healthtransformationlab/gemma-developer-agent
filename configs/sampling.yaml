@@ -1,3 +1,8 @@
+# Rulebook §2.4 and §10: a bounded thinking budget with include_thoughts keeps <|tool_call> from being cut
+# off by a long thought block; max_output_tokens leaves room for an edit_file payload.
 temperature: 0.2
 top_p: 0.95
-max_output_tokens: 4096
+max_output_tokens: 16384
+thinking_config:
+  thinking_budget: 4096
+  include_thoughts: true

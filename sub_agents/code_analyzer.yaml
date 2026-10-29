@@ -1,7 +1,8 @@
 name: code_analyzer
 model: gemma-4-e4b-it-qat-w4a16-ct
-description: Read-only analyst. Finds the symbols, tests and configuration an issue touches using the code graph and embeddings, and reports back; never edits.
+description: Read-only analyst. Given an issue, returns the symbols it names, their one-hop neighbours, the tests that cover them, and the configuration that governs them, as paths and line ranges. Never edits.
 instruction: !include ../prompts/analyzer.md
+include_contents: none
 tools:
   - read_file
   - get_code_neighbors
