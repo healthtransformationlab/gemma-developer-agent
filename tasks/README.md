@@ -14,6 +14,7 @@ tasks/
 ```
 
 `build_tasks.py` (planned) reads the incident set, finds each fix commit from `recorded_in_text`, and
-writes the rows. The comparison the paper reports: the same agent config on the competition's 129-task
+writes the rows in the exact schema in [`docs/dataset-format.md`](../docs/dataset-format.md), verifying
+fail-to-pass and pass-to-pass the way the competition's curation does. The comparison the paper reports: the same agent config on the competition's 129-task
 development set (FastAPI, Requests, Rich, HTTPX) and on this set, with and without the pipeline-doctor
 skill, pass rate on both.
