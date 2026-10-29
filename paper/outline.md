@@ -25,8 +25,10 @@ agent (Gemma 4 E4B, the competition's harness tools) fixes such issues better wh
 that metadata in a typed, consistent form, and when the agent is told to read it first.
 
 We contribute (1) a DataOps task set in the competition's format, built from a public synthetic-data
-project's recorded incidents, each with an issue, a pre-fix snapshot, a reference patch and validation
-tests; (2) `pipeline-doctor`, an ADK skill and library that classifies a failure by rules over four
+project's own history (196 merged changes, 115 of which change code and tests; every one traced to an issue,
+67 of them by backfilled records that quote the original text verbatim), each with a problem statement, a
+pre-fix snapshot, a reference patch and validation tests, and a fidelity tier that says where the statement
+came from; (2) `pipeline-doctor`, an ADK skill and library that classifies a failure by rules over four
 metadata tables (pipeline config, run log with OpenTelemetry timing and cost, lineage, runbook) and
 recommends only actions on the runbook's allow-list; and (3) a switch-off test that hides each table in turn
 and measures what the rules can still do. We report pass rate for the same agent on the competition's
@@ -39,10 +41,14 @@ development set and on the DataOps set, with and without the skill. [Results to 
 2. **Related work** [300]. SWE-bench (Jimenez et al., 2024); the competition's code graphs and embeddings;
    DataOps and observability (freshness, volume, schema, distribution, lineage); OpenTelemetry for pipelines;
    LLM-as-judge and evaluation against human labels; DORA's four metrics applied to data pipelines.
-3. **The DataOps task set** [500]. How an incident becomes a task: the incident row (class, action taken,
-   where recorded), the fix commit, the failing test before it and the passing suite after it, exactly as
-   the competition's curation requires. Nine tasks from one project to start; how a second project adds
-   its own. Honest size: small, with intervals.
+3. **The DataOps task set** [500]. Mining the repo's history the way the competition mined its repos
+   (changes that touch code and tests). Three fidelity tiers for the problem statement: A, an issue (48
+   candidates); B, a PR without an issue (45); C, a direct commit (22). Backfilled issue records: verbatim
+   text, labelled, closed on creation, no text written after the fact. The incident set marks which tasks
+   are DataOps failures. The two gates (tests fail before the fix, suite passes after), run with the
+   competition's own evaluator. A finding in its own right: the share of a repo's history that is
+   agent-ready (traceable to an issue) went from under half to all of it once the branch-to-issue rule was
+   enforced in CI.
 4. **pipeline-doctor** [600]. The four tables, named and typed. The ladder: deterministic → classify by
    rules (configuration-management classes first) → root cause by LLM for `unknown` only → recommend from
    the allow-list with impact, severity and owner → graduate to automatic after N matches, back after two
@@ -66,19 +72,21 @@ development set and on the DataOps set, with and without the skill. [Results to 
 
 | Needed | Exists | Where |
 |---|---|---|
-| pipeline-doctor library, 31 tests | yes | healthtransformationlab/pipeline-doctor |
-| Incident set, nine rows, with classes and actions | yes | health-transformation-lab-nlp `data/ops/incident.csv` (branch spec/027-pipeline-doctor) |
+| pipeline-doctor library, 31 tests, configuration-management classes | yes | healthtransformationlab/pipeline-doctor |
+| Incident set, nine rows, with classes and actions | yes | health-transformation-lab-nlp `data/ops/incident.csv` (PR #357) |
+| Task manifest: 196 changes, 115 candidates, tiers, every candidate with an issue | yes | health-transformation-lab-nlp `data/tasks/task_manifest.csv` (PR #358) |
 | E1 numbers with intervals | yes (nine incidents) | spec 027, "The switch-off test" |
 | Configuration-management incident rows (credential, deprecation, drift) | no | add from the project's secrets register, model inventory and environment configs |
-| Task set in competition format (`tasks.jsonl`, snapshots) | no | `tasks/build_tasks.py` (planned) |
+| Task set in competition format (`tasks.jsonl`, snapshots, graphs) | no | NLP repo spec 028 US3-US4 (`47_build_tasks.py`, planned); format in `docs/dataset-format.md` |
 | Agent run on the dev set (E2 baseline) | no | one Kaggle L4x4 run |
 | Agent run on the DataOps set, both conditions | no | two runs |
 | Paper text | this outline | `paper/writeup.md` |
 
 ## Schedule to November 12
 
-- Oct 30–Nov 2: task-set builder; nine tasks validated (test fails before, passes after). Add the
-  configuration-management incidents from the project's own records.
+- Oct 30–Nov 2: task-set builder (spec 028 US3-US4); candidates validated with `swegemma eval --skip-agent-patch`
+  (fail before) and with `patch` (pass after); drop what fails a gate. Add the configuration-management
+  incidents from the project's own records (secrets register, model inventory, environment configs).
 - Nov 3–5: one dev-set run without the skill (baseline); one DataOps run without the skill.
 - Nov 6–8: both runs with the skill. E3 from the harness budget reports.
 - Nov 9–11: writeup, 3,000 words, numbers from runs only. Decision point Nov 5: if the baseline runs
