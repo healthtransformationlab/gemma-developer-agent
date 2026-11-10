@@ -4,7 +4,8 @@
     python paper/check_rules.py --check    # also fails if paper/rules_check.md is out of date (CI)
 
 Each row is one rule from the Official Competition Rules (kaggle.com/competitions/gemma-4-developer-agent/rules) or
-the paper track's stated limit. A row checked here reads the paper's text (`small-local-agent-redo-cloud-agent-
+one requirement of the Paper Track's own page (its Evaluation, Submission Requirements and Submission Details, as the
+owner pasted them on November 10, 2026). A row checked here reads the paper's text (`small-local-agent-redo-cloud-agent-
 work.md`), its PDF (the file submitted) and this repository's tracked files. A row marked "owner" cannot be checked
 from files: the owner confirms it before submitting. This is a reading of the rules, not legal advice.
 """
@@ -25,6 +26,10 @@ WORD_LIMIT = 3000
 DATASET = "kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks"
 REPOS = ("github.com/healthtransformationlab/health-transformation-lab-nlp",
          "github.com/healthtransformationlab/gemma-developer-agent")
+NOTEBOOK = "kaggle.com/code/jcblearning/coding-agent-tasks-quickstart"
+PARTS = ("## Abstract", "## 1. Introduction", "## 2. Related work", "## 4. Building the task set", "## 6. Baseline",
+         "## References")
+PRIVATE = ("htlnlp-agent-", "htlnlp-run-", "htlnlp-colab-", "htlnlp-offrun-")   # the runs' private Kaggle resources
 # the competition's own files: never committed here (rule 2.4.b, data security)
 COMPETITION_FILES = re.compile(r"(\.whl$|sample_submission/|HARNESS_README|(^|/)swegemma/|adk_submission/)", re.I)
 
@@ -89,8 +94,26 @@ def rows() -> list[tuple[str, str, str, str]]:
          r(both("no number here is a competition score") or both("comparable to the leaderboard"))),
         ("3.5 Individual account, teams", "one Kaggle account; no private sharing outside a Team",
          "not checkable from files", "OWNER"),
-        ("Paper track: AI-assisted writing", "whatever the paper-track page says about AI-written text",
-         "not in the Official Rules; read the competition's Writeup instructions", "OWNER"),
+        ("Paper track: required parts", "title and subtitle, abstract, introduction, methods and experiments, "
+         "related work and citations",
+         "the paper's first line is its title and its third the subtitle; headings for the abstract, introduction, "
+         "related work, the task set, the baseline and the references",
+         r(md.startswith("# ") and md.split("\n")[2].startswith("**") and all(h in md for h in PARTS))),
+        ("Paper track: code as a public notebook", "code is submitted as a public notebook in Project Links",
+         "the public quickstart notebook is linked in the paper and the PDF; adding it to Project Links is the owner's",
+         ("PASS (link)" if both(NOTEBOOK) else "FAIL (link)") + "; OWNER (Project Links)"),
+        ("Paper track: private resources", "a private Kaggle resource attached to a Writeup is made public after "
+         "the deadline",
+         "the paper names no private dataset or notebook of the runs (htlnlp-agent-, htlnlp-run-, htlnlp-colab-, "
+         "htlnlp-offrun-); what is attached in the form is the owner's",
+         ("PASS (paper)" if not any(x in md for x in PRIVATE) else "FAIL (paper)") + "; OWNER (attachments)"),
+        ("Paper track: original, unpublished research", "not published elsewhere; the track is non-archival",
+         "not checkable from files: the paper is in a public repository and at no venue", "OWNER"),
+        ("Paper track: submitted, not a draft", "only submitted Writeups are judged; a tie goes to the earlier entry",
+         "not checkable from files", "OWNER"),
+        ("Paper track: AI-assisted writing", "no rule on it in the Official Rules or on the Paper Track page (as the "
+         "owner pasted it on November 10, 2026)",
+         "the paper says a cloud agent built the repository and wrote most of its issue text", r(both("cloud agent"))),
     ]
 
 

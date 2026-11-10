@@ -50,8 +50,10 @@ the same verdict as the local harness on all 48 agent patches compared. Gemma 4 
 for 40 of the 48 published tasks it attempted and resolved 5. A paired rerun of 23 of them, with and without the
 code-graph tools, resolved 2 either way; with the tools available the model called one in 4 of the 23 runs. Ten
 more attempts were on tasks since left out of the published set. Run end to end by the competition's own evaluator
-(four L4 GPUs, this repo's competition settings) on a seeded sample of 20 tasks, the agent resolved none. Details
-and limits: [`paper/small-local-agent-redo-cloud-agent-work.md`](paper/small-local-agent-redo-cloud-agent-work.md).
+(four L4 GPUs, this repo's competition settings) on a seeded sample of 20 tasks, the agent resolved none. A rerun of
+the 23 cheapest of the 48 with eight times the output budget and thinking on (one L4 GPU on Colab, the local harness) resolved
+2, against 2 under the tight limits. By names and call edges, a task's code graph leads from its statement to
+its fix in 22 of the 93 tasks. Details and limits: [`paper/small-local-agent-redo-cloud-agent-work.md`](paper/small-local-agent-redo-cloud-agent-work.md).
 
 The offline switch-off test in pipeline-doctor is not evidence for the ingredients above: its rules were written
 from the nine incidents it is scored on, and its "no conventions" condition blanks five data columns.
@@ -74,7 +76,7 @@ issue; 67 of those issues are backfilled records that quote the original text ve
 <details>
 <summary><b>Status and dates</b></summary>
 
-- **Run:** the task set (built, gated, verified with the competition's evaluator, published), the harness controls, and Gemma 4 E4B on 58 tasks, 28 of them twice. Every number
+- **Run:** the task set (built, gated, verified with the competition's evaluator, published), the harness controls, and Gemma 4 E4B on 58 tasks, 28 of them twice and 23 a third time with a larger budget. Every number
   is in `paper/sources.md` with the file it came from.
 - **Run under the competition's own evaluator:** this `agent.yaml`, end to end, on a seeded sample of 20 published tasks
   (0 resolved). The analyzer sub-agent and the skill were available there; the model called the sub-agent 3 times and
