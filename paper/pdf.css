@@ -1,0 +1,52 @@
+/* Layout for paper/writeup.pdf (paper/build_pdf.js). Print only: no dark mode, white paper. */
+@page { size: Letter; }
+html { font-size: 10.6pt; }
+body { margin: 0; color: #111; background: #fff; font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+  line-height: 1.42; text-rendering: optimizeLegibility; font-variant-numeric: lining-nums; }
+p { margin: 0 0 .62em; text-align: justify; hyphens: auto; orphans: 3; widows: 3; }
+a { color: #1a4f8b; text-decoration: none; overflow-wrap: anywhere; }
+strong { font-weight: 700; }
+code { font-family: 'DejaVu Sans Mono', 'Liberation Mono', monospace; font-size: .8em; overflow-wrap: anywhere; }
+
+/* Title block */
+.title-block { text-align: center; margin: 0 0 1.1em; }
+.title-block p { text-align: center; hyphens: manual; }
+.title-block h1 { font-family: Inter, Arial, sans-serif; font-size: 20pt; font-weight: 700; line-height: 1.18; letter-spacing: -.01em; margin: 0 0 .35em; }
+.title-block p:nth-of-type(1) { font-family: Inter, Arial, sans-serif; font-size: 10.6pt; line-height: 1.35; color: #333; margin: 0 auto 1.1em; max-width: 34em; }
+.title-block p:nth-of-type(1) strong { font-weight: 500; }
+.title-block p:nth-of-type(2) { font-family: Inter, Arial, sans-serif; font-size: 11pt; margin: 0 0 .25em; }
+.title-block p:nth-of-type(3) { font-family: Inter, Arial, sans-serif; font-size: 9pt; color: #333; margin: 0 0 .7em; }
+.title-block p:nth-of-type(4) { font-size: 8.6pt; color: #555; margin: 0 auto; max-width: 44em; }
+
+/* Abstract box */
+.abstract { background: #f5f5f1; border-top: 1.2pt solid #111; border-bottom: .6pt solid #111; padding: .75em 1.1em .5em; margin: 0 0 1em; break-inside: avoid; }
+.abstract h2 { font-size: 9pt; text-transform: uppercase; letter-spacing: .09em; margin: 0 0 .45em; }
+.abstract p { font-size: 9.7pt; line-height: 1.4; }
+.abstract p:last-child { text-align: left; hyphens: manual; font-family: Inter, Arial, sans-serif; font-size: 7.7pt; line-height: 1.6; margin: .7em 0 .2em; padding-top: .6em; border-top: .5pt solid #bdbdb6; }
+
+.abstract p:last-child a { white-space: nowrap; }
+
+/* Headings */
+h2, h3 { font-family: Inter, Arial, sans-serif; break-after: avoid; line-height: 1.25; }
+h2 { font-size: 12pt; font-weight: 650; margin: 1.25em 0 .4em; }
+h3 { font-size: 10.2pt; font-weight: 650; margin: 1em 0 .3em; }
+
+/* Lists */
+ol, ul { margin: 0 0 .7em; padding-left: 1.5em; }
+li { margin: 0 0 .28em; text-align: justify; hyphens: auto; }
+
+/* Tables: three rules, no boxes */
+table { border-collapse: collapse; width: 100%; margin: .7em 0 1em; font-family: Inter, Arial, sans-serif; font-size: 8.5pt; line-height: 1.35;
+  border-top: 1pt solid #111; border-bottom: 1pt solid #111; break-inside: avoid; }
+th { text-align: left; font-weight: 650; border-bottom: .6pt solid #111; padding: .38em .7em .38em 0; vertical-align: bottom; }
+td { padding: .32em .7em .32em 0; vertical-align: top; border-bottom: .3pt solid #d9d9d4; }
+tr:last-child td { border-bottom: 0; }
+td:last-child, th:last-child { padding-right: 0; }
+
+/* Figure */
+figure { margin: .9em 0 1em; break-inside: avoid; }
+figure img { width: 100%; height: auto; display: block; }
+
+/* References */
+#references + ol { font-size: 8.7pt; line-height: 1.36; }
+#references + ol li { text-align: left; hyphens: manual; margin-bottom: .22em; }

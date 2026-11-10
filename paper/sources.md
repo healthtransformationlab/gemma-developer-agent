@@ -8,6 +8,20 @@ Every agent number was measured with `htlnlp-harness-v1`, that repository's re-i
 documented harness. None is a score from the competition's evaluator. The word limit excludes references (the host's
 reply in the competition's "Word Count" discussion, October 27, 2026).
 
+## The title block, Figure 1 and the PDF
+
+| Figure | Source |
+|---|---|
+| "Gemma 4 Developer Agent Competition, Paper Track [17]" and reference 17 | the "Citation" block of the competition's Overview page (kaggle.com/competitions/gemma-4-developer-agent), as the owner pasted it on November 10, 2026. Reference 17 gives the ten authors' surnames, the title, Kaggle and 2026 as that block does |
+| "Topic: Tasks & Benchmarks" | the same page's list of paper topics: "Tasks & Benchmarks: Development of new tasks, evaluation datasets, or resources targeting code structure, graphs, and structured code generation" |
+| "Data and code": three links and their licences | the same three releases the closing paragraph named until November 10, 2026: the Kaggle dataset (CC BY 4.0), `NLP` (Apache 2.0) and this repository (Apache 2.0). All three answered on November 10, 2026 |
+| Figure 1: 197, 116, 113, 93 | the Section 4.1 table. "Built, pass both gates, licensed" is the 113 left after one task was withdrawn, one failed a gate and one was withheld |
+| Figure 1: 48, 40, 5 | Section 6, "Results": 48 scored, a patch for 40, 5 resolved |
+| Figure 1: 30, 25, 5 | Section 6, "Task fairness": 30 screened, 25 whose tests need a name or text the statement never gives, 5 that pass |
+
+Figure 1 adds no number. `paper/figures/make_figure1.py` holds its ten counts and draws `figure1.svg`;
+`paper/build_pdf.js` makes `figure1.png` from it and lays `writeup.md` out as `writeup.pdf` without changing a word.
+
 ## Section 1, the introduction
 
 | Figure | Source |
@@ -121,6 +135,10 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
   resolved): cut the same day for the same reason. Its row is in the Section 7 table above.
 - "38 of 305 merged pull requests" from Section 3 (a keyword count of the pull requests that touch the three artifacts):
   cut on November 10, 2026 to make room for the author's check. Its row is in the Section 3 table above.
+- "Data, harness and run tables are public." (the abstract's last sentence) and the closing paragraph that listed the
+  three releases: replaced on November 10, 2026 by the "Data and code" paragraph under the abstract, which names the
+  same three releases and licences as links a reader can open from page 1. "Where each number comes from is listed
+  in `paper/sources.md`" became "each number's source" beside this repository's link.
 - An independent human screen of task quality: not done. The screen of 30 is an AI reviewer's, checked by the
   author in summary (Section 6 above).
 - A split of all 93 tasks into fixes, features and maintenance: not done; the screen classifies its 30. The mining
