@@ -42,6 +42,7 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 | Figure | Source |
 |---|---|
 | 197 changes, 116 candidates, tiers 49 / 45 / 22 | `NLP/data/tasks/task_manifest.csv` (`is_candidate`, `tier_code`) |
+| The 81 changes that are not candidates: 49 touch no Python file, 19 change tests without code, 13 change code without tests | the same manifest, `is_code_changed` and `is_tests_changed` (`NLP/python/health_transformation_lab_nlp/task_mine.py`, `classify_files`: code is a `.py` file that is not a test; a test is a `.py` file under `tests/` or named `test_*`). 49 + 19 + 13 = 81 = 197 − 116. The 49 are documentation, specs, decks and data. Not in the writeup, which gives the rule and both totals |
 | Of the 93 published: 39 / 34 / 20 | the 93 task ids of `NLP/data/tasks/official_verifier/published_verification.csv` joined to `tier_code` in the manifest (`NLP` main at `d876fa6`); 39 + 34 + 20 = 93 |
 | 67 backfilled issue records | the tier B and C candidates (45 + 22), each with an `issue_number` in the manifest |
 | 115 built, 114 pass both gates | `NLP/data/tasks/task_gates.csv` (`is_valid`) |
@@ -105,5 +106,9 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 - Why most of the second repository's candidates cannot be tied to a pull request (fast-forwarded and squashed
   merges): cut from Section 4.5 on November 10, 2026 to make room for the limits two outside reviews asked for.
   The counts are in the Section 4 table above.
+- Why the repository's issue count is not the task count. On November 10, 2026 the repository had 313 closed issues
+  and 312 merged pull requests (GitHub's search API). The task set mines merged changes on `main` as of October 29,
+  2026 (197), so nothing merged later is in it: 114 of the 313 closed issues were opened after that date. 67 of the
+  313 are the backfilled records of Section 4.2.
 - A human check of task quality, and a split of the tasks into fixes, features and maintenance: not done. The mining
   rule keeps any change that touches code and tests, so the set is not only bug fixes.
