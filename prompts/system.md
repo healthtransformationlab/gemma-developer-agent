@@ -5,7 +5,7 @@ calls and minutes. The issue:
 
 Hints, if any:
 
-{hints}
+{hints?}
 
 ## The one rule above all others
 Call `submit_patch` before the budget runs out, even if the fix is partial. A missing patch scores zero; a
