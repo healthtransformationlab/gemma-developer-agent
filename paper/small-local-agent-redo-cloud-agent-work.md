@@ -22,7 +22,7 @@ This competition [14] asks whether a model that fits on one accelerator can do t
 
 Two kinds of repository are scarce. In a **data repository** the costly defect is silent: a pipeline finishes and a number in its table is wrong. An **agent-built repository** can leave an unusually complete record: an issue, a pull request and a review for each change. Which changes can a small local agent take out of the person's loop, and what does the person need for the rest?
 
-This paper adds one repository that is both, set beside the competition's four by the competition's mining rule, format and evaluator. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are application work: de-identification, record checks, model scoring, pipelines. Every change was made by coding-agent sessions directed in chat and merged after an automated review, and every step from merged change to published task is a script.
+This paper adds one repository that is both, set beside the competition's four by the competition's mining rule, format and evaluator. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are real changes to application code: de-identification, record checks, model scoring, pipelines. Every change was made by coding-agent sessions directed in chat and merged after an automated review, and every step from merged change to published task is a script.
 
 Contributions:
 
@@ -86,7 +86,7 @@ A task is kept only if its tests fail at `base_commit` with the test patch alone
 
 ### 4.5 A second repository
 
-Applied unchanged to Open Navigator, a public repository run by a nonprofit the author leads, with several human contributors and no issue-tracing rule, the mining rule finds 133 candidates in 1,320 first-parent commits. None links an issue and only 22 can be tied to a pull request: statements depend on what the history recorded. The 133 are not gated or released.
+Applied unchanged to Open Navigator, a public repository run by a nonprofit the author leads, with several human contributors and no issue-tracing rule, the mining rule finds 133 candidates in 1,320 first-parent commits. None links an issue and only 22 can be tied to a pull request: statements depend on what the history recorded. Gating and releasing them is future work.
 
 ## 5. Harness and verification
 
@@ -119,7 +119,7 @@ Of the 20 left out, twelve have tests that read third-party files the published 
 
 **A larger budget.** To test the tight limits, the 23 cheapest of the 48 were rerun on the same harness on one Colab L4 GPU: 16,384 output tokens per turn, thinking on, 100 tool calls, 20 minutes and a 20,000-token context. The model resolved 2 of 23, against 2 under the tight limits, and wrote a patch for 20 against 19. Of its 139 tool calls, 5 were to a graph tool. Colab has network access, which Kaggle's notebooks did not; no command used it.
 
-**Task fairness.** Two AI screens rated tasks on SWE-bench Verified's two questions [2]. The first took a random 30; the author checked its findings in summary and agreed with all 30: five pass, and in 25 the tests need a name or text the statement never gives. The second, a separate pass that never saw the first, took all 93. It gives the same verdict on all 30 and passes 17 of 93; Each verdict and its reason are in the repository (`data/tasks/screening/`). SWE-bench's own human screen filtered out 68.3% of 1,699 samples [2]. Of the 48 tasks the model attempted, it resolved 4 of the 13 that pass and 1 of the 35 that fail, so the baseline may measure the tasks more than the model.
+**Task fairness.** Two AI screens rated tasks on SWE-bench Verified's two questions [2]. The first took a random 30; the author checked its findings in summary and agreed with all 30: five pass, and in 25 the tests need a name or text the statement never gives. An independent second pass, blind to the first, rated all 93: the same verdict on all 30, and 17 of 93 pass. Each verdict and its reason are in the repository (`data/tasks/screening/`). SWE-bench's own human screen filtered out 68.3% of 1,699 samples [2]. Of the 48 tasks the model attempted, it resolved 4 of the 13 that pass and 1 of the 35 that fail, so the baseline may measure the tasks more than the model.
 
 **Under the competition's evaluator.** The agent was also run end to end with the official harness: `swegemma`'s agent loop, vLLM from the competition's wheelhouse, four L4 GPUs, and its competition settings (16,384 output tokens, a 4,096-token thinking budget, 40 tool calls, 5 minutes). The sample is 20 of the 93, seeded and stratified by tier, not by cost. Each task ran alone, without patch or tests. The agent resolved 0 of 20 (95% CI 0–16.1): 16 patches fail and 4 runs submit nothing. In 189 tool calls the model called a graph tool 9 times. Seventeen of the 20 fail the second screen.
 
