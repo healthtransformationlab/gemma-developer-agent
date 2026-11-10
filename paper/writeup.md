@@ -1,4 +1,4 @@
-# Silent defects in health data: can a small local agent redo a cloud agent's work?
+# Can a small local agent redo a cloud agent's work?
 
 **93 evaluator-verified tasks from an agent-built health-data repository, with an open harness and a Gemma 4 E4B baseline**
 
@@ -6,7 +6,7 @@
 
 ## Abstract
 
-Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored). It has 93 tasks in the competition's format, each verified with the competition's own evaluator and labelled with where its problem statement came from: an issue, a pull request or a commit message. Gemma 4 E4B on two free T4 GPUs resolved 5 of the 48 tasks it attempted. A paired rerun of 23 with the code-graph tools resolved 2, as without them; the model rarely called the tools. The agent ran on my open re-implementation of the competition's harness, which agrees with the official evaluator on all 48 agent patches compared. I report how the model fails and what each task costs. Data, harness and run tables are public.
+Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored). It has 93 tasks in the competition's format, each verified with the competition's own evaluator and labelled with where its problem statement came from: an issue, a pull request or a commit message. Under tight limits (2,048 output tokens, thinking off), Gemma 4 E4B on two free T4 GPUs resolved 5 of 48 tasks, run cheapest first. A paired rerun of 23 with the code-graph tools resolved 2, as without them; the model rarely called the tools. The agent ran on my open re-implementation of the competition's harness; the official evaluator, which did not run the agent, gives the same verdict on all 48 patches compared. I report how the model fails and what each task costs. Data, harness and run tables are public.
 
 ## 1. Introduction
 
@@ -25,7 +25,7 @@ Contributions:
 1. **A task set** of 93 tasks in the competition's format, each verified with the competition's own evaluator, public on Kaggle under CC BY 4.0, with snapshots, code graphs, embeddings and a fidelity tier per task (Section 4).
 2. **An open harness checked against the official one**: a sandboxed re-implementation of the competition's documented harness that agrees with the competition's evaluator on every saved agent patch and keeps answers away from the model on shared GPUs (Section 5).
 3. **A baseline** for Gemma 4 E4B with a failure breakdown, cost per task and a paired test of the code-graph tools (Section 6).
-4. **Evidence that the tracing rule makes a history minable**: on a second repository without it, the same mining rule finds candidates but no issue-linked statements (Section 4.5).
+4. **A check on a second repository**: without the tracing rule, the same mining rule finds candidates but no issue-linked statements (Section 4.5).
 
 ## 2. Related work
 
@@ -161,9 +161,9 @@ A keyword match on titles puts 16 of the 116 candidates in de-identification; th
 
 ## 9. Conclusion and release
 
-A cloud agent built this repository in fifteen days. From the same problem statements, a model that runs on free GPUs resolved 5 of 48 tasks, all of them small, and left the graph tools almost unused. That gap is now measurable on a kind of repository the standard sets miss.
+A cloud agent built this repository in fifteen days. From the same problem statements, a model that runs on free GPUs resolved 5 of 48 tasks, all of them small, and left the graph tools almost unused. The released tasks let others measure that gap.
 
-The recipe generalises to any repository that traces its changes to issues: mine the changes that touch code and tests, record where each statement came from, gate, and run a reference-patch control and an empty-patch control on the published files, with the official evaluator where there is one, before trusting any model's score.
+The recipe should transfer to any repository that traces its changes to issues: mine the changes that touch code and tests, record where each statement came from, gate, and run a reference-patch control and an empty-patch control on the published files, with the official evaluator where there is one, before trusting any model's score.
 
 Where each number comes from is listed in `paper/sources.md`. Released: the task set (Kaggle, `jcblearning/health-transformation-lab-coding-agent-tasks`, CC BY 4.0), the harness and builders (`healthtransformationlab/health-transformation-lab-nlp`, Apache 2.0), the agent configuration (`healthtransformationlab/gemma-developer-agent`, Apache 2.0), and every run table cited here.
 
