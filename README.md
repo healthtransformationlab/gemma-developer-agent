@@ -27,7 +27,7 @@ Licence: [Apache 2.0](LICENSE), the licence type the competition names for winni
 | `agent.yaml`, `prompts/`, `sub_agents/`, `configs/`, `eval_config.yaml` | the competition entry (`submission.zip` layout): a coder agent and a read-only analyzer, on Gemma 4 E4B for the small-model bonus; to be rebased on the dataset's `sample_submission/` |
 | `skills/pipeline-doctor/` | the [pipeline-doctor](https://github.com/healthtransformationlab/pipeline-doctor) method as a skill: classify the issue from the repo's tables before reading code |
 | `tasks/` | a note on the task set: 93 tasks in the competition's format, each verified with the competition's own evaluator, built from a real repo's history. The tasks themselves are [on Kaggle](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks); the builders and run tables are in [health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp) (`data/tasks/`) |
-| `paper/` | the paper-track writeup ([`writeup.md`](paper/writeup.md), under 3,000 words, due November 12, 2026) and where each of its numbers comes from ([`sources.md`](paper/sources.md)) |
+| `paper/` | the paper-track writeup ([`writeup.md`](paper/writeup.md), under 3,000 words, due November 12, 2026), the same text laid out as a paper ([`writeup.pdf`](paper/writeup.pdf), rebuilt with `node paper/build_pdf.js`) and where each of its numbers comes from ([`sources.md`](paper/sources.md)) |
 | `docs/` | what the rules, the dataset format and the starter notebook tell us |
 
 </details>
