@@ -3,7 +3,7 @@
 Run from anywhere: python3 paper/figures/make_figure1.py
 Writes figure1.svg beside this file. paper/build_pdf.js turns it into figure1.png.
 
-Every count is already in paper/writeup.md; paper/sources.md says where each comes from. A count that changes there
+Every count is already in paper/small-local-agent-redo-cloud-agent-work.md; paper/sources.md says where each comes from. A count that changes there
 changes here: the lists below are the only place the figure's numbers live.
 """
 from html import escape

@@ -23,4 +23,4 @@ Counts: 197 merged changes, 116 candidates, 114 pass both gates (the tests fail 
 93 published (the ones whose reference patch the competition's evaluator resolves, and whose empty patch it does not). Each task carries a fidelity tier for its problem statement: A from an issue (49 candidates), B from
 a pull request description (45), C from a commit message (22). Format: [`docs/dataset-format.md`](../docs/dataset-format.md).
 
-What has been measured on it, and how: [`paper/writeup.md`](../paper/writeup.md).
+What has been measured on it, and how: [`paper/small-local-agent-redo-cloud-agent-work.md`](../paper/small-local-agent-redo-cloud-agent-work.md).

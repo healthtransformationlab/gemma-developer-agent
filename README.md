@@ -27,7 +27,7 @@ Licence: [Apache 2.0](LICENSE), the licence type the competition names for winni
 | `agent.yaml`, `prompts/`, `sub_agents/`, `configs/`, `eval_config.yaml` | the competition entry (`submission.zip` layout): a coder agent and a read-only analyzer, on Gemma 4 E4B for the small-model bonus; to be rebased on the dataset's `sample_submission/` |
 | `skills/pipeline-doctor/` | the [pipeline-doctor](https://github.com/healthtransformationlab/pipeline-doctor) method as a skill: classify the issue from the repo's tables before reading code |
 | `tasks/` | a note on the task set: 93 tasks in the competition's format, each verified with the competition's own evaluator, built from a real repo's history. The tasks themselves are [on Kaggle](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks); the builders and run tables are in [health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp) (`data/tasks/`) |
-| `paper/` | the paper-track writeup ([`writeup.md`](paper/writeup.md), under 3,000 words, due November 12, 2026), the same text laid out as a paper ([`writeup.pdf`](paper/writeup.pdf), rebuilt with `node paper/build_pdf.js`) and where each of its numbers comes from ([`sources.md`](paper/sources.md)) |
+| `paper/` | the paper-track writeup ([`small-local-agent-redo-cloud-agent-work.md`](paper/small-local-agent-redo-cloud-agent-work.md), under 3,000 words, due November 12, 2026), the same text laid out as a paper ([`small-local-agent-redo-cloud-agent-work.pdf`](paper/small-local-agent-redo-cloud-agent-work.pdf), rebuilt with `node paper/build_pdf.js`) and where each of its numbers comes from ([`sources.md`](paper/sources.md)) |
 | `docs/` | what the rules, the dataset format and the starter notebook tell us |
 
 </details>
@@ -49,7 +49,7 @@ patches: on the published files it resolves 93 of 93 reference patches and 0 of 
 the same verdict as the local harness on all 48 agent patches compared. Gemma 4 E4B on two T4 GPUs wrote a patch
 for 40 of the 48 published tasks it attempted and resolved 5. A paired rerun of 23 of them, with and without the
 code-graph tools, resolved 2 either way; with the tools available the model called one in 4 of the 23 runs. Ten
-more attempts were on tasks since left out of the published set. Details and limits: [`paper/writeup.md`](paper/writeup.md).
+more attempts were on tasks since left out of the published set. Details and limits: [`paper/small-local-agent-redo-cloud-agent-work.md`](paper/small-local-agent-redo-cloud-agent-work.md).
 
 The offline switch-off test in pipeline-doctor is not evidence for the ingredients above: its rules were written
 from the nine incidents it is scored on, and its "no conventions" condition blanks five data columns.

@@ -20,7 +20,7 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 | Figure 1: 30, 25, 5 | Section 6, "Task fairness": 30 screened, 25 whose tests need a name or text the statement never gives, 5 that pass |
 
 Figure 1 adds no number. `paper/figures/make_figure1.py` holds its ten counts and draws `figure1.svg`;
-`paper/build_pdf.js` makes `figure1.png` from it and lays `writeup.md` out as `writeup.pdf` without changing a word.
+`paper/build_pdf.js` makes `figure1.png` from it and lays `small-local-agent-redo-cloud-agent-work.md` out as `small-local-agent-redo-cloud-agent-work.pdf` without changing a word.
 
 ## Section 1, the introduction
 
