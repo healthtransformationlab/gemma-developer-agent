@@ -27,27 +27,32 @@ Figure 1 adds no number. `paper/figures/make_figure1.py` holds its thirteen coun
 
 ## The abstract
 
-Each figure is in a section below; these rows say which.
+Each figure is in a section below; these rows say which. The headings in bold are the paper's reading of its own
+results, set by the owner on November 10, 2026 (people stay in the loop on complex changes, and what helps them is
+better information); the figures under each heading are the measurements.
 
 | Figure | Source |
 |---|---|
-| "In fifteen days ... from nothing to 960 commits, 775 of them marked as agent-authored" | Section 3 (rows below): 960 commits on `main` from GitHub's initial commit on October 25 to November 8, 2026, fifteen days counting both ends; 775 = 710 with the agent's co-author trailer + 65 authored as the agent. The other 185 are 175 merge commits GitHub made for pull requests, 5 by an automation bot, 4 by the owner alone and the initial commit. The owner asked on November 10, 2026 for the abstract to lead with this |
-| "I typed no code" (the abstract; in Section 1 until November 10, 2026) | the four commits by the owner alone are three documentation edits and one merge of `main` into a branch (Section 3, the row on the 250 commits without a trailer); every other change came through a coding-agent session's pull request |
-| "Existing benchmarks mine mature libraries maintained by people" | Section 1 and Section 2: SWE-bench draws on twelve popular Python libraries, the competition's development set on four; SWE-Gym, SWE-smith and SWE-rebench also collect from human-maintained repositories |
+| "In fifteen days, one person directing a cloud coding agent ... from nothing to 960 commits, 775 of them marked as agent-authored" | Section 3 (rows below): 960 commits on `main` from GitHub's initial commit on October 25 to November 8, 2026, fifteen days counting both ends; 775 = 710 with the agent's co-author trailer + 65 authored as the agent. The other 185 are 175 merge commits GitHub made for pull requests, 5 by an automation bot, 4 by the owner alone and the initial commit. The owner asked on November 10, 2026 for the abstract to lead with this |
+| "without typing code" | the four commits by the owner alone are three documentation edits and one merge of `main` into a branch (Section 3, the row on the 250 commits without a trailer); every other change came through a coding-agent session's pull request |
+| "The person stayed in the loop" | Section 1 and Section 3: every change was made by a coding-agent session the owner directed in chat; `NLP/AGENTS.md` ("Branches and issues", rule 6) keeps limited-compute runs, publishing, deletions and rule changes for the owner's word |
+| "written rules that CI enforces gave that loop a record of issues, pull requests and reviews" | Section 3: `NLP/AGENTS.md` requires an issue per user story and a pull request tied to it, CI rejects a pull request without an issue link, and 240 reviews are committed as files. The issue rule was adopted partway through (Section 4.2), so the sentence says what the record holds, not that every change has all three |
 | "resolves every reference patch and no empty patch" | Section 5: the corrected release as published, 93 of 93 reference patches and 0 of 93 empty patches |
+| "unattended" | each task ran from the prompt to a submitted patch with no person acting: the harness loop of `NLP` spec 035, one task per offline Kaggle notebook |
+| 5 of 48 on two free T4 GPUs, "all small (a CI rule, a warning message, a label parser, two settings)" | Section 6, "Results" and "How it fails" |
+| "eight times the output budget changed little (2 of the 23 cheapest of the 48, against 2)" | Section 6, "A larger budget": 16,384 output tokens a turn against 2,048, with thinking on |
+| "the competition's evaluator resolved none of a random 20" | Section 6, "Under the competition's evaluator": the agent run end to end on four L4 GPUs |
+| "each task is labelled with its statement's source" | Section 4.2, the fidelity tiers |
 | 25 of 30 screened | Section 6, "Task fairness" |
-| 5 of 48 under tight limits | Section 6, "Results" |
-| 2 of the 23 cheapest of those, "eight times the output budget and thinking on" | Section 6, "A larger budget": 16,384 output tokens a turn against 2,048 |
-| None of a random 20 run end to end by the competition's evaluator | Section 6, "Under the competition's evaluator" (four L4 GPUs; "on its hardware" was cut from the abstract for length) |
-| "across three setups, 20 of 473 tool calls were to a graph tool" | 6 of 145 in the paired rerun, 5 of 139 with the larger budget and 9 of 189 under the evaluator (Section 6, three rows below); 6 + 5 + 9 = 20 and 145 + 139 + 189 = 473. The runs of the baseline that are not in the paired rerun were not counted |
-| "names and call edges connect a task's statement to the code its fix edits in 22 of 93 tasks" | Section 4.3 (rows below): the statement names an edited function or class in 20 tasks and call edges join a named one to an edited one in 2 more |
+| "names and call edges lead from statement to fix in 22 of 93 tasks" | Section 4.3 (rows below): the statement names an edited function or class in 20 tasks and call edges join a named one to an edited one in 2 more |
+| "the model asked a graph tool in only 20 of 473 tool calls" | 6 of 145 in the paired rerun, 5 of 139 with the larger budget and 9 of 189 under the evaluator (Section 6, three rows below); 6 + 5 + 9 = 20 and 145 + 139 + 189 = 473. The runs of the baseline that are not in the paired rerun were not counted |
 
 ## Section 1, the introduction
 
 | Figure | Source |
 |---|---|
-| The masking defect: about a quarter of charted teeth without measures while every test passed | `NLP/docs/tooth_loss.md`, "After the tooth-table fixes of #631"; fixed by pull request 632. Until November 10, 2026 this was in Section 7, "What these tasks contain that web-library tasks do not" |
-| "synthetic records throughout" | every record in `NLP` is synthetic (`NLP/DISCLAIMER.md`); the clause replaces the limitation "Synthetic health data" |
+| "with a person in the loop"; "what does the person need for the rest?" | the abstract's rows above: the owner directed every session; the question is the paper's framing |
+| Every record is synthetic | `NLP/DISCLAIMER.md`; stated in the title block and in "synthetic dental records" |
 
 ## Section 2, related work
 
@@ -128,9 +133,9 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 | 30 with failing tests, 5 with errors | `verify_exit_code` 1 and 2, over the 48 |
 | Eight empty patches: four hit the token limit, three submit without an edit, one calls the edit tool with an argument it does not take | each run's `result.json`, downloaded from its Kaggle notebook output on November 10, 2026. `htlnlp_206`, `236`, `cfa7c008` and `pr23` each have a turn at exactly 2,048 output tokens; `htlnlp_120`, `152` and `230` call `submit_patch` without an edit; `htlnlp_71` calls `edit_file` four times with `start_line`, which the tool rejects. `NLP/pull_requests/pr-630-review.md` had attributed the first five to the limit |
 | 20.6 GPU-hours for the 58 first attempts, 9.6 for the 28 reruns, 30.2 in all; median 0.39 GPU-hours, 7 tool calls, about 91,000 prompt tokens | `gpu_hours` summed over the run table at `NLP` commit `db0a29d` (20.56) and `rerun_gpu_hours` over the paired table (9.64); the medians are over the run table's 58 rows as they are now |
-| About $21 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`: 14.19 for the first attempts, 6.65 for the reruns; `price_basis_text` |
+| Not in the writeup since November 10, 2026: about $21 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`: 14.19 for the first attempts, 6.65 for the reruns; `price_basis_text` |
 | The screen: 30 of the 93, 5 pass, 25 with tests that need a name or text the statement never gives | `NLP/data/tasks/screening/agent_screen.csv` and its `README.md` (`NLP` pull request 653): drawn with seed 20261110 within each statement source (13 of 39, 11 of 34, 6 of 20); `is_pass` is both ratings 0 or 1, the rule of SWE-bench Verified [2]; `test_rating_num` is 2 or 3 for 25. An AI reviewer made both passes; the second agrees with the first on all 30 but had read the first's ratings |
-| "I checked its findings in summary and agreed with all 30" | the same table, `owner_fair_code` and `owner_note_text`: on November 10, 2026 the author answered one question per task (is the test fair) from two plain-language sentences, with the AI's verdict already selected: fair 5, unfair 25, cannot tell 0. The author did not read the test code. It is a check of the AI's findings, not an independent rating, which is what Section 7 says |
+| "the author checked its findings in summary and agreed with all 30" | the same table, `owner_fair_code` and `owner_note_text`: on November 10, 2026 the author answered one question per task (is the test fair) from two plain-language sentences, with the AI's verdict already selected: fair 5, unfair 25, cannot tell 0. The author did not read the test code. It is a check of the AI's findings, not an independent rating, which is what Section 7 says |
 | Of 16 screened tasks the model attempted: 1 of the 3 that pass resolved, 0 of the 13 that fail | the same table, `is_attempted` and `is_resolved` against `is_pass`; the resolved one is `htlnlp_pr63` |
 | Not in the writeup from the same table | 10 of 30 statements rated vague or worse; 4 fixes, 14 features, 12 maintenance changes; the statement names the fix fully in 10 and partly in 17 |
 | Confidence intervals | Wilson, 95%; named once in the text since an outside review took them for Clopper-Pearson (which would give 3.5 to 22.7 for 5 of 48) |
@@ -180,8 +185,7 @@ go-ahead: `NLP/kaggle/official_agent_run.py --sample 20 --seed 20261110`.
 | Figure | Source |
 |---|---|
 | 5 of 48, 2 of 23, none of a random 20 | Section 6: "Results", "A larger budget" and "Under the competition's evaluator" |
-| "Only 20 of 473 tool calls were to a graph tool"; "22 of 93 tasks" | the abstract's rows above |
-| "they cover more than its package" | Section 4.3: the graph holds the Python package's functions, classes and methods, and in 31 tasks the fix touches none of its modules |
+| "Some small upkeep can leave the loop; the rest stays with a person, who gains a map of the work" | the abstract's rows above; "whether its tests are fair" is the screen of Section 6, "22 of 93" and "20 of 473" are the abstract's figures |
 | "the competition's evaluator runs on it as published" | Section 5: `NLP/data/tasks/official_verifier/published_verification.csv`, 93 of 93 reference patches and 0 of 93 empty patches on dataset version 4 with no file added |
 | `kaggle/official_verify.py` "replays the two controls" | `NLP/kaggle/official_verify.py` runs the competition's verification with a chosen patch per task: none, the reference patch, or patches from a file |
 | `63_graph_coverage.py` replays "the graph counts" | `NLP/python/scripts/63_graph_coverage.py --published <the downloaded dataset>` writes `graph_coverage.csv` and prints the counts of Section 4.3; about ten seconds, no model needed |
@@ -189,11 +193,12 @@ go-ahead: `NLP/kaggle/official_agent_run.py --sample 20 --seed 20261110`.
 
 ## The former Section 7 (cut on November 10, 2026)
 
-One of its three cases is now in Section 1 (row above). The rows below are for what was cut.
+None of its three cases is in the paper now. The rows below are for what was cut.
 
 | Figure | Source |
 |---|---|
 | De-identification rules: 1.00 and 0.27 (`regex_v2`, hard and unseen tiers) | `NLP/data/deid/scores.csv` (`entity_recall`). In Section 1 for part of November 10, 2026, then cut for length |
+| The masking defect: about a quarter of charted teeth without measures while every test passed | `NLP/docs/tooth_loss.md`, "After the tooth-table fixes of #631"; fixed by pull request 632. In Section 1 for part of November 10, 2026, then cut for length |
 | Tooth-loss AUC 0.89 to 0.90 and 0.59 to 0.63 | `NLP/docs/tooth_loss.md`, "After the tooth-table fixes of #631" (completed-extraction models) |
 | 16 de-identification candidates; 5 scorable attempts, none resolved | a keyword match on `title_text` in the manifest (`de-id`, `phi`, `maccrobat`, `presidio`, `redact`, `mask`), joined to the run table. Three more were attempted but are among the 10 set aside. The match is mine and approximate |
 
@@ -283,6 +288,20 @@ One of its three cases is now in Section 1 (row above). The rows below are for w
   Section 1 (now in the abstract); and Section 5's "Elsewhere the two verifiers agree on every reference patch"
   (the table's counts say it: the evaluator resolves 93 of 113, and the 20 it rejects are listed with their
   reasons).
+- Changed later on November 10, 2026 (the same pull request), at the owner's direction:
+  - Voice: "I" and "my" became "this paper", "this work", "the author" or "the local harness" throughout.
+  - The claim that other benchmarks' sources are "maintained by people" (the abstract) or "human-maintained"
+    (Section 2) is gone: nothing here measured who maintains them. Section 2 now says they "draw on public
+    open-source projects".
+  - The abstract and the conclusion are framed by what can leave a person's loop and what the person gains for
+    the rest. Cut to make room: the abstract's "Can a small local model redo that work?" and its clause on
+    existing benchmarks; "with thinking on" and "run end to end" in the abstract (Section 6 has both); the
+    masking-defect example and "(synthetic records throughout)" in Section 1; "about $21 at an estimated $0.69
+    per hour" in Section 6; "One task was resolved only without the tools, one only with them, one both times"
+    became "Only one task was resolved both times"; "To see whether the tight limits decide the result" became
+    "To test the tight limits"; "which ships in" became "in"; and the conclusion's "Whether graphs help a small
+    model on a data repository cannot be told until the model asks them and they cover more than its package"
+    (Section 4.3 says the graph covers the package only).
 - Whether embedding search finds the fix where names and call edges do not (Section 4.3): not run. It needs the
   statement embedded with the same model as the nodes.
 - An independent human screen of task quality: not done. The screen of 30 is an AI reviewer's, checked by the
