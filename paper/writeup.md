@@ -6,7 +6,7 @@
 
 ## Abstract
 
-Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored). It has 93 tasks in the competition's format, each verified with the competition's own evaluator and labelled with where its problem statement came from: an issue, a pull request or a commit message. Under tight limits (2,048 output tokens, thinking off), Gemma 4 E4B on two free T4 GPUs resolved 5 of 48 tasks, run cheapest first. A paired rerun of 23 with the code-graph tools resolved 2, as without them; the model rarely called the tools. An AI reviewer's screen of 30 finds 25 with tests needing names the statement never gives. The agent ran on my open re-implementation of the competition's harness; the official evaluator, which did not run the agent, gives the same verdict on all 48 patches compared. I report how the model fails and what each task costs. Data, harness and run tables are public.
+Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored). It has 93 tasks in the competition's format, each verified with the competition's own evaluator and labelled with where its problem statement came from: an issue, a pull request or a commit message. Under tight limits (2,048 output tokens, thinking off), Gemma 4 E4B on two free T4 GPUs resolved 5 of 48 tasks, run cheapest first. A paired rerun of 23 with the code-graph tools resolved 2, as without them; the model rarely called the tools. An AI-assisted screen of 30 finds 25 with tests needing names the statement never gives. The agent ran on my open re-implementation of the competition's harness; the official evaluator, which did not run the agent, gives the same verdict on all 48 patches compared. I report how the model fails and what each task costs. Data, harness and run tables are public.
 
 ## 1. Introduction
 
@@ -47,7 +47,7 @@ The repository holds a Python package, its tests, an R twin kept in numerical pa
 
 **Reviews.** Every pull request has a review committed as a file: 240 of them. Of the 192 with a structured verdict, all approve (64 with minor findings, 9 with conditions); blocking findings are fixed on the branch first. Agents merge their own green pull requests except in four cases reserved for me: limited-compute runs, publishing outside the repository, deletions, and rule changes.
 
-**Where my time went.** By my own estimate, more than half of my time went into three things a person reads: a data-model diagram annotated per attribute, a results view that drills from sensitivity, specificity, PPV, NPV and AUC down to SHAP values, and a data-quality page. A keyword match on titles finds them in only 38 of 305 merged pull requests. How a discrepancy is displayed and drilled into decides whether anyone catches it, and no test checks that.
+**Where my time went.** By my own estimate, more than half of my time went into three things a person reads: a data-model diagram annotated per attribute, a results view that drills from sensitivity, specificity, PPV, NPV and AUC down to SHAP values, and a data-quality page. How a discrepancy is displayed and drilled into decides whether anyone catches it, and no test checks that.
 
 ## 4. Building the task set
 
@@ -133,7 +133,7 @@ One task was resolved only without the tools, one only with them, one both times
 
 **How it fails.** Of the 43 unresolved tasks, 35 submitted a patch that fails the target tests (30 with failing tests, 5 with errors before any test ran) and 8 submitted nothing. In those eight transcripts, four have a turn that hit the 2,048-token limit, three submit without an edit, and one calls the edit tool four times with an argument it does not take. The five resolved tasks are small: a CI rule, a warning message, a label parser, a training setting, a notebook setting.
 
-**Task fairness.** An AI reviewer screened 30 of the 93 on SWE-bench Verified's two questions [2]: 5 pass. In 25 the tests need a name or text the statement never gives. Of 16 screened tasks the model attempted, it resolved 1 of the 3 that pass and none of the 13 that fail, so the baseline may measure the tasks more than the model.
+**Task fairness.** An AI reviewer screened 30 of the 93 on SWE-bench Verified's two questions [2]; I checked its findings in summary and agreed with all 30. Five pass. In 25 the tests need a name or text the statement never gives. Of 16 the model attempted, it resolved 1 of the 3 that pass and none of the 13 that fail, so the baseline may measure the tasks more than the model.
 
 **Cost.** The 58 first attempts used 20.6 GPU-hours and the 28 reruns 9.6: 30.2 in all, about $21 at an estimated $0.69 per T4-hour; Kaggle's GPUs are free. The median task takes 0.39 GPU-hours, 7 tool calls and about 91,000 prompt tokens. Five resolved tasks cost 6.0 GPU-hours each.
 
@@ -154,7 +154,7 @@ Three cases from the repository show the defect class that motivates it: everyth
 - **My harness ran the agent.** The competition's evaluator verified patches afterwards but did not run the agent, so no score here is comparable to the leaderboard.
 - **Constrained settings.** The baseline caps output at 2,048 tokens with thinking off on T4 GPUs. My competition configuration allows 16,384 output tokens and a 4,096-token thinking budget on four L4s. It is a constrained baseline, not an estimate of the model under the competition's budgets.
 - **Small.** 48 of 93 tasks, cheapest first, one sampled run per condition at temperature 0.2. One task flipping moves the paired result.
-- **An AI's screen, not a person's.** I did not verify the 30 ratings, and the other 63 tasks are unscreened.
+- **A screen checked only in summary.** I did not read the tests; the AI's verdict was shown first. 63 tasks are unscreened.
 - **Untested components.** The submission's analyzer sub-agent and its skill were not run.
 - **The tasks are not silent.** Each comes with a failing test. The set measures repair of the code that looks for silent defects, not noticing one unprompted.
 - **Synthetic health data.** The cases in Section 7 are agreement with a synthetic answer key, not findings about any patient or practice.
