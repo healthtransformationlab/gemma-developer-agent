@@ -1,51 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 504" width="720" height="504" role="img" aria-label="Figure 1. Task counts at each step, on one scale. Merged changes mined: 197; Touch code and tests (candidates): 116; Built, pass both gates, licensed: 113; Verified by the competition&#x27;s evaluator (published): 93; Attempted and scored: 48; Wrote a patch: 40; Resolved: 5; Sampled, stratified by tier: 20; Wrote a patch: 16; Resolved: 0; Screened: 30; Tests need a name or text the statement never gives: 25; Pass both questions: 5" font-family="Inter, 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif">
-<rect width="720" height="504" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 418" width="720" height="418" role="img" aria-label="Figure 1. Task counts at each step, on one scale. Merged changes mined: 197; Touch code and tests (candidates): 116; Built, pass both gates, licensed: 113; Verified by the competition&#x27;s evaluator (published): 93; Attempted and scored: 48; Wrote a patch: 40; Resolved: 5; Sampled, stratified by tier: 20; Wrote a patch: 16; Resolved: 0; Screened: 30; Tests need a name or text the statement never gives: 25; Pass both questions: 5" font-family="Inter, 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif">
+<rect width="720" height="418" fill="#ffffff"/>
 <text x="12" y="20" font-size="13" font-weight="600" fill="#0b0b0b">Figure 1. Task counts at each step, on one scale.</text>
-<text x="12" y="58" font-size="11.5" font-weight="600" fill="#0b0b0b">Building the task set (Sections 4 and 5)</text>
-<text x="346" y="83.0" font-size="11.5" text-anchor="end" fill="#52514e">Merged changes mined</text>
-<path d="M356,72 h296.0 a4,4 0 0 1 4,4 v6.0 a4,4 0 0 1 -4,4 h-296.0 z" fill="#2a78d6"><title>Merged changes mined: 197</title></path>
-<text x="663.0" y="83.0" font-size="11.5" font-weight="600" fill="#0b0b0b">197</text>
-<text x="346" y="107.0" font-size="11.5" text-anchor="end" fill="#52514e">Touch code and tests (candidates)</text>
-<path d="M356,96 h172.6 a4,4 0 0 1 4,4 v6.0 a4,4 0 0 1 -4,4 h-172.6 z" fill="#2a78d6"><title>Touch code and tests (candidates): 116</title></path>
-<text x="539.6" y="107.0" font-size="11.5" font-weight="600" fill="#0b0b0b">116</text>
-<text x="346" y="131.0" font-size="11.5" text-anchor="end" fill="#52514e">Built, pass both gates, licensed</text>
-<path d="M356,120 h168.1 a4,4 0 0 1 4,4 v6.0 a4,4 0 0 1 -4,4 h-168.1 z" fill="#2a78d6"><title>Built, pass both gates, licensed: 113</title></path>
-<text x="535.1" y="131.0" font-size="11.5" font-weight="600" fill="#0b0b0b">113</text>
-<text x="346" y="155.0" font-size="11.5" text-anchor="end" fill="#52514e">Verified by the competition&#x27;s evaluator (published)</text>
-<path d="M356,144 h137.6 a4,4 0 0 1 4,4 v6.0 a4,4 0 0 1 -4,4 h-137.6 z" fill="#2a78d6"><title>Verified by the competition&#x27;s evaluator (published): 93</title></path>
-<text x="504.6" y="155.0" font-size="11.5" font-weight="600" fill="#0b0b0b">93</text>
-<line x1="356" y1="68" x2="356" y2="162" stroke="#c9c8c2" stroke-width="1"/>
-<text x="12" y="192" font-size="11.5" font-weight="600" fill="#0b0b0b">Baseline: Gemma 4 E4B on published tasks (Section 6)</text>
-<text x="346" y="217.0" font-size="11.5" text-anchor="end" fill="#52514e">Attempted and scored</text>
-<path d="M356,206 h69.1 a4,4 0 0 1 4,4 v6.0 a4,4 0 0 1 -4,4 h-69.1 z" fill="#2a78d6"><title>Attempted and scored: 48</title></path>
-<text x="436.1" y="217.0" font-size="11.5" font-weight="600" fill="#0b0b0b">48</text>
-<text x="346" y="241.0" font-size="11.5" text-anchor="end" fill="#52514e">Wrote a patch</text>
-<path d="M356,230 h56.9 a4,4 0 0 1 4,4 v6.0 a4,4 0 0 1 -4,4 h-56.9 z" fill="#2a78d6"><title>Wrote a patch: 40</title></path>
-<text x="423.9" y="241.0" font-size="11.5" font-weight="600" fill="#0b0b0b">40</text>
-<text x="346" y="265.0" font-size="11.5" text-anchor="end" fill="#52514e">Resolved</text>
-<path d="M356,254 h3.8 a3.8071065989847717,3.8071065989847717 0 0 1 3.8071065989847717,3.8071065989847717 v6.4 a3.8071065989847717,3.8071065989847717 0 0 1 -3.8071065989847717,3.8071065989847717 h-3.8 z" fill="#2a78d6"><title>Resolved: 5</title></path>
-<text x="370.6" y="265.0" font-size="11.5" font-weight="600" fill="#0b0b0b">5</text>
-<line x1="356" y1="202" x2="356" y2="272" stroke="#c9c8c2" stroke-width="1"/>
-<text x="12" y="302" font-size="11.5" font-weight="600" fill="#0b0b0b">Run by the competition&#x27;s own evaluator on a random sample (Section 6)</text>
-<text x="346" y="327.0" font-size="11.5" text-anchor="end" fill="#52514e">Sampled, stratified by tier</text>
-<path d="M356,316 h26.5 a4,4 0 0 1 4,4 v6.0 a4,4 0 0 1 -4,4 h-26.5 z" fill="#2a78d6"><title>Sampled, stratified by tier: 20</title></path>
-<text x="393.5" y="327.0" font-size="11.5" font-weight="600" fill="#0b0b0b">20</text>
-<text x="346" y="351.0" font-size="11.5" text-anchor="end" fill="#52514e">Wrote a patch</text>
-<path d="M356,340 h20.4 a4,4 0 0 1 4,4 v6.0 a4,4 0 0 1 -4,4 h-20.4 z" fill="#2a78d6"><title>Wrote a patch: 16</title></path>
-<text x="387.4" y="351.0" font-size="11.5" font-weight="600" fill="#0b0b0b">16</text>
-<text x="346" y="375.0" font-size="11.5" text-anchor="end" fill="#52514e">Resolved</text>
-<path d="M356,364 h0.0 a0.0,0.0 0 0 1 0.0,0.0 v14.0 a0.0,0.0 0 0 1 -0.0,0.0 h-0.0 z" fill="#2a78d6"><title>Resolved: 0</title></path>
-<text x="363.0" y="375.0" font-size="11.5" font-weight="600" fill="#0b0b0b">0</text>
-<line x1="356" y1="312" x2="356" y2="382" stroke="#c9c8c2" stroke-width="1"/>
-<text x="12" y="412" font-size="11.5" font-weight="600" fill="#0b0b0b">AI-assisted screen of a random sample of the published tasks (Section 6)</text>
-<text x="346" y="437.0" font-size="11.5" text-anchor="end" fill="#52514e">Screened</text>
-<path d="M356,426 h41.7 a4,4 0 0 1 4,4 v6.0 a4,4 0 0 1 -4,4 h-41.7 z" fill="#2a78d6"><title>Screened: 30</title></path>
-<text x="408.7" y="437.0" font-size="11.5" font-weight="600" fill="#0b0b0b">30</text>
-<text x="346" y="461.0" font-size="11.5" text-anchor="end" fill="#52514e">Tests need a name or text the statement never gives</text>
-<path d="M356,450 h34.1 a4,4 0 0 1 4,4 v6.0 a4,4 0 0 1 -4,4 h-34.1 z" fill="#2a78d6"><title>Tests need a name or text the statement never gives: 25</title></path>
-<text x="401.1" y="461.0" font-size="11.5" font-weight="600" fill="#0b0b0b">25</text>
-<text x="346" y="485.0" font-size="11.5" text-anchor="end" fill="#52514e">Pass both questions</text>
-<path d="M356,474 h3.8 a3.8071065989847717,3.8071065989847717 0 0 1 3.8071065989847717,3.8071065989847717 v6.4 a3.8071065989847717,3.8071065989847717 0 0 1 -3.8071065989847717,3.8071065989847717 h-3.8 z" fill="#2a78d6"><title>Pass both questions: 5</title></path>
-<text x="370.6" y="485.0" font-size="11.5" font-weight="600" fill="#0b0b0b">5</text>
-<line x1="356" y1="422" x2="356" y2="492" stroke="#c9c8c2" stroke-width="1"/>
+<text x="12" y="52" font-size="11.5" font-weight="600" fill="#0b0b0b">Building the task set (Sections 4 and 5)</text>
+<text x="346" y="72.0" font-size="11.5" text-anchor="end" fill="#52514e">Merged changes mined</text>
+<path d="M356,62 h296.0 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-296.0 z" fill="#2a78d6"><title>Merged changes mined: 197</title></path>
+<text x="663.0" y="72.0" font-size="11.5" font-weight="600" fill="#0b0b0b">197</text>
+<text x="346" y="92.0" font-size="11.5" text-anchor="end" fill="#52514e">Touch code and tests (candidates)</text>
+<path d="M356,82 h172.6 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-172.6 z" fill="#2a78d6"><title>Touch code and tests (candidates): 116</title></path>
+<text x="539.6" y="92.0" font-size="11.5" font-weight="600" fill="#0b0b0b">116</text>
+<text x="346" y="112.0" font-size="11.5" text-anchor="end" fill="#52514e">Built, pass both gates, licensed</text>
+<path d="M356,102 h168.1 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-168.1 z" fill="#2a78d6"><title>Built, pass both gates, licensed: 113</title></path>
+<text x="535.1" y="112.0" font-size="11.5" font-weight="600" fill="#0b0b0b">113</text>
+<text x="346" y="132.0" font-size="11.5" text-anchor="end" fill="#52514e">Verified by the competition&#x27;s evaluator (published)</text>
+<path d="M356,122 h137.6 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-137.6 z" fill="#2a78d6"><title>Verified by the competition&#x27;s evaluator (published): 93</title></path>
+<text x="504.6" y="132.0" font-size="11.5" font-weight="600" fill="#0b0b0b">93</text>
+<line x1="356" y1="58" x2="356" y2="138" stroke="#c9c8c2" stroke-width="1"/>
+<text x="12" y="162" font-size="11.5" font-weight="600" fill="#0b0b0b">Baseline: Gemma 4 E4B on published tasks (Section 6)</text>
+<text x="346" y="182.0" font-size="11.5" text-anchor="end" fill="#52514e">Attempted and scored</text>
+<path d="M356,172 h69.1 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-69.1 z" fill="#2a78d6"><title>Attempted and scored: 48</title></path>
+<text x="436.1" y="182.0" font-size="11.5" font-weight="600" fill="#0b0b0b">48</text>
+<text x="346" y="202.0" font-size="11.5" text-anchor="end" fill="#52514e">Wrote a patch</text>
+<path d="M356,192 h56.9 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-56.9 z" fill="#2a78d6"><title>Wrote a patch: 40</title></path>
+<text x="423.9" y="202.0" font-size="11.5" font-weight="600" fill="#0b0b0b">40</text>
+<text x="346" y="222.0" font-size="11.5" text-anchor="end" fill="#52514e">Resolved</text>
+<path d="M356,212 h3.8 a3.8071065989847717,3.8071065989847717 0 0 1 3.8071065989847717,3.8071065989847717 v4.4 a3.8071065989847717,3.8071065989847717 0 0 1 -3.8071065989847717,3.8071065989847717 h-3.8 z" fill="#2a78d6"><title>Resolved: 5</title></path>
+<text x="370.6" y="222.0" font-size="11.5" font-weight="600" fill="#0b0b0b">5</text>
+<line x1="356" y1="168" x2="356" y2="228" stroke="#c9c8c2" stroke-width="1"/>
+<text x="12" y="252" font-size="11.5" font-weight="600" fill="#0b0b0b">Run by the competition&#x27;s own evaluator on a random sample (Section 6)</text>
+<text x="346" y="272.0" font-size="11.5" text-anchor="end" fill="#52514e">Sampled, stratified by tier</text>
+<path d="M356,262 h26.5 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-26.5 z" fill="#2a78d6"><title>Sampled, stratified by tier: 20</title></path>
+<text x="393.5" y="272.0" font-size="11.5" font-weight="600" fill="#0b0b0b">20</text>
+<text x="346" y="292.0" font-size="11.5" text-anchor="end" fill="#52514e">Wrote a patch</text>
+<path d="M356,282 h20.4 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-20.4 z" fill="#2a78d6"><title>Wrote a patch: 16</title></path>
+<text x="387.4" y="292.0" font-size="11.5" font-weight="600" fill="#0b0b0b">16</text>
+<text x="346" y="312.0" font-size="11.5" text-anchor="end" fill="#52514e">Resolved</text>
+<path d="M356,302 h0.0 a0.0,0.0 0 0 1 0.0,0.0 v12.0 a0.0,0.0 0 0 1 -0.0,0.0 h-0.0 z" fill="#2a78d6"><title>Resolved: 0</title></path>
+<text x="363.0" y="312.0" font-size="11.5" font-weight="600" fill="#0b0b0b">0</text>
+<line x1="356" y1="258" x2="356" y2="318" stroke="#c9c8c2" stroke-width="1"/>
+<text x="12" y="342" font-size="11.5" font-weight="600" fill="#0b0b0b">AI-assisted screen of a random sample of the published tasks (Section 6)</text>
+<text x="346" y="362.0" font-size="11.5" text-anchor="end" fill="#52514e">Screened</text>
+<path d="M356,352 h41.7 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-41.7 z" fill="#2a78d6"><title>Screened: 30</title></path>
+<text x="408.7" y="362.0" font-size="11.5" font-weight="600" fill="#0b0b0b">30</text>
+<text x="346" y="382.0" font-size="11.5" text-anchor="end" fill="#52514e">Tests need a name or text the statement never gives</text>
+<path d="M356,372 h34.1 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-34.1 z" fill="#2a78d6"><title>Tests need a name or text the statement never gives: 25</title></path>
+<text x="401.1" y="382.0" font-size="11.5" font-weight="600" fill="#0b0b0b">25</text>
+<text x="346" y="402.0" font-size="11.5" text-anchor="end" fill="#52514e">Pass both questions</text>
+<path d="M356,392 h3.8 a3.8071065989847717,3.8071065989847717 0 0 1 3.8071065989847717,3.8071065989847717 v4.4 a3.8071065989847717,3.8071065989847717 0 0 1 -3.8071065989847717,3.8071065989847717 h-3.8 z" fill="#2a78d6"><title>Pass both questions: 5</title></path>
+<text x="370.6" y="402.0" font-size="11.5" font-weight="600" fill="#0b0b0b">5</text>
+<line x1="356" y1="348" x2="356" y2="408" stroke="#c9c8c2" stroke-width="1"/>
 </svg>
