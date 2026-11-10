@@ -6,7 +6,7 @@
 
 ## Abstract
 
-Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored). It has 93 tasks in the competition's format, each verified with the competition's own evaluator and labelled with where its problem statement came from: an issue, a pull request or a commit message. Gemma 4 E4B on two free T4 GPUs resolved 5 of the 48 tasks it attempted. The agent ran on my open re-implementation of the competition's harness, which agrees with the official evaluator on all 25 agent patches compared. I report how the model fails and what each task costs. Data, harness and run tables are public.
+Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored). It has 93 tasks in the competition's format, each verified with the competition's own evaluator and labelled with where its problem statement came from: an issue, a pull request or a commit message. Gemma 4 E4B on two free T4 GPUs resolved 5 of the 48 tasks it attempted. A paired rerun of 23 with the code-graph tools resolved 2, as without them; the model rarely called the tools. The agent ran on my open re-implementation of the competition's harness, which agrees with the official evaluator on all 48 agent patches compared. I report how the model fails and what each task costs. Data, harness and run tables are public.
 
 ## 1. Introduction
 
@@ -24,7 +24,7 @@ Contributions:
 
 1. **A task set** of 93 tasks in the competition's format, each verified with the competition's own evaluator, public on Kaggle under CC BY 4.0, with snapshots, code graphs, embeddings and a fidelity tier per task (Section 4).
 2. **An open harness checked against the official one**: a sandboxed re-implementation of the competition's documented harness that agrees with the competition's evaluator on every saved agent patch and keeps answers away from the model on shared GPUs (Section 5).
-3. **A baseline** for Gemma 4 E4B with a failure breakdown and cost per task (Section 6).
+3. **A baseline** for Gemma 4 E4B with a failure breakdown, cost per task and a paired test of the code-graph tools (Section 6).
 4. **Evidence that the tracing rule makes a history minable**: on a second repository without it, the same mining rule finds candidates but no issue-linked statements (Section 4.5).
 
 ## 2. Related work
@@ -43,7 +43,7 @@ The repository holds a Python package, its tests, an R twin kept in numerical pa
 
 **Who wrote it.** Of 960 commits on `main`, 775 are marked as agent-authored, 175 are merge commits GitHub made for pull requests, 5 come from an automation bot, 4 carry only my name, and one is the initial commit.
 
-**Rules the agents work under.** A checked-in `AGENTS.md` requires one issue per user story, a branch named for its issue, a pull request that closes it, and a test written before the code. CI rejects a pull request from an agent's own session branch or without an issue link. Prose rules are tests too: one fails the build on a banned phrase, another when a public function lacks its tracing decorator.
+**Rules the agents work under.** A checked-in `AGENTS.md` requires one issue per user story, a branch named for its issue, a pull request that closes it, and a test written before the code. CI rejects a pull request from an agent's own session branch or without an issue link.
 
 **Reviews.** Every pull request has a review committed as a file: 240 of them. Of the 192 with a structured verdict, all approve (64 with minor findings, 9 with conditions); blocking findings are fixed on the branch first. Agents merge their own green pull requests except in four cases reserved for me: limited-compute runs, publishing outside the repository, deletions, and rule changes.
 
@@ -104,8 +104,9 @@ So the rule finds candidates anywhere, but the problem statements come from the 
 | One file added per snapshot, Gemma's saved patches | same verdict as my harness on 25 of 25 |
 | Corrected release as published, reference patch | 93 of 93 resolved |
 | Corrected release as published, empty patch | 0 of 93 resolved |
+| Corrected release as published, Gemma's rerun patches | same verdict as my harness on 23 of 23 |
 
-The first release could not be scored by the evaluator. It puts the repository root on the import path, and this package sits in `python/`. A short `conftest.py` at each snapshot's root fixes that. The corrected release builds that file into every snapshot and keeps only the 93.
+The first release could not be scored: the evaluator puts the repository root on the import path, and this package sits in `python/`. The corrected release adds a short `conftest.py` at each snapshot's root and keeps only the 93.
 
 The 20 left out fall into three groups. Twelve have tests that read third-party files the published snapshots withhold for licence reasons, so they cannot pass from a snapshot under any verifier; my control missed this because it ran from the repository's history. Six start a script that imports a module beside it, which the evaluator's `PYTHONSAFEPATH=1` forbids and my harness allows. Two need Postgres or R. Elsewhere the two verifiers agree on every reference patch.
 
@@ -119,21 +120,20 @@ Kaggle GPUs do not allow namespaces, and a notebook can read every attached file
 
 **Setup.** `gemma-4-e4b-it` in fp16 with transformers on two T4 GPUs, internet off, thinking off, at most 2,048 new tokens per turn, a 24,576-token context, 40 tool calls, 60 turns and 30 minutes per task. Generation runs at about 8 tokens a second, hence 30 minutes. Tasks were run cheapest first under a GPU-hour cap.
 
-**Results.** Ten of the 58 tasks attempted are among the twenty left out (Section 5), so they are set aside. The remaining 48 ran under two conditions, which I did not plan: a fault in my harness, fixed before the last 17, meant the first 31 were served without their code graph and embeddings, so the three graph tools had nothing to query.
+**Results.** Ten of the 58 tasks attempted are among the twenty left out (Section 5), so they are set aside. On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% CI 4.5–22.2). By tier, it resolved 4 of 24 tasks whose statement is an issue, 1 of 19 from a pull request and 0 of 5 from a commit message. The intervals overlap.
 
-| Condition | Tasks | Non-empty patch | Resolved (95% CI) |
-|---|---|---|---|
-| Graph tools unavailable | 31 | 26 | 5 (16.1%, 7.1–32.6) |
-| Graph tools available | 17 | 12 | 0 (0%, 0–18.4) |
-| All | 48 | 38 | 5 (10.4%, 4.5–22.2) |
+**Do the graph tools help?** A fault in my harness served the first tasks without their code graph and embeddings, so the three graph tools had nothing to query. After fixing it I ran 23 of those tasks again with the same settings, which gives a paired comparison.
 
-The two conditions are not a comparison of the graph tools. The 17 later tasks are the costlier ones (0.55 against 0.27 GPU-hours per task), so they are also harder. A paired rerun of the first tasks on the fixed harness is the experiment that would isolate the tools.
+| 23 tasks, each run twice | Non-empty patch | Resolved (95% CI) |
+|---|---|---|
+| Graph tools unavailable | 18 | 2 (8.7%, 2.4–26.8) |
+| Graph tools available | 20 | 2 (8.7%, 2.4–26.8) |
 
-By tier, the model resolved 4 of 24 tasks whose statement is an issue, 1 of 19 from a pull request and 0 of 5 from a commit message. The intervals overlap.
+One task was resolved only without the tools, one only with them, one both times. The transcripts suggest why: with the tools available the model called one in 4 of the 23 runs, 6 calls among 145. It reads and edits files and rarely searches. The figures above and below use each task's latest run; eight tasks have none with the tools.
 
-**How it fails.** Of the 43 unresolved tasks, 33 submitted a patch that fails the target tests (28 with failing tests, 5 with errors before any test ran) and 10 submitted nothing. Four of those 10 ended within two turns without a single tool call. I read the transcripts of the five empty patches among the last 17: four had at least one turn that hit the 2,048-token limit, and one submitted without editing anything. The five resolved tasks are small: a CI rule, a warning message, a renumbered script, a label parser, a notebook setting.
+**How it fails.** Of the 43 unresolved tasks, 35 submitted a patch that fails the target tests (30 with failing tests, 5 with errors before any test ran) and 8 submitted nothing. In those eight transcripts, four have a turn that hit the 2,048-token limit, three submit without an edit, and one calls the edit tool four times with an argument it does not take. The five resolved tasks are small: a CI rule, a warning message, a label parser, a training setting, a notebook setting.
 
-**Cost.** All 58 attempts used 20.6 GPU-hours (10.3 hours of Kaggle's weekly allowance), a median of 0.32 GPU-hours, 6 tool calls and about 74,000 prompt tokens per task. That is about $14 at an estimated $0.69 per T4-hour; Kaggle's GPUs are free. Five resolved tasks cost 4.1 GPU-hours each.
+**Cost.** The 58 first attempts used 20.6 GPU-hours and the 28 reruns 9.6: 30.2 in all, about $21 at an estimated $0.69 per T4-hour; Kaggle's GPUs are free. The median task takes 0.39 GPU-hours, 7 tool calls and about 91,000 prompt tokens. Five resolved tasks cost 6.0 GPU-hours each.
 
 ## 7. What these tasks contain that web-library tasks do not
 
@@ -145,23 +145,22 @@ Three cases from the repository show the defect class that motivates it: everyth
 | Tooth-loss model, AUC | 0.89–0.90 (held-out labelled extractions) | 0.59–0.63 (teeth missing at the first visit) |
 | A masking defect in the feature table | every test passed | the measures of about a quarter of charted teeth were blank in every earlier run |
 
-All three are on synthetic data. A keyword match on titles puts 16 of the 116 candidates in de-identification; the baseline attempted 5 of those published and resolved none.
+A keyword match on titles puts 16 of the 116 candidates in de-identification; the baseline attempted 5 of those published and resolved none.
 
 ## 8. Limitations
 
 - **One repository, one author's rules.** The second repository tests only the mining rule.
 - **Agent-written statements.** The issue text was largely written by a cloud agent at my direction. That may make them easier or harder to follow than a person's.
 - **My harness ran the agent.** The competition's evaluator verified patches afterwards but did not run the agent, so no score here is comparable to the leaderboard.
-- **Twenty gated tasks are left out.** They pass my gates but not the competition's evaluator, twelve because their tests read third-party files the snapshots withhold.
 - **Constrained settings.** The baseline caps output at 2,048 tokens with thinking off on T4 GPUs. My competition configuration allows 16,384 output tokens and a 4,096-token thinking budget on four L4s. The baseline is a floor for this setup, not a measure of the model.
-- **Small and partial.** 48 scorable attempts, one sampled run each at temperature 0.2, and 31 of them without the graph tools.
+- **Small.** 48 tasks, one sampled run per condition at temperature 0.2. One task flipping moves the paired result.
 - **Untested components.** The submission's analyzer sub-agent and its skill were not run.
 - **The tasks are not silent.** Each comes with a failing test. The set measures repair of the code that looks for silent defects, not noticing one unprompted.
 - **Synthetic health data.** The cases in Section 7 are agreement with a synthetic answer key, not findings about any patient or practice.
 
 ## 9. Conclusion and release
 
-A cloud agent built this repository in fifteen days. From the same problem statements, a model that runs on free GPUs resolved 5 of 48 tasks, all of them small. That gap is what this competition is trying to close, and it is now measurable on a kind of repository the standard sets miss.
+A cloud agent built this repository in fifteen days. From the same problem statements, a model that runs on free GPUs resolved 5 of 48 tasks, all of them small, and left the graph tools almost unused. That gap is what this competition is trying to close, and it is now measurable on a kind of repository the standard sets miss.
 
 The recipe generalises to any repository that traces its changes to issues: mine the changes that touch code and tests, record where each statement came from, gate, and run a reference-patch control and an empty-patch control on the published files, with the official evaluator where there is one, before trusting any model's score.
 

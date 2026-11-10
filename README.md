@@ -46,9 +46,10 @@ One cell has been run, so this repo does not yet say whether the skill, or a wel
 does give is a baseline and its controls. The agent ran on a local re-implementation of the competition's
 documented harness, not the competition's evaluator. The competition's evaluator then checked the task set and the
 patches: on the published files it resolves 93 of 93 reference patches and 0 of 93 empty patches, and it gives
-the same verdict as the local harness on all 25 saved agent patches. Gemma 4 E4B on two T4 GPUs wrote a patch for 38 of the 48 published tasks it attempted; the first 31 ran without their code graph (a
-harness fault, since fixed) and resolved 5, the next 17 resolved none. Ten more attempts were on tasks since left
-out of the published set. Details and limits: [`paper/writeup.md`](paper/writeup.md).
+the same verdict as the local harness on all 48 agent patches compared. Gemma 4 E4B on two T4 GPUs wrote a patch
+for 40 of the 48 published tasks it attempted and resolved 5. A paired rerun of 23 of them, with and without the
+code-graph tools, resolved 2 either way; with the tools available the model called one in 4 of the 23 runs. Ten
+more attempts were on tasks since left out of the published set. Details and limits: [`paper/writeup.md`](paper/writeup.md).
 
 The offline switch-off test in pipeline-doctor is not evidence for the ingredients above: its rules were written
 from the nine incidents it is scored on, and its "no conventions" condition blanks five data columns.
@@ -71,7 +72,7 @@ issue; 67 of those issues are backfilled records that quote the original text ve
 <details>
 <summary><b>Status and dates</b></summary>
 
-- **Run:** the task set (built, gated, verified with the competition's evaluator, published), the harness controls, and Gemma 4 E4B on 58 tasks. Every number
+- **Run:** the task set (built, gated, verified with the competition's evaluator, published), the harness controls, and Gemma 4 E4B on 58 tasks, 28 of them twice. Every number
   is in `paper/sources.md` with the file it came from.
 - **Not run:** this `agent.yaml` on the competition's own evaluator (it has verified patches, not run the agent); the analyzer sub-agent; the pipeline-doctor
   skill; the competition's development set.
