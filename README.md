@@ -16,6 +16,8 @@ We test five things a well-run repo has. Each one is switched off in turn and th
 
 > Personal learning project. Not affiliated with or endorsed by any employer, institution or vendor.
 
+Licence: [Apache 2.0](LICENSE), the licence type the competition names for winning submissions.
+
 <details>
 <summary><b>What's in this repo</b></summary>
 
