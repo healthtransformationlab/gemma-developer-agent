@@ -33,7 +33,7 @@ The framing by a person's loop, and the wish to show what the graph is worth, ar
 
 | Figure | Source |
 |---|---|
-| "In fifteen days, one person in the loop with a cloud coding agent ... from nothing to 960 commits, 775 of them marked as agent-authored" | Section 3 (rows below): 960 commits on `main` from GitHub's initial commit on October 25 to November 8, 2026, fifteen days counting both ends; 775 = 710 with the agent's co-author trailer + 65 authored as the agent. The other 185 are 175 merge commits GitHub made for pull requests, 5 by an automation bot, 4 by the owner alone and the initial commit. The owner asked on November 10, 2026 for the abstract to lead with this |
+| "In fifteen days, one person in the loop with a cloud coding agent ... from nothing to 960 commits, 775 marked as agent-authored" | Section 3 (rows below): 960 commits on `main` from GitHub's initial commit on October 25 to November 8, 2026, fifteen days counting both ends; 775 = 710 with the agent's co-author trailer + 65 authored as the agent. The other 185 are 175 merge commits GitHub made for pull requests, 5 by an automation bot, 4 by the owner alone and the initial commit. The owner asked on November 10, 2026 for the abstract to lead with this |
 | "without typing code" | the four commits by the owner alone are three documentation edits and one merge of `main` into a branch (Section 3, the row on the 250 commits without a trailer); every other change came through a coding-agent session's pull request |
 | "one person in the loop"; "that loop" | Section 1 and Section 3: every change was made by a coding-agent session the owner directed in chat; `NLP/AGENTS.md` ("Branches and issues", rule 6) keeps limited-compute runs, publishing, deletions and rule changes for the owner's word |
 | "Scripts turn its CI-enforced record into 93 ... tasks" (the record: issues, pull requests and reviews) | Section 1's row on the scripts, and Section 3: `NLP/AGENTS.md` requires an issue per user story and a pull request tied to it, CI rejects a pull request without an issue link, and 240 reviews are committed as files. The issue rule was adopted partway through (Section 4.2), so this says what the record holds, not that every change has all three |
@@ -41,10 +41,10 @@ The framing by a person's loop, and the wish to show what the graph is worth, ar
 | "made the way the competition's own are: its mining rule, its format, its evaluator on every task" | Section 4.1 (a candidate touches both non-test code and test files, the competition's own mining rule), Section 5 (its evaluator on all 93) and Section 4.3: the format check against the competition's own files (snapshot layout, graph keys, embedding shape) |
 | "unattended" | each task ran from the prompt to a submitted patch with no person acting: the harness loop of `NLP` spec 035, one task per offline Kaggle notebook |
 | "5 of the 48 tasks it ran, cheapest first (95% CI 4.5–22.2%), all small" | Section 6, "Setup", "Results" (the Wilson interval of 5 of 48) and "How it fails" (a CI rule, a warning message, a label parser and two settings) |
-| "with eight times the output budget, 2 of the 23 cheapest, against 2 before" | Section 6, "A larger budget": 16,384 output tokens a turn against 2,048, with thinking on |
-| "under the competition's evaluator, none of a random 20" | Section 6, "Under the competition's evaluator": the agent run end to end on four L4 GPUs |
+| "With eight times the output budget it resolved 2 of the 23 cheapest, against 2 before" | Section 6, "A larger budget": 16,384 output tokens a turn against 2,048, with thinking on |
+| "Under the competition's evaluator it resolved none of a random 20" | Section 6, "Under the competition's evaluator": the agent run end to end on four L4 GPUs |
 | "by name, call edge or embedding search (first ten results), the graph leads from statement to fix in 42 of the 51 tasks that edit existing code" | Section 4.3 (rows below): 20 by a name, 2 more by call edges, and an edited node in the first ten by embedding similarity for 20 of the 29 that neither reaches; 51 tasks have a fix that edits a function, class or method the graph holds |
-| "embedding search ranks an edited function first in 15 (0.6 expected by chance)" | Section 4.3 (rows below) |
+| "embedding search ranks an edited function first in 15 (0.6 by chance)" | Section 4.3 (rows below) |
 | "The model asked a graph tool in only 20 of 473 tool calls" | 6 of 145 in the paired rerun, 5 of 139 with the larger budget and 9 of 189 under the evaluator (Section 6, three rows below); 6 + 5 + 9 = 20 and 145 + 139 + 189 = 473. The runs of the baseline that are not in the paired rerun were not counted |
 | "only 17 of 93 statements say what their tests check (an AI screen, matching all 30 a person checked)" | Section 6, "Task fairness" (rows below): 17 pass the second screen; "say what their tests check" is the screen's pass, both ratings 0 or 1 |
 | "the 13 it ran gave 4 of its 5 fixes for 17% of its time, and the tasks a name or call edge reaches gave 3 for 20%" | Section 6, "Cost, and what to send" (rows below) |
@@ -408,6 +408,10 @@ None of its three cases is in the paper now. The rows below are for what was cut
   the conclusion's list of what the person in the loop can see; and the GPU-hour totals (30.2 T4 GPU-hours for the
   baseline and its reruns, 12.8 L4 for the evaluator's runs, 2.1 for the larger budget; their rows are under
   Section 6 above).
+- The abstract's longest sentence, three results joined by semicolons, is now three sentences (a review gave
+  Clarity 2.5 and named it the sentence most likely to cost points). "cheapest first", "all small", "against 2
+  before" and "random" stay. Four words left the abstract to keep it at 229: "of them" after 775, "expected"
+  before "by chance" (Section 4.3 keeps it and says how it is worked out), and "tool" in "473 tool calls".
 - Two more from a further review, the same day: the first row of Section 5's table reads "First release, with the
   import fix below" (the review found "one file added per snapshot" at odds with "As first published, no task
   could be scored"), and the conclusion's "that value is there to be used" became "that signal is there to be
