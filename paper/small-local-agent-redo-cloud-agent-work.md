@@ -10,7 +10,7 @@ Gemma 4 Developer Agent Competition, Paper Track [14]. Topic: Tasks & Benchmarks
 
 ## Abstract
 
-In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960 commits, 775 of them marked as agent-authored, without typing code. Scripts turn its CI-enforced record of issues, pull requests and reviews into 93 health-data modelling tasks in the competition's format, each verified with the competition's own evaluator. What can a small local model take out of that loop? **What it did unattended:** on free T4 GPUs, Gemma 4 E4B resolved 5 of the 48 tasks it ran, cheapest first (95% CI 4.5–22.2%), all small; with eight times the output budget, 2 of the 23 cheapest, against 2 before; under the competition's evaluator, none of a random 20. **What the graph could tell it:** by name, call edge or embedding search (first ten results), the graph leads from statement to fix in 42 of the 51 tasks that edit existing code, and embedding search ranks an edited function first in 15 (0.6 expected by chance). The model asked a graph tool in only 20 of 473 tool calls. **Where its time paid:** only 17 of 93 statements say what their tests check (an AI screen, matching all 30 a person checked); the 13 it ran gave 4 of its 5 fixes for 17% of its time, and the tasks a name or call edge reaches gave 3 for 20%.
+In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960 commits, 775 of them marked as agent-authored, without typing code. Scripts turn its CI-enforced record into 93 health-data modelling tasks made the way the competition's own are: its mining rule, its format, its evaluator on every task. What can a small local model take out of that loop? **What it did unattended:** on free T4 GPUs, Gemma 4 E4B resolved 5 of the 48 tasks it ran, cheapest first (95% CI 4.5–22.2%), all small; with eight times the output budget, 2 of the 23 cheapest, against 2 before; under the competition's evaluator, none of a random 20. **What the graph could tell it:** by name, call edge or embedding search (first ten results), the graph leads from statement to fix in 42 of the 51 tasks that edit existing code, and embedding search ranks an edited function first in 15 (0.6 expected by chance). The model asked a graph tool in only 20 of 473 tool calls. **Where its time paid:** only 17 of 93 statements say what their tests check (an AI screen, matching all 30 a person checked); the 13 it ran gave 4 of its 5 fixes for 17% of its time, and the tasks a name or call edge reaches gave 3 for 20%.
 
 **Data and code.** Tasks (CC BY 4.0): [kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks). Quickstart notebook: [kaggle.com/code/jcblearning/coding-agent-tasks-quickstart](https://www.kaggle.com/code/jcblearning/coding-agent-tasks-quickstart). Harness, builders and run tables (Apache 2.0): [github.com/healthtransformationlab/health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp). Agent configuration and each number's source (Apache 2.0): [github.com/healthtransformationlab/gemma-developer-agent](https://github.com/healthtransformationlab/gemma-developer-agent).
 
@@ -22,7 +22,7 @@ This competition [14] asks whether a model that fits on one accelerator can do t
 
 Two kinds of repository are scarce. In a **data repository** the costly defect is silent: a pipeline finishes and a number in its table is wrong. An **agent-built repository** can leave an unusually complete record: an issue, a pull request and a review for each change. Which changes can a small local agent take out of the person's loop, and what does the person need for the rest?
 
-This paper studies one repository that is both. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are application work: de-identification, record checks, model scoring, pipelines. Every change was made by coding-agent sessions directed in chat and merged after an automated review, and every step from merged change to published task is a script.
+This paper adds one repository that is both, set beside the competition's four by the competition's mining rule, format and evaluator. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are application work: de-identification, record checks, model scoring, pipelines. Every change was made by coding-agent sessions directed in chat and merged after an automated review, and every step from merged change to published task is a script.
 
 Contributions:
 
@@ -59,7 +59,7 @@ The mining script reads every merged pull request and every first-parent commit 
 | Touch code and tests (candidates) | 116 |
 | Built (one withdrawn under the repository's rules) | 115 |
 | Pass both gates | 114 |
-| One withheld (third-party files with no stated licence) | 113 |
+| One withheld (unlicensed third-party files) | 113 |
 | Published: the competition's evaluator resolves the reference patch (Section 5) | 93 |
 
 ### 4.2 Fidelity tiers
@@ -78,7 +78,7 @@ Tiers B and C exist because the issue rule was adopted partway through; for thos
 
 A snapshot is the tree at `base_commit` as a single commit, so no later history comes along. The code graph is an AST walk over the package into NetworkX node-link JSON with the competition's keys: a node for each function, class and method with its source text, and a `calls` edge where one calls another (medians: 488 nodes, 397 edges). Embeddings come from EmbeddingGemma, cut to 256 dimensions and renormalised. A format check against the competition's own files matched (layout, graph keys, embedding shape); the competition does not name its embedding model.
 
-The graph reaches only part of what a data repository changes. It misses the fix in 42 of the 93 tasks: 31 touch no module it covers (new modules, scripts, notebooks, configuration or documents) and 11 change no existing function or class. In the other 51, the statement names an edited function or class (by its identifier) in 20, call edges lead there from one it names in 2 more, and in 29 neither does. Embedding search does more: ranking a graph's nodes (median 398) by similarity to the statement puts an edited one first in 15 of the 51 (0.6 expected by chance) and in the first ten in 30 (5.4 by chance), 20 of them among those 29. So by name, call edge or embedding search the graph leads to the fix in 42 of the 51. These are counts from the published files, not agent runs.
+The graph reaches only part of what a data repository changes. It misses the fix in 42 of the 93 tasks: 31 touch no module it covers (new modules, scripts, notebooks, configuration or documents) and 11 change no existing function or class. In the other 51, the statement names an edited function or class (by its identifier) in 20, call edges lead there from one it names in 2 more, and in 29 neither does. Embedding search does more: ranking a graph's nodes (median 398) by similarity to the statement puts an edited one first in 15 of the 51 (0.6 expected by chance: each graph's nodes ranked at random, hypergeometric, summed over tasks) and in the first ten in 30 (5.4 by chance), 20 of them among those 29. So by name, call edge or embedding search the graph leads to the fix in 42 of the 51. These are counts from the published files, not agent runs.
 
 ### 4.4 Gates
 
@@ -111,13 +111,13 @@ Of the 20 left out, twelve have tests that read third-party files the published 
 
 **Setup.** `gemma-4-e4b-it` in fp16 with transformers on two T4 GPUs, internet off, thinking off, at most 2,048 new tokens per turn, a 24,576-token context, 40 tool calls, 60 turns and 30 minutes per task. Tasks were run cheapest first under a GPU-hour cap, so no rate here is an unbiased estimate for the 93.
 
-**Results.** Ten of the 58 tasks attempted are among the twenty left out (Section 5), so they are set aside. On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% Wilson CI 4.5–22.2). By statement source: 4 of 24 from issues, 1 of 19 from pull requests, 0 of 5 from commit messages; the intervals overlap.
+**Results.** Ten of the 58 tasks attempted were excluded from the set (Section 5). On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% Wilson CI 4.5–22.2). By statement source: 4 of 24 from issues, 1 of 19 from pull requests, 0 of 5 from commit messages; the intervals overlap.
 
-**Do the graph tools help?** A harness fault served the first tasks without their code graph; after the fix, 28 were rerun with the same settings. On the 23 published, 2 were resolved either way (one in common). With the tools available the model called one in 4 of the 23 runs, 6 calls among 145: it reads and edits files and rarely searches.
+**Do the graph tools help?** A harness fault served the first tasks without their code graph; after the fix, 28 were rerun with the same settings. On the 23 published, 2 were resolved either way (one in common). The model made only 6 graph-tool calls among 145, in 4 of the 23 runs.
 
 **How it fails.** Of the 43 unresolved tasks, 35 submitted a patch that fails the target tests and 8 submitted nothing. The five resolved tasks are small: a CI rule, a warning message, a label parser and two settings.
 
-**A larger budget.** To test the tight limits, the 23 cheapest of the 48 were rerun on the same harness on one Colab L4 GPU: 16,384 output tokens per turn, thinking on, 100 tool calls, 20 minutes and a 20,000-token context. The model resolved 2 of 23, against 2 under the tight limits, and wrote a patch for 20 against 19. One of the 23 runs had a turn above 2,048 output tokens (the longest, 3,335), and one reached the context limit. Of its 139 tool calls, 5 were to a graph tool. Colab has network access, which Kaggle's notebooks did not; no command used it.
+**A larger budget.** To test the tight limits, the 23 cheapest of the 48 were rerun on the same harness on one Colab L4 GPU: 16,384 output tokens per turn, thinking on, 100 tool calls, 20 minutes and a 20,000-token context. The model resolved 2 of 23, against 2 under the tight limits, and wrote a patch for 20 against 19. Of its 139 tool calls, 5 were to a graph tool. Colab has network access, which Kaggle's notebooks did not; no command used it.
 
 **Task fairness.** Two AI screens rated tasks on SWE-bench Verified's two questions [2]. The first took a random 30; the author checked its findings in summary and agreed with all 30: five pass, and in 25 the tests need a name or text the statement never gives. The second, a separate pass that never saw the first, took all 93. It gives the same verdict on all 30 and passes 17 of 93; Each verdict and its reason are in the repository (`data/tasks/screening/`). SWE-bench's own human screen filtered out 68.3% of 1,699 samples [2]. Of the 48 tasks the model attempted, it resolved 4 of the 13 that pass and 1 of the 35 that fail, so the baseline may measure the tasks more than the model.
 
@@ -127,7 +127,7 @@ Of the 20 left out, twelve have tests that read third-party files the published 
 
 ## 7. Limitations
 
-- **One repository, one author's rules.** The second repository tests only the mining rule.
+- **One new repository.** It sits beside the competition's four under the same rule, format and evaluator; the screens and graph counts were run on it alone.
 - **Agent-written statements, no cloud baseline.** A cloud agent wrote most of the issue text at the author's direction and made these changes with a person in the loop; it was not rerun on the statements alone.
 - **No leaderboard score.** The competition's evaluator ran the agent on 20 tasks only, with non-default settings (5 minutes and 40 tool calls, not 60 and 100).
 - **Small.** 48 of 93 tasks, cheapest first, and a random 20 for the evaluator; one run each at temperature 0.2.
@@ -140,7 +140,7 @@ From a cloud agent's own problem statements, a model that runs on free GPUs reso
 
 **Using the set.** The dataset has the competition's layout, so its evaluator runs on it as published. In the repository, `kaggle/official_verify.py` replays the two controls and scripts 63 to 66 the graph, search, cost and routing counts; the quickstart notebook loads a task with its snapshot, graph and embeddings.
 
-The recipe, run in full on one repository only: mine changes that touch code and tests, record each statement's source, gate, run reference-patch and empty-patch controls on the published files with the official evaluator, and screen statements against tests before trusting any model's score.
+The recipe is the competition's (changes that touch code and tests, its format, its evaluator) plus what this paper adds on one repository: record each statement's source, run reference-patch and empty-patch controls on the published files, screen statements against tests, and count where the graph leads to the fix.
 
 ## References
 
