@@ -20,42 +20,36 @@ Coding-agent benchmarks are mined from mature web libraries maintained by people
 
 The best coding agents today run on large models in the cloud. This competition [17] asks whether a model that fits on one accelerator can do the same work. The tasks available come from a narrow place: SWE-bench draws on twelve popular Python libraries [1], and the competition's development set on four.
 
-Two kinds of repository are scarce.
+Two kinds of repository are scarce. In a **data repository** the costly defect is silent: a pipeline finishes, a table is written, and a number in it is wrong (Section 7). An **agent-built repository**, written by agents under a person's direction, can leave an unusually complete record: an issue, a pull request and a review for each change. A large cloud agent did this work. How much of it can a small local agent redo from the same problem statements?
 
-The first is the **data repository**. In a web library a bug usually announces itself: a request fails, a test goes red. In health data the costly defect is silent. A pipeline finishes, a table is written, and a number in it is wrong (Section 7).
-
-The second is the **agent-built repository**, written by agents under a person's direction. Such a repository can leave an unusually complete record: an issue for each change, a pull request, a review. A large cloud agent did this work. How much of it can a small local agent redo from the same problem statements?
-
-I study one repository that is both. `health-transformation-lab-nlp` is part of Health Transformation Lab, open benchmarks I built on one premise: better health starts with accurate health information. Its job is to surface silent defects, here in how well gum disease can be found in synthetic dental records. I typed no code: every change was made by coding-agent sessions I directed in chat and merged after an automated review.
+I study one repository that is both. `health-transformation-lab-nlp` is part of Health Transformation Lab, my open health-data benchmarks. Its job is to surface silent defects, here in how well gum disease can be found in synthetic dental records. I typed no code: every change was made by coding-agent sessions I directed in chat and merged after an automated review.
 
 Contributions:
 
-1. **A task set** of 93 tasks in the competition's format, each verified with the competition's own evaluator, public on Kaggle under CC BY 4.0, with snapshots, code graphs, embeddings and a fidelity tier per task (Section 4).
-2. **An open harness checked against the official one**: a sandboxed re-implementation of the competition's documented harness that agrees with the competition's evaluator on every saved agent patch and keeps answers away from the model on shared GPUs (Section 5).
+1. **A task set** of 93 tasks in the competition's format, each verified with the competition's own evaluator, public on Kaggle under CC BY 4.0, with a fidelity tier per task (Section 4).
+2. **An open harness checked against the official one**: a sandboxed re-implementation that agrees with the competition's evaluator on every saved agent patch and keeps answers from the model (Section 5).
 3. **A baseline** for Gemma 4 E4B with a failure breakdown, cost per task and a paired test of the code-graph tools (Section 6).
 4. **A check on a second repository**: without the tracing rule, the same mining rule finds candidates but no issue-linked statements (Section 4.5).
 
 ## 2. Related work
 
-**Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. Defects4J [3] and BugsInPy [4] did the same for Java and Python bugs before language models. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale task collection for training and for contamination-free evaluation. All draw on human-maintained open-source libraries. This one follows the same recipe on an agent-built data repository, and labels each statement's source: issue, pull request or commit message.
+**Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. Defects4J [3] and BugsInPy [4] did the same for Java and Python bugs before language models. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale task collection for training and for contamination-free evaluation. All draw on human-maintained libraries; this set applies the recipe to an agent-built data repository and labels each statement's source.
 
-**Agents.** SWE-agent showed that the interface given to a model matters as much as the model [8]; the competition fixes that interface, so this work re-implements it.
+**Agents.** SWE-agent showed that the interface matters as much as the model [8]; the competition fixes it.
 
-**Data work.** DS-1000 tests data-science code generation [9]; Spider 2.0 [10], ELT-Bench [11] and data-eng-bench [16] score an artefact agents produce: SQL, a pipeline, dbt models. MLOps-Bench [15] is closest: 212 tasks with fail-to-pass tests from 31 public ML repositories. These tasks score repairs to one tested, agent-built health-data codebase.
+**Data work.** DS-1000 tests data-science code generation [9]; Spider 2.0 [10], ELT-Bench [11] and data-eng-bench [16] score an artefact agents produce: SQL, a pipeline, dbt models. MLOps-Bench [15] is closest: 212 fail-to-pass tasks from 31 public ML repositories.
 
 **Health-data quality.** The repository's checks follow the harmonized data-quality terms of Kahn et al. [12]; its de-identification tests follow the i2b2/UTHealth categories [13] and use MACCROBAT [14].
 
 ## 3. The source repository
 
-The repository holds a Python package, its tests, an R twin kept in numerical parity, SQL and Databricks pipelines, and documentation. It was written between October 25 and November 8, 2026.
+The repository holds a Python package and tests, an R twin kept in numerical parity, SQL and Databricks pipelines, and documentation, written October 25 to November 8, 2026.
 
 **Who wrote it.** Of 960 commits on `main`, 775 are marked as agent-authored, 175 are merge commits GitHub made for pull requests, 5 come from an automation bot, 4 carry only my name, and one is the initial commit.
 
-**Rules the agents work under.** A checked-in `AGENTS.md` requires one issue per user story, a branch named for its issue, a pull request that closes it, and a test written before the code. CI rejects a pull request from an agent's own session branch or without an issue link.
+**Rules the agents work under.** A checked-in `AGENTS.md` requires an issue per user story, a branch and pull request tied to it, and a test before the code. CI rejects a pull request from an agent's own session branch or without an issue link.
 
-**Reviews.** Every pull request has a review committed as a file: 240 of them. Of the 192 with a structured verdict, all approve (64 with minor findings, 9 with conditions); blocking findings are fixed on the branch first. Agents merge their own green pull requests except in four cases reserved for me: limited-compute runs, publishing outside the repository, deletions, and rule changes.
-
-**Where my time went.** By my own estimate, more than half of my time went into three things a person reads: a data-model diagram annotated per attribute, a results view that drills from sensitivity, specificity, PPV, NPV and AUC down to SHAP values, and a data-quality page. How a discrepancy is displayed and drilled into decides whether anyone catches it, and no test checks that.
+**Reviews.** Every pull request has a review committed as a file: 240 of them. Of the 192 with a structured verdict, all approve (64 with minor findings, 9 with conditions), since blocking findings are fixed first. Agents merge their own green pull requests; runs on limited compute, publishing, deletions and rule changes wait for me.
 
 ## 4. Building the task set
 
@@ -86,7 +80,7 @@ Tiers B and C exist because the issue rule was adopted partway through the histo
 
 ### 4.3 Snapshots, graphs, embeddings
 
-A snapshot is the tree at `base_commit` as a single commit, so no later history comes along. The code graph is an AST walk over the package into NetworkX node-link JSON with the competition's keys (median 488 nodes and 397 `calls` edges). Embeddings come from EmbeddingGemma, cut to 256 dimensions and renormalised. The competition does not name its embedding model, so similarity to its vectors is unverified. A format check against the competition's own files matched on the snapshot layout, the graph keys and the embedding shape.
+A snapshot is the tree at `base_commit` as a single commit, so no later history comes along. The code graph is an AST walk over the package into NetworkX node-link JSON with the competition's keys (median 488 nodes and 397 `calls` edges). Embeddings come from EmbeddingGemma, cut to 256 dimensions and renormalised. A format check against the competition's own files matched the snapshot layout, graph keys and embedding shape; the competition does not name its embedding model.
 
 ### 4.4 Gates
 
@@ -100,7 +94,7 @@ So the rule finds candidates anywhere, but statements depend on what the history
 
 ## 5. Harness and verification
 
-**My harness.** The competition's guide documents the initial prompt, the multi-turn loop, the nine tools with their limits, the budgets, patch extraction and verification. I re-implemented those sections before I had the competition's evaluator: it is not on PyPI or among the competition's files, and I missed the separate Kaggle dataset that carries it. The prompt, nudge messages and budget warning follow the guide's wording. Two scripted models bound the harness. Replaying each reference patch from the repository's history resolves 111 of 113 tasks (the other two need Postgres and R), and submitting nothing resolves none.
+**My harness.** The competition's guide documents the initial prompt, the multi-turn loop, the nine tools with their limits, the budgets, patch extraction and verification. I re-implemented those sections before I found the competition's evaluator, which ships in a separate Kaggle dataset. The prompt, nudge messages and budget warning follow the guide's wording. Two scripted models bound the harness. Replaying each reference patch from the repository's history resolves 111 of 113 tasks (the other two need Postgres and R), and submitting nothing resolves none.
 
 **The competition's evaluator.** I then ran the competition's own verification (`swegemma` 0.2.11, subprocess sandbox, unmodified) on the 113 tasks first published and on the corrected release.
 
@@ -120,17 +114,17 @@ The 20 left out fall into three groups. Twelve have tests that read third-party 
 
 **Keeping answers from the model.** This repository's history contains every fix, and later snapshots contain earlier tasks' fixes. Commands and verification run in Linux user, mount, network and pid namespaces with no network and an allow-listed environment. A review before the first pull request found that an earlier version ran the model's commands on the host, where it could read every reference patch.
 
-Kaggle GPUs do not allow namespaces, and a notebook can read every attached file. So each task runs alone in a private, offline notebook beside a private dataset holding that task only. The patch comes back and is verified locally.
+Kaggle GPUs do not allow namespaces, and a notebook can read every attached file, so each task runs alone in a private, offline notebook beside a private dataset holding that task only; the patch is verified locally.
 
 **Known differences.** Namespaces instead of a container; no ADK context compaction or prefix caching; sub-agents and skills are not run; `PYTHONSAFEPATH` is not set. No number here is a competition score.
 
 ## 6. Baseline
 
-**Setup.** `gemma-4-e4b-it` in fp16 with transformers on two T4 GPUs, internet off, thinking off, at most 2,048 new tokens per turn, a 24,576-token context, 40 tool calls, 60 turns and 30 minutes per task. Generation runs at about 8 tokens a second, hence 30 minutes. Tasks were run cheapest first under a GPU-hour cap.
+**Setup.** `gemma-4-e4b-it` in fp16 with transformers on two T4 GPUs, internet off, thinking off, at most 2,048 new tokens per turn, a 24,576-token context, 40 tool calls, 60 turns and 30 minutes per task. Tasks were run cheapest first under a GPU-hour cap.
 
 **Results.** Ten of the 58 tasks attempted are among the twenty left out (Section 5), so they are set aside. On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% Wilson CI 4.5–22.2). By tier, it resolved 4 of 24 tasks whose statement is an issue, 1 of 19 from a pull request and 0 of 5 from a commit message. The intervals overlap.
 
-**Do the graph tools help?** A fault in my harness served the first tasks without their code graph and embeddings, so the three graph tools had nothing to query. After fixing it I reran 28 of them with the same settings; the 23 published give a paired comparison.
+**Do the graph tools help?** A harness fault served the first tasks without their code graph, so the graph tools had nothing to query. After fixing it I reran 28 of them with the same settings; the 23 published give a paired comparison.
 
 | 23 tasks, each run twice | Non-empty patch | Resolved (95% CI) |
 |---|---|---|
@@ -147,7 +141,7 @@ One task was resolved only without the tools, one only with them, one both times
 
 ## 7. What these tasks contain that web-library tasks do not
 
-Three cases from the repository show the defect class that motivates it: everything ran, and a number was wrong.
+Three cases show the defect class that motivates the set: everything ran, and a number was wrong.
 
 | Case | Score on what it was built against | Score on what it was not |
 |---|---|---|
@@ -158,11 +152,11 @@ Three cases from the repository show the defect class that motivates it: everyth
 ## 8. Limitations
 
 - **One repository, one author's rules.** The second repository tests only the mining rule.
-- **Agent-written statements.** The issue text was largely written by a cloud agent at my direction. That may make them easier or harder to follow than a person's.
+- **Agent-written statements.** The issue text was largely written by a cloud agent at my direction, which may make it easier or harder to follow than a person's.
 - **My harness ran the agent.** The competition's evaluator verified patches afterwards but did not run the agent, so no score here is comparable to the leaderboard.
 - **Constrained settings.** The baseline caps output at 2,048 tokens with thinking off on T4 GPUs. My competition configuration allows 16,384 output tokens and a 4,096-token thinking budget on four L4s. It is a constrained baseline, not an estimate of the model under the competition's budgets.
 - **Small.** 48 of 93 tasks, cheapest first, one sampled run per condition at temperature 0.2. One task flipping moves the paired result.
-- **A screen checked only in summary.** I did not read the tests; the AI's verdict was shown first. 63 tasks are unscreened.
+- **A screen checked only in summary.** I saw the AI's verdict first and did not read the tests; 63 tasks are unscreened.
 - **Untested components.** The submission's analyzer sub-agent and its skill were not run.
 - **The tasks are not silent.** Each comes with a failing test. The set measures repair of the code that looks for silent defects, not noticing one unprompted.
 - **Synthetic health data.** The cases in Section 7 are agreement with a synthetic answer key, not findings about any patient or practice.
@@ -171,7 +165,7 @@ Three cases from the repository show the defect class that motivates it: everyth
 
 A cloud agent built this repository in fifteen days. From the same problem statements, a model that runs on free GPUs resolved 5 of 48 tasks, all of them small, and left the graph tools almost unused. The released tasks let others test other models and settings.
 
-The recipe should transfer to any repository that traces its changes to issues: mine the changes that touch code and tests, record where each statement came from, gate, and run a reference-patch control and an empty-patch control on the published files, with the official evaluator where there is one, then screen statements against tests, before trusting any model's score.
+The recipe should transfer to any repository that traces changes to issues: mine changes that touch code and tests, record each statement's source, gate, run reference-patch and empty-patch controls on the published files with the official evaluator, and screen statements against tests before trusting any model's score.
 
 ## References
 
