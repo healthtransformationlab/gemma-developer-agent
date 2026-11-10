@@ -50,7 +50,8 @@ Results: `summary.json`, `task_results.jsonl`, `patches/`, `test_outputs/`, `tra
   output out of the coder's context), not a `sub_agents` include.
 - `configs/sampling.yaml`: `max_output_tokens` 16,384, `thinking_budget` 4,096, `include_thoughts`.
 - `eval_config.yaml`: 5 min, 40 calls, 60 turns, 120 s per command.
-- `prompts/system.md`: `{problem_description}` and `{hints}`; submit-before-budget first; the stripped
+- `prompts/system.md`: `{problem_description}` and `{hints?}` (optional: the evaluator sets `hints` only for a task that has
+  some, and a required variable that is not set ends the agent before its first model call; issue 33); submit-before-budget first; the stripped
   files; scratch in `/tmp`; symbol names for the graph tools; no `pip install`.
 - For the DataOps task set: a fix that lives only in `pyproject.toml` or a test file cannot be scored, so
   such tasks are excluded (spec 028 US3); fixes in `ops/*.yaml` are fine.
