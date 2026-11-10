@@ -46,10 +46,11 @@ the measurements. The framing by a person's loop is the owner's, set on November
 | "eight times the output budget changed little (2 of the 23 cheapest of the 48, against 2)" | Section 6, "A larger budget": 16,384 output tokens a turn against 2,048, with thinking on |
 | "the competition's evaluator resolved none of a random 20" | Section 6, "Under the competition's evaluator": the agent run end to end on four L4 GPUs |
 | "each task's statement source" | Section 4.2, the fidelity tiers |
-| The screen's figures | Section 6, "Task fairness" (rows below) |
+| "4 of the 13 whose statements say what their tests check and 1 of the other 35" | Section 6, "Task fairness" (rows below): of the 48 tasks the model ran, 13 pass the second screen and 35 fail it |
+| "only 17 of 93 statements say what their tests check (an AI screen, matching all 30 verdicts a person checked)" | Section 6, "Task fairness" (rows below): 17 pass the second screen; "say what their tests check" is the screen's pass, both ratings 0 or 1 |
+| "what each kind of task cost" | Section 6, "Cost" (rows below) |
 | "names and call edges lead from statement to fix in 22 of 93 tasks and embedding search in 20 more" | Section 4.3 (rows below): 20 by a name, 2 more by call edges, and an edited node in the first ten by embedding similarity for 20 of the 29 that neither reaches |
 | "only 20 of 473 tool calls asked a graph tool" | 6 of 145 in the paired rerun, 5 of 139 with the larger budget and 9 of 189 under the evaluator (Section 6, three rows below); 6 + 5 + 9 = 20 and 145 + 139 + 189 = 473. The runs of the baseline that are not in the paired rerun were not counted |
-| "the tasks a name or call edge reaches took a fifth of the agent's time and gave three of its five fixes" | Section 6, "Cost" (row below): 20.2% of the agent's time on the 48 tasks, 3 of the 5 resolved |
 
 ## Section 1, the introduction
 
@@ -143,6 +144,11 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 | 20.6 GPU-hours for the 58 first attempts, 9.6 for the 28 reruns, 30.2 in all; median 0.39 GPU-hours, 7 tool calls, about 91,000 prompt tokens | `gpu_hours` summed over the run table at `NLP` commit `db0a29d` (20.56) and `rerun_gpu_hours` over the paired table (9.64); the medians are over the run table's 58 rows as they are now |
 | Not in the writeup since November 10, 2026: about $21 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`: 14.19 for the first attempts, 6.65 for the reruns; `price_basis_text` |
 | The screen: 30 of the 93, 5 pass, 25 with tests that need a name or text the statement never gives | `NLP/data/tasks/screening/agent_screen.csv` and its `README.md` (`NLP` pull request 653): drawn with seed 20261110 within each statement source (13 of 39, 11 of 34, 6 of 20); `is_pass` is both ratings 0 or 1, the rule of SWE-bench Verified [2]; `test_rating_num` is 2 or 3 for 25. An AI reviewer made both passes; the second agrees with the first on all 30 but had read the first's ratings |
+| "Two AI screens"; the second "took all 93", "never saw the first", "passes 17 of 93" | `NLP/data/tasks/screening/agent_screen_all.csv` and the second part of its `README.md` (`NLP` pull request 665): eight AI raters, each given a random share of the 93 tasks, the task files and the written protocol, and none of the first screen's ratings; the same two questions and scales. 17 pass (both ratings 0 or 1), 76 fail; the tests are rated 2 or 3 in 76 and the statement in 20. An AI reviewer's rating in one pass, not checked by a person outside the 30 |
+| "the same verdict on all 30" | `is_same_as_checked` true in all 30 rows where `is_owner_checked` is true: 25 fail and 5 pass in both screens |
+| "26 tasks rated twice by different raters got the same verdict" | stand-in raters were started on two raters' tasks when those two had written nothing for nine minutes; all the first eight then finished, so 26 tasks have two ratings from raters who did not see each other's. Pass or fail is the same on all 26; the table keeps the first eight raters' ratings (`NLP/pull_requests/pr-665-review.md`) |
+| "it resolved 4 of the 13 that pass and 1 of the 35 that fail" | the same table, `is_attempted` and `is_resolved` (from the Gemma 4 E4B run table, each task's latest run): 48 attempted, 13 of them pass the second screen with 4 resolved, 35 fail with 1 resolved (`htlnlp_116`). On the first screen's 30: 16 attempted, 1 of 3 passing resolved and 0 of 13 failing (no longer in the writeup) |
+| "Seventeen of the 20 fail the second screen" | the 20 rows with `is_in_sample` in `NLP/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma.csv` against `is_pass` in `agent_screen_all.csv`: 3 pass, 17 fail. On the first screen: 13 of the 20 were in it and 11 of those fail (no longer in the writeup) |
 | "Each verdict and its reason are in the repository" | `NLP/data/tasks/screening/agent_screen.csv`: one row per screened task with both ratings, the reason for each, what the tests need that the statement lacks, the second check and the owner's answer; the protocol is in its `README.md` |
 | SWE-bench's human screen "filtered out 68.3% of 1,699 annotated samples" | Chowdhury et al. (OpenAI, August 2024): 1,699 randomly drawn samples annotated by software developers; 68.3% filtered out for underspecified issue descriptions, tests that reject valid solutions, or other issues. The method was read from the announcement and the 68.3% confirmed through a summary of it on November 10, 2026. The comparison is of kind, not of rate: theirs is a human screen of a random sample of twelve libraries, this one an AI reviewer's of 30 tasks |
 | "the author checked its findings in summary and agreed with all 30" | the same table, `owner_fair_code` and `owner_note_text`: on November 10, 2026 the author answered one question per task (is the test fair) from two plain-language sentences, with the AI's verdict already selected: fair 5, unfair 25, cannot tell 0. The author did not read the test code. It is a check of the AI's findings, not an independent rating, which is what Section 7 says |
@@ -371,7 +377,8 @@ None of its three cases is in the paper now. The rows below are for what was cut
   requests" and "Candidates are everywhere" (Section 4.5); "The best coding agents today run on large models in
   the cloud", "a table is written" and "written by agents under a person's direction" (Section 1); the five
   resolved tasks' examples in the abstract (Section 6 has them); the sentence on what this graph lacks.
-- An independent human screen of task quality: not done. The screen of 30 is an AI reviewer's, checked by the
-  author in summary (Section 6 above).
+- An independent human screen of task quality: not done. Both screens are AI reviewers'; a person checked the
+  first screen's 30 verdicts in summary (Section 6 above). The second screen's 63 other verdicts have no person's
+  check.
 - A split of all 93 tasks into fixes, features and maintenance: not done; the screen classifies its 30. The mining
   rule keeps any change that touches code and tests, so the set is not only bug fixes.

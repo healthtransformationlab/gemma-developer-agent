@@ -83,7 +83,7 @@ def rows() -> list[tuple[str, str, str, str]]:
          "the public repositories are linked in the paper and the PDF; the forum post is the owner's",
          ("PASS (links)" if all(both(x) for x in REPOS) else "FAIL (links)") + "; OWNER (forum post)"),
         ("3.4.b No hand labelling of test data", "no human labels of the competition's validation or test records",
-         "the only screen in the paper is of this project's own tasks", r(both("screened 30 of the 93"))),
+         "the only screen in the paper is of this project's own tasks", r(both("screens rated tasks on swe-bench verified"))),
         ("3.14.a Original work", "the Submission is your own work; no third-party rights infringed",
          "the paper discloses the cloud agent's part and cites its sources", r(both("cloud agent") and "## references" in md.lower())),
         ("3.1.c Eligibility, employer", "not entered for an employer without its consent",
