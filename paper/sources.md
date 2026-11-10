@@ -12,8 +12,6 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 
 | Figure | Source |
 |---|---|
-| Twelve models: 81% on dental licensing-exam questions, 22% on questions from published patient cases | Zhao et al., *GlobalDentBench*, arXiv:2605.24636v2, abstract: accuracy "plummeted from 81.34% on multiple-choice to 64.53% on short-answer and 22.34% on case-based questions" across "12 frontier LLMs". Read November 10, 2026; also in `NLP/docs/claims.yaml` |
-| Omissions are more than 80% of severe errors on 1,100 medical consultation tasks | Wu et al., *First, do NOHARM*, arXiv:2512.01241v4 (July 13, 2026), abstract: "a 1,100-task benchmark of primary care-to-specialist consultation cases" and "errors of omission accounting for more than 80% of severe errors" across 20 models and 4 retrieval tools. The 1,100 are tasks, not cases: the text gives "1,100 items (100 clinical cases with 1,000 physician-perturbed variants)". Versions 1 and 2 (December 2025) gave 76.6% of severely harmful errors, which is why the reference names version 4. A preprint, in general medicine, with no oral-health cases. Read November 10, 2026 |
 | "Better health starts with accurate health information" | the headline of [healthtransformationlab.org](https://healthtransformationlab.org) and the `NLP` repository's description on GitHub |
 
 ## Section 2, related work
@@ -84,6 +82,9 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 | Eight empty patches: four hit the token limit, three submit without an edit, one calls the edit tool with an argument it does not take | each run's `result.json`, downloaded from its Kaggle notebook output on November 10, 2026. `htlnlp_206`, `236`, `cfa7c008` and `pr23` each have a turn at exactly 2,048 output tokens; `htlnlp_120`, `152` and `230` call `submit_patch` without an edit; `htlnlp_71` calls `edit_file` four times with `start_line`, which the tool rejects. `NLP/pull_requests/pr-630-review.md` had attributed the first five to the limit |
 | 20.6 GPU-hours for the 58 first attempts, 9.6 for the 28 reruns, 30.2 in all; median 0.39 GPU-hours, 7 tool calls, about 91,000 prompt tokens | `gpu_hours` summed over the run table at `NLP` commit `db0a29d` (20.56) and `rerun_gpu_hours` over the paired table (9.64); the medians are over the run table's 58 rows as they are now |
 | About $21 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`: 14.19 for the first attempts, 6.65 for the reruns; `price_basis_text` |
+| The screen: 30 of the 93, 5 pass, 25 with tests that need a name or text the statement never gives | `NLP/data/tasks/screening/agent_screen.csv` and its `README.md` (`NLP` pull request 653): drawn with seed 20261110 within each statement source (13 of 39, 11 of 34, 6 of 20); `is_pass` is both ratings 0 or 1, the rule of SWE-bench Verified [2]; `test_rating_num` is 2 or 3 for 25. **An AI reviewer made both passes; no person verified the ratings.** The second pass agrees with the first on all 30 but had read the first's ratings |
+| Of 16 screened tasks the model attempted: 1 of the 3 that pass resolved, 0 of the 13 that fail | the same table, `is_attempted` and `is_resolved` against `is_pass`; the resolved one is `htlnlp_pr63` |
+| Not in the writeup from the same table | 10 of 30 statements rated vague or worse; 4 fixes, 14 features, 12 maintenance changes; the statement names the fix fully in 10 and partly in 17 |
 | Confidence intervals | Wilson, 95%; named once in the text since an outside review took them for Clopper-Pearson (which would give 3.5 to 22.7 for 5 of 48) |
 | "48 of 93 tasks, cheapest first" (Section 8) | the setup's own sentence: tasks were run cheapest first under a GPU-hour cap, so the 48 are not a sample of the 93 and 5 of 48 is not a rate for the set |
 | "No human screening" (Section 8) | no annotation pass over the tasks exists in `NLP/data/tasks/`: the checks are the two gates and the evaluator's reference-patch and empty-patch controls. SWE-bench Verified's screening, of whether a statement specifies what its tests require, was not done |
@@ -110,5 +111,13 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
   and 312 merged pull requests (GitHub's search API). The task set mines merged changes on `main` as of October 29,
   2026 (197), so nothing merged later is in it: 114 of the 313 closed issues were opened after that date. 67 of the
   313 are the backfilled records of Section 4.2.
-- A human check of task quality, and a split of the tasks into fixes, features and maintenance: not done. The mining
+- The two health-AI studies that opened Section 1 (GlobalDentBench, arXiv:2605.24636v2: twelve models averaged 81.34% on
+  multiple-choice and 22.34% on case-based questions; First, do NOHARM, arXiv:2512.01241v4: omissions are more than 80%
+  of severe errors on a 1,100-task benchmark): cut on November 10, 2026 to make room for the screen. Two outside
+  reviews had called them peripheral to coding agents. They were references 15 and 16; MLOps-Bench and data-eng-bench
+  took those numbers.
+- The keyword count of de-identification tasks that closed Section 7 (16 of 116 candidates; 5 attempted, none
+  resolved): cut the same day for the same reason. Its row is in the Section 7 table above.
+- A human check of task quality: not done. The screen of 30 is an AI reviewer's (Section 6 above).
+- A split of all 93 tasks into fixes, features and maintenance: not done; the screen classifies its 30. The mining
   rule keeps any change that touches code and tests, so the set is not only bug fixes.
