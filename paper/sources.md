@@ -5,7 +5,8 @@
 unless another repository is named. Checked on November 10, 2026 against `NLP` main at `b12e2e0`.
 
 Every agent number was measured with `htlnlp-harness-v1`, that repository's re-implementation of the competition's
-documented harness. None is a score from the competition's evaluator.
+documented harness. None is a score from the competition's evaluator. The word limit excludes references (the host's
+reply in the competition's "Word Count" discussion, October 27, 2026).
 
 ## Section 3, the source repository
 
@@ -34,6 +35,7 @@ documented harness. None is a score from the competition's evaluator.
 
 | Figure | Source |
 |---|---|
+| The official evaluator was available and was not run | The starter notebook `ryanholbrook/getting-started-gemma-4-developer-agent` lists the dataset `metric/gemma-4-developer-agent-wheelhouse` among its sources; that dataset holds `swegemma-0.2.11-py3-none-any.whl` (created October 12, 2026). Both read through the Kaggle API on November 10, 2026. What was tried at the time: installing it in a cloud session, where it could not be installed (`NLP/pull_requests/pr-421-review.md`); it is not on PyPI (`NLP/specs/035-local-agent-harness/spec.md`); and a workflow that listed the competition's 524 files and found no `swegemma` wheel (`NLP` pull request 449, `NLP/specs/028-dataops-task-set/tasks.md` T007). No record shows the wheelhouse dataset being tried |
 | Reference patch resolves 111 of 113 | `NLP/data/tasks/agent_runs/oracle_tasks_gated.csv` |
 | Empty patch resolves 0 of 113 | `NLP/data/tasks/agent_runs/null_tasks_gated.csv` |
 | The review that found commands ran on the host | `NLP/pull_requests/pr-549-review.md` |

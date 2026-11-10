@@ -6,7 +6,7 @@
 
 ## Abstract
 
-Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored), where every pull request has a committed review. From 197 merged changes I derive 116 candidate tasks and publish 113 in the competition's format, each with a one-commit snapshot, a code graph, embeddings, and a tier recording whether its problem statement came from an issue, a pull request or a commit message. No statement was written after the fact. Because the competition's evaluator is not distributed, its documented harness is re-implemented in a sandbox and bounded with two controls: the reference patch resolves 111 of 113 tasks and an empty patch resolves none. Gemma 4 E4B on two free T4 GPUs produced a patch for 45 of 58 tasks and resolved 5. I report how it fails, what each task costs, and what a second repository shows about why issue-traced history matters. Data, harness and run tables are public.
+Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored), where every pull request has a committed review. From 197 merged changes I derive 116 candidate tasks and publish 113 in the competition's format, each with a one-commit snapshot, a code graph, embeddings, and a tier recording whether its problem statement came from an issue, a pull request or a commit message. No statement was written after the fact. Scores come from my sandboxed re-implementation of the competition's documented harness, not from the official evaluator, which I did not run. Two controls bound it: the reference patch resolves 111 of 113 tasks and an empty patch resolves none. Gemma 4 E4B on two free T4 GPUs produced a patch for 45 of 58 tasks and resolved 5. I report how it fails, what each task costs, and what a second repository shows about why issue-traced history matters. Data, harness and run tables are public.
 
 ## 1. Introduction
 
@@ -89,7 +89,9 @@ So the rule finds candidates anywhere, but the problem statements come from the 
 
 ## 5. Harness and controls
 
-The competition's evaluator is not distributed, so its scores exist only for submissions on its own tasks. Its guide documents the initial prompt, the multi-turn loop, the nine tools with their limits, the budgets, patch extraction and verification. The harness implements those sections. The prompt, nudge messages and budget warning follow the guide's wording; the guide itself is not redistributed.
+The competition's evaluator, `swegemma`, is available to participants as wheels in a separate Kaggle dataset that the starter notebook attaches. I tried to install it (it is not on PyPI), looked for it among the competition's own files, found neither, and built a re-implementation from its guide. I missed that dataset, and it shapes everything below: every score here comes from the re-implementation, and scoring this task set with the official evaluator is the first thing to do next.
+
+The guide documents the initial prompt, the multi-turn loop, the nine tools with their limits, the budgets, patch extraction and verification. The harness implements those sections. The prompt, nudge messages and budget warning follow the guide's wording; the guide itself is not redistributed.
 
 **Controls.** Two scripted models bound the harness. One replays each reference patch and should resolve every task; it resolves 111 of 113. The two misses need a Postgres server and an R runtime that the sandbox lacks, and are excluded from any real model's denominator. The other submits nothing and resolves 0 of 113.
 
@@ -137,7 +139,7 @@ A keyword match on titles puts 16 of the 116 candidates in de-identification. Th
 
 - **One repository, one author's rules.** The second repository tests the mining rule only, not the agent.
 - **Agent-written statements.** The issue text was largely written by a cloud agent at my direction. Following a large model's problem statements may be easier or harder than following a person's.
-- **My harness, not the competition's.** Section 5 lists the known differences.
+- **My harness, not the official evaluator, which was available.** Section 5 says how that happened and lists the known differences. No score here is comparable to the leaderboard.
 - **Constrained settings.** The baseline caps output at 2,048 tokens with thinking off on T4 GPUs. My competition configuration allows 16,384 output tokens and a 4,096-token thinking budget on four L4s. The baseline is a floor for this setup, not a measure of the model.
 - **Small and partial.** 58 of 111 scorable tasks, one sampled run each at temperature 0.2, and 36 of them without the graph tools.
 - **Untested components.** The submission's analyzer sub-agent and its skill were not run.
