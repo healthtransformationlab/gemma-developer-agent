@@ -8,6 +8,14 @@ Every agent number was measured with `htlnlp-harness-v1`, that repository's re-i
 documented harness. None is a score from the competition's evaluator. The word limit excludes references (the host's
 reply in the competition's "Word Count" discussion, October 27, 2026).
 
+## Section 1, the introduction
+
+| Figure | Source |
+|---|---|
+| Twelve models: 81% on dental licensing-exam questions, 22% on questions from published patient cases | Zhao et al., *GlobalDentBench*, arXiv:2605.24636v2, abstract: accuracy "plummeted from 81.34% on multiple-choice to 64.53% on short-answer and 22.34% on case-based questions" across "12 frontier LLMs". Read November 10, 2026; also in `NLP/docs/claims.yaml` |
+| Omissions are more than 80% of severe errors on 1,100 medical consultation cases | Wu et al., *First, do NOHARM*, arXiv:2512.01241v4, abstract: "a 1,100-task benchmark of primary care-to-specialist consultation cases" and "errors of omission accounting for more than 80% of severe errors" across 20 models and 4 retrieval tools. A preprint, in general medicine, with no oral-health cases. Read November 10, 2026 |
+| "Better health starts with accurate health information" | the headline of [healthtransformationlab.org](https://healthtransformationlab.org) and the `NLP` repository's description on GitHub |
+
 ## Section 3, the source repository
 
 | Figure | Source |
