@@ -18,6 +18,8 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 | 240 review files, pull requests up to 634 | `NLP/pull_requests/pr-*-review.md` |
 | 192 with a verdict: 119 approve, 64 approve with minor findings, 9 other approve forms, 0 request changes | the `verdict:` line of each review's front matter |
 | The four cases reserved for the owner | `NLP/AGENTS.md`, "Branches and issues", rule 6 |
+| More than half of the author's time on three artifacts | the author's own estimate; not measured |
+| 38 of 305 merged pull requests touch those artifacts | titles of the merged pull requests in `NLP` from GitHub's search API (November 10, 2026), matched for the entity diagram and data dictionary (5), the results tables, metric display and SHAP (22), and the data-quality page and dashboards (11). The match is by keyword and approximate |
 
 ## Section 4, the task set
 
@@ -35,8 +37,11 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 
 | Figure | Source |
 |---|---|
-| The official evaluator was available and was not run | The starter notebook `ryanholbrook/getting-started-gemma-4-developer-agent` lists the dataset `metric/gemma-4-developer-agent-wheelhouse` among its sources; that dataset holds `swegemma-0.2.11-py3-none-any.whl` (created October 12, 2026). Both read through the Kaggle API on November 10, 2026. What was tried at the time: installing it in a cloud session, where it could not be installed (`NLP/pull_requests/pr-421-review.md`); it is not on PyPI (`NLP/specs/035-local-agent-harness/spec.md`); and a workflow that listed the competition's 524 files and found no `swegemma` wheel (`NLP` pull request 449, `NLP/specs/028-dataops-task-set/tasks.md` T007). No record shows the wheelhouse dataset being tried |
-| Reference patch resolves 111 of 113 | `NLP/data/tasks/agent_runs/oracle_tasks_gated.csv` |
+| The competition's evaluator: 93 of 113 reference patches, 0 of 113 empty patches, the same verdict as the author's harness on 25 of 25 saved patches | `NLP/data/tasks/official_verifier/swegemma_verification.csv` and its `README.md` (on branch `data/636-028-official-evaluator-check` until merged). `swegemma` 0.2.11 from the Kaggle dataset `metric/gemma-4-developer-agent-wheelhouse`, its `harness.verification.verify_task` unmodified, subprocess sandbox, run November 10, 2026 on copies of the published snapshots with `kaggle/official_adapter_conftest.py` added at the root |
+| As published, all 3 tasks tried fail at import | the evaluator's own command line (`python -m swegemma eval --sandbox subprocess --skip-agent-patch`) on `htlnlp_116`, `htlnlp_143` and `htlnlp_174`: `ModuleNotFoundError` for the package during collection |
+| The 20 unresolved reference patches: 12, 6 and 2 | the `reason_text` column of the same table; each was rerun with full output and grouped by its error |
+| What was tried before the harness was re-implemented | an install in a cloud session (`NLP/pull_requests/pr-421-review.md`), PyPI (`NLP/specs/035-local-agent-harness/spec.md`), and the competition's file list (`NLP` pull request 449). None tried the wheelhouse dataset |
+| The author's control: reference patch resolves 111 of 113 | `NLP/data/tasks/agent_runs/oracle_tasks_gated.csv`. It ran from the repository's history, not from the published snapshots, which is why it did not see the withheld files |
 | Empty patch resolves 0 of 113 | `NLP/data/tasks/agent_runs/null_tasks_gated.csv` |
 | The review that found commands ran on the host | `NLP/pull_requests/pr-549-review.md` |
 | Known differences from the competition's harness | `NLP/specs/035-local-agent-harness/spec.md` |
@@ -48,14 +53,14 @@ All from `NLP/data/tasks/agent_runs/gemma-4-e4b-it_kaggle.csv` (58 rows) and its
 
 | Figure | Source |
 |---|---|
-| 58 tasks, 45 non-empty patches, 5 resolved, 40 fail the tests, 13 empty | `is_resolved`, `agent_patch_bytes`, `reason_text` |
-| 36 tasks without the code graph, 22 on the fixed harness | `NLP/specs/035-local-agent-harness/tasks.md` (T005) for the fault; the split is by `run_ts` before and after 2026-11-06 12:00 UTC, with the three pilot rows (no `run_ts`) in the first group. The table has no batch column, so this split is mine |
-| 30 and 15 non-empty patches; 5 and 0 resolved | the same split |
-| 0.53 against 0.27 GPU-hours per task | `gpu_hours` summed over each group (11.75 over 22; 8.81 over the 33 rows that record it) |
-| By tier: 4 of 27, 1 of 26, 0 of 5 | joined to `tier_code` in the manifest |
-| 35 with failing tests, 5 with errors | `verify_exit_code` 1 and 2 |
-| Six empty patches with no tool call | `tool_call_count` 0 among the empty-patch rows |
-| Empty patches traced to the 2,048-token limit | `NLP/pull_requests/pr-630-review.md`. I did not re-read the transcripts |
+| 58 attempts; 7 set aside; 51 scorable with 39 non-empty patches and 5 resolved; 34 fail the tests, 12 empty | `is_resolved`, `agent_patch_bytes`, `reason_text`. The 7 set aside are the attempted tasks among the 12 whose tests read withheld files: `htlnlp_pr38`, `pr39`, `pr40`, `pr41`, `pr44`, `pr49`, `pr61` |
+| 33 scorable tasks without the code graph, 18 on the fixed harness | `NLP/specs/035-local-agent-harness/tasks.md` (T005) for the fault; the split is by `run_ts` before and after 2026-11-06 12:00 UTC, with the three pilot rows (no `run_ts`) in the first group. The table has no batch column, so this split is mine |
+| 27 and 12 non-empty patches; 5 and 0 resolved | the same split |
+| 0.53 against 0.26 GPU-hours per task | `gpu_hours` averaged over the rows of each group that record it |
+| By tier: 4 of 27, 1 of 19, 0 of 5 | joined to `tier_code` in the manifest, over the 51 |
+| 29 with failing tests, 5 with errors | `verify_exit_code` 1 and 2, over the 51 |
+| Five empty patches with no tool call | `tool_call_count` 0 among the empty-patch rows, over the 51 |
+| Six empty patches on the fixed harness: four hit the token limit, two submitted without editing | the `turns[].output_tokens` of each run's `result.json`, downloaded from its Kaggle notebook output on November 10, 2026: `htlnlp_206`, `236`, `cfa7c008` and `pr23` each have a turn at exactly 2,048; `htlnlp_120` and `122` end in two turns. `NLP/pull_requests/pr-630-review.md` had attributed all of them to the limit |
 | 20.6 GPU-hours, 10.3 allowance hours, median 0.32 GPU-hours, 6 tool calls, about 74,000 prompt tokens | `gpu_hours`, `gpu_hours / gpu_count`, `tool_call_count`, `prompt_token_count` |
 | $14.19 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`, `price_basis_text` |
 | Confidence intervals | Wilson, 95% |
@@ -67,7 +72,7 @@ All from `NLP/data/tasks/agent_runs/gemma-4-e4b-it_kaggle.csv` (58 rows) and its
 | De-identification 1.00 and 0.27 (`regex_v2`, hard and unseen tiers) | `NLP/data/deid/scores.csv` (`entity_recall`) |
 | Tooth-loss AUC 0.89 to 0.90 and 0.59 to 0.63 | `NLP/docs/tooth_loss.md`, "After the tooth-table fixes of #631" (completed-extraction models) |
 | The masking defect | the same section; fixed by pull request 632 |
-| 16 de-identification candidates, 8 attempted, none resolved | a keyword match on `title_text` in the manifest (`de-id`, `phi`, `maccrobat`, `presidio`, `redact`, `mask`), joined to the run table. The match is mine and approximate |
+| 16 de-identification candidates; 5 scorable attempts, none resolved | a keyword match on `title_text` in the manifest (`de-id`, `phi`, `maccrobat`, `presidio`, `redact`, `mask`), joined to the run table. Three more were attempted but are among the 7 set aside. The match is mine and approximate |
 
 ## Not in the writeup, and why
 
