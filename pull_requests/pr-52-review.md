@@ -8,7 +8,9 @@
 | Section 6: "An independent second pass, blind to the first, rated all 93: the same verdict on all 30, and 17 of 93 pass." The old sentence had a stray semicolon before "Each" | ok |
 | Section 4.5: "Gating and releasing them is future work." The same fact as "The 133 are not gated or released": they are still neither | ok |
 | No number changes; the abstract is untouched (229 words) | ok |
-| Word count: 2,799 before the references (2,800 before); the pasted text with its references is 2,963 | ok |
+| Section 5 table, first row: "First release, with the import fix below" (a further review found the old label at odds with "As first published, no task could be scored") | ok |
+| Conclusion: "that signal is there to be used, its benefit to an agent untested": reaching the fix is not repairing it, and two reviews marked the old wording as stronger than its evidence | ok |
+| Word count: 2,805 before the references (2,800 before); the pasted text with its references is 2,969 | ok |
 | `check_rules.py --check` exits 0: 15 rows PASS, none FAIL | ok |
 | PDF rebuilt: 6 pages, Figure 1 on page 1 | ok |
 | No first person, no secrets, no real data, no organisation names | ok |
@@ -22,6 +24,9 @@
 - "the 10.4% rate is a lower-bound estimate": cheapest-first tasks are more likely easier than harder, so the
   rate is not a lower bound. "No rate here is an unbiased estimate" stays.
 - "computed on the released graphs before any agent run": the counts were made after the runs.
+- "Retrospective graph localization:" as the abstract's heading, and "Retrospectively, screen-passing tasks
+  accounted for 4 of 5 fixes and 17% of runtime": the same review named the sentence it would replace as the one a
+  judge remembers; "would have kept" already says it is hindsight.
 - A longer question in the abstract: the abstract is at the length that keeps Figure 1 on page 1.
 
 Nothing blocking. Held for the owner's "merge".

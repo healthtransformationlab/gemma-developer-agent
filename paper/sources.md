@@ -221,7 +221,7 @@ go-ahead: `NLP/kaggle/official_agent_run.py --sample 20 --seed 20261110`.
 | "The recipe, run in full on one repository only" | Section 4.5 and Section 7: the second repository was mined, not gated, verified or run |
 | 5 of 48, 2 of 23, none of a random 20 | Section 6: "Results", "A larger budget" and "Under the competition's evaluator" |
 | "Five small tasks left the loop and the rest stayed in it" | Section 6: the 5 resolved of 48, each a small change, and the 43 unresolved, which the cloud agent and the owner had done |
-| "The graph could have told it where to look in 42 of the 51 tasks that edit existing code"; "that value is there to be used" | Section 4.3 for the count; the second phrase is a reading: the tools to ask the graph exist and were called in 20 of 473 tool calls |
+| "The graph could have told it where to look in 42 of the 51 tasks that edit existing code"; "that signal is there to be used, its benefit to an agent untested" | Section 4.3 for the count; the second phrase is a reading: the tools to ask the graph exist and were called in 20 of 473 tool calls |
 | "Sending the model only the tasks that pass the screen would have kept 4 of its 5 fixes for 17% of its time" | Section 6, "Cost, and what to send" |
 | "the competition's evaluator runs on it as published" | Section 5: `NLP/data/tasks/official_verifier/published_verification.csv`, 93 of 93 reference patches and 0 of 93 empty patches on dataset version 4 with no file added |
 | `kaggle/official_verify.py` "replays the two controls" | `NLP/kaggle/official_verify.py` runs the competition's verification with a chosen patch per task: none, the reference patch, or patches from a file |
@@ -408,6 +408,10 @@ None of its three cases is in the paper now. The rows below are for what was cut
   the conclusion's list of what the person in the loop can see; and the GPU-hour totals (30.2 T4 GPU-hours for the
   baseline and its reruns, 12.8 L4 for the evaluator's runs, 2.1 for the larger budget; their rows are under
   Section 6 above).
+- Two more from a further review, the same day: the first row of Section 5's table reads "First release, with the
+  import fix below" (the review found "one file added per snapshot" at odds with "As first published, no task
+  could be scored"), and the conclusion's "that value is there to be used" became "that signal is there to be
+  used, its benefit to an agent untested", because reaching the fix is not repairing it.
 - Three more wording fixes from a review, the same day. That review read the task set as "heavily synthesized":
   the patient records are synthetic, the tasks are real merged changes, so Section 1 now says "its tasks are real
   changes to application code". The second screen's sentence reads "An independent second pass, blind to the

@@ -96,7 +96,7 @@ Applied unchanged to Open Navigator, a public repository run by a nonprofit the 
 
 | Snapshots | Reference patch | Empty patch | Gemma's saved patches |
 |---|---|---|---|
-| First release, one file added per snapshot | 93 of 113 resolved | 0 of 113 | both verifiers agree on 25 of 25 |
+| First release, with the import fix below | 93 of 113 resolved | 0 of 113 | both verifiers agree on 25 of 25 |
 | Corrected release, as published | 93 of 93 resolved | 0 of 93 | both verifiers agree on 23 of 23 |
 
 As first published, no task could be scored (all three tried fail at import): the evaluator puts the repository root on the import path, and this package sits in `python/`. The corrected release adds a short `conftest.py` at each snapshot's root and keeps only the 93.
@@ -136,7 +136,7 @@ Of the 20 left out, twelve have tests that read third-party files the published 
 
 ## 8. Conclusion and release
 
-From a cloud agent's own problem statements, a model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, 2 of 23 with a larger budget and none of a random 20 under the competition's evaluator. The graph could have told it where to look in 42 of the 51 tasks that edit existing code, yet only 20 of 473 tool calls asked a graph tool: that value is there to be used. Sending the model only the tasks that pass the screen would have kept 4 of its 5 fixes for 17% of its time.
+From a cloud agent's own problem statements, a model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, 2 of 23 with a larger budget and none of a random 20 under the competition's evaluator. The graph could have told it where to look in 42 of the 51 tasks that edit existing code, yet only 20 of 473 tool calls asked a graph tool: that signal is there to be used, its benefit to an agent untested. Sending the model only the tasks that pass the screen would have kept 4 of its 5 fixes for 17% of its time.
 
 **Using the set.** The dataset has the competition's layout, so its evaluator runs on it as published. In the repository, `kaggle/official_verify.py` replays the two controls and scripts 63 to 66 the graph, search, cost and routing counts; the quickstart notebook loads a task with its snapshot, graph and embeddings.
 
