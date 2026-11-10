@@ -152,7 +152,7 @@ under the tight limits (its row in the Section 6 run table) beside its run with 
 |---|---|
 | 16,384 output tokens a turn, thinking on, 100 tool calls, 20 minutes | `MODEL_CFG` and `BUDGET` in `62_colab_agent.py` (also 500 turns and 300 seconds a command, the rulebook's values); the same harness, `htlnlp-harness-v1` |
 | "thinking on" | `gemma_agent.GemmaModel` passes `enable_thinking` to the model's chat template, which then opens the system turn with `<|think|>` (`chat_template.jinja` of `google/gemma-4/transformers/gemma-4-e4b-it/1`, read November 10, 2026) |
-| One L4 GPU on Colab, a 20,000-token context; 1 run reached it | `larger_gpu_name` in every row; `MAX_CONTEXT` in `NLP/kaggle/colab_agent.ipynb` (32,768 on a 40 GB card, 20,000 on an L4's 24 GB; the tight run's two T4s held 24,576). `larger_over_context_turn_count` above zero in 1 of the 23 rows: turns the model could not take because the prompt was past the limit |
+| One Colab L4 GPU, a 20,000-token context; 1 run reached it | `larger_gpu_name` in every row; `MAX_CONTEXT` in `NLP/kaggle/colab_agent.ipynb` (32,768 on a 40 GB card, 20,000 on an L4's 24 GB; the tight run's two T4s held 24,576). `larger_over_context_turn_count` above zero in 1 of the 23 rows: turns the model could not take because the prompt was past the limit |
 | the 23 cheapest of the 48 | the notebook's `IDS`: the 48 scored tasks ordered by `session_seconds` in the tight run's table, so the first to finish are the cheapest. The run was read while still going: 23 had finished |
 | Resolved 2 of 23 against 2; a patch for 20 against 19 | `is_larger_resolved` and `is_tight_resolved`; `larger_patch_bytes` and `tight_patch_bytes` above zero. Each patch was verified by `agent_harness.score_patch` in the sandbox, as in the baseline |
 | 1 of the 23 runs with a turn above 2,048 output tokens; the longest turn, 3,335 | `larger_max_output_token_count`, the largest output of any turn of each run |
@@ -302,6 +302,15 @@ None of its three cases is in the paper now. The rows below are for what was cut
     "To test the tight limits"; "which ships in" became "in"; and the conclusion's "Whether graphs help a small
     model on a data repository cannot be told until the model asks them and they cover more than its package"
     (Section 4.3 says the graph covers the package only).
+- Another model's review, November 10, 2026 (the owner gave it the Paper Track's rubric and the PDF). Of its five
+  proposed changes, two were taken in part: "can leave it" became "can leave the loop" in the abstract, and
+  Section 6 gives the larger budget's settings as one list. Not taken, because the paper cannot support them or
+  a reader needs what they remove: dropping "Some", the model's name and the five tasks' examples from the
+  abstract; "the first benchmark derived specifically from an agent-built health data repository" (no source
+  for "first"); "full verification requires extensive manual test screening" in place of the conclusion's recipe
+  (the screen was an AI reviewer's, checked in summary); a sentence on data repositories in place of "Two kinds
+  of repository are scarce"; and a shorter larger-budget sentence without "of the 48", "on the same harness",
+  "per turn" and the 20,000-token context.
 - Whether embedding search finds the fix where names and call edges do not (Section 4.3): not run. It needs the
   statement embedded with the same model as the nodes.
 - An independent human screen of task quality: not done. The screen of 30 is an AI reviewer's, checked by the
