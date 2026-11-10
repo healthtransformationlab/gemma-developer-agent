@@ -22,7 +22,7 @@ This competition [14] asks whether a model that fits on one accelerator can do t
 
 Two kinds of repository are scarce. In a **data repository** the costly defect is silent: a pipeline finishes and a number in its table is wrong. An **agent-built repository** can leave an unusually complete record: an issue, a pull request and a review for each change. Which changes can a small local agent take out of the person's loop, and what does the person need for the rest?
 
-This paper adds one repository that is both, set beside the competition's four by the competition's mining rule, format and evaluator. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are application work: de-identification, record checks, model scoring, pipelines. Every change was made by coding-agent sessions directed in chat and merged after an automated review, and every step from merged change to published task is a script.
+This paper adds one repository that is both, set beside the competition's four by the competition's mining rule, format and evaluator. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are real changes to application code: de-identification, record checks, model scoring, pipelines. Every change was made by coding-agent sessions directed in chat and merged after an automated review, and every step from merged change to published task is a script.
 
 Contributions:
 
@@ -86,7 +86,7 @@ A task is kept only if its tests fail at `base_commit` with the test patch alone
 
 ### 4.5 A second repository
 
-Applied unchanged to Open Navigator, a public repository run by a nonprofit the author leads, with several human contributors and no issue-tracing rule, the mining rule finds 133 candidates in 1,320 first-parent commits. None links an issue and only 22 can be tied to a pull request: statements depend on what the history recorded. The 133 are not gated or released.
+Applied unchanged to Open Navigator, a public repository run by a nonprofit the author leads, with several human contributors and no issue-tracing rule, the mining rule finds 133 candidates in 1,320 first-parent commits. None links an issue and only 22 can be tied to a pull request: statements depend on what the history recorded. Gating and releasing them is future work.
 
 ## 5. Harness and verification
 
@@ -96,7 +96,7 @@ Applied unchanged to Open Navigator, a public repository run by a nonprofit the 
 
 | Snapshots | Reference patch | Empty patch | Gemma's saved patches |
 |---|---|---|---|
-| First release, one file added per snapshot | 93 of 113 resolved | 0 of 113 | both verifiers agree on 25 of 25 |
+| First release, with the import fix below | 93 of 113 resolved | 0 of 113 | both verifiers agree on 25 of 25 |
 | Corrected release, as published | 93 of 93 resolved | 0 of 93 | both verifiers agree on 23 of 23 |
 
 As first published, no task could be scored (all three tried fail at import): the evaluator puts the repository root on the import path, and this package sits in `python/`. The corrected release adds a short `conftest.py` at each snapshot's root and keeps only the 93.
@@ -119,7 +119,7 @@ Of the 20 left out, twelve have tests that read third-party files the published 
 
 **A larger budget.** To test the tight limits, the 23 cheapest of the 48 were rerun on the same harness on one Colab L4 GPU: 16,384 output tokens per turn, thinking on, 100 tool calls, 20 minutes and a 20,000-token context. The model resolved 2 of 23, against 2 under the tight limits, and wrote a patch for 20 against 19. Of its 139 tool calls, 5 were to a graph tool. Colab has network access, which Kaggle's notebooks did not; no command used it.
 
-**Task fairness.** Two AI screens rated tasks on SWE-bench Verified's two questions [2]. The first took a random 30; the author checked its findings in summary and agreed with all 30: five pass, and in 25 the tests need a name or text the statement never gives. The second, a separate pass that never saw the first, took all 93. It gives the same verdict on all 30 and passes 17 of 93; Each verdict and its reason are in the repository (`data/tasks/screening/`). SWE-bench's own human screen filtered out 68.3% of 1,699 samples [2]. Of the 48 tasks the model attempted, it resolved 4 of the 13 that pass and 1 of the 35 that fail, so the baseline may measure the tasks more than the model.
+**Task fairness.** Two AI screens rated tasks on SWE-bench Verified's two questions [2]. The first took a random 30; the author checked its findings in summary and agreed with all 30: five pass, and in 25 the tests need a name or text the statement never gives. An independent second pass, blind to the first, rated all 93: the same verdict on all 30, and 17 of 93 pass. Each verdict and its reason are in the repository (`data/tasks/screening/`). SWE-bench's own human screen filtered out 68.3% of 1,699 samples [2]. Of the 48 tasks the model attempted, it resolved 4 of the 13 that pass and 1 of the 35 that fail, so the baseline may measure the tasks more than the model.
 
 **Under the competition's evaluator.** The agent was also run end to end with the official harness: `swegemma`'s agent loop, vLLM from the competition's wheelhouse, four L4 GPUs, and its competition settings (16,384 output tokens, a 4,096-token thinking budget, 40 tool calls, 5 minutes). The sample is 20 of the 93, seeded and stratified by tier, not by cost. Each task ran alone, without patch or tests. The agent resolved 0 of 20 (95% CI 0–16.1): 16 patches fail and 4 runs submit nothing. In 189 tool calls the model called a graph tool 9 times. Seventeen of the 20 fail the second screen.
 
@@ -136,7 +136,7 @@ Of the 20 left out, twelve have tests that read third-party files the published 
 
 ## 8. Conclusion and release
 
-From a cloud agent's own problem statements, a model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, 2 of 23 with a larger budget and none of a random 20 under the competition's evaluator. The graph could have told it where to look in 42 of the 51 tasks that edit existing code, yet only 20 of 473 tool calls asked a graph tool: that value is there to be used. Sending the model only the tasks that pass the screen would have kept 4 of its 5 fixes for 17% of its time.
+From a cloud agent's own problem statements, a model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, 2 of 23 with a larger budget and none of a random 20 under the competition's evaluator. The graph could have told it where to look in 42 of the 51 tasks that edit existing code, yet only 20 of 473 tool calls asked a graph tool: that signal is there to be used, its benefit to an agent untested. Sending the model only the tasks that pass the screen would have kept 4 of its 5 fixes for 17% of its time.
 
 **Using the set.** The dataset has the competition's layout, so its evaluator runs on it as published. In the repository, `kaggle/official_verify.py` replays the two controls and scripts 63 to 66 the graph, search, cost and routing counts; the quickstart notebook loads a task with its snapshot, graph and embeddings.
 

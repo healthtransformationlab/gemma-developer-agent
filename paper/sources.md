@@ -145,7 +145,7 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 | 20.6 GPU-hours for the 58 first attempts, 9.6 for the 28 reruns, 30.2 in all; median 0.39 GPU-hours, 7 tool calls, about 91,000 prompt tokens | `gpu_hours` summed over the run table at `NLP` commit `db0a29d` (20.56) and `rerun_gpu_hours` over the paired table (9.64); the medians are over the run table's 58 rows as they are now |
 | Not in the writeup since November 10, 2026: about $21 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`: 14.19 for the first attempts, 6.65 for the reruns; `price_basis_text` |
 | The screen: 30 of the 93, 5 pass, 25 with tests that need a name or text the statement never gives | `NLP/data/tasks/screening/agent_screen.csv` and its `README.md` (`NLP` pull request 653): drawn with seed 20261110 within each statement source (13 of 39, 11 of 34, 6 of 20); `is_pass` is both ratings 0 or 1, the rule of SWE-bench Verified [2]; `test_rating_num` is 2 or 3 for 25. An AI reviewer made both passes; the second agrees with the first on all 30 but had read the first's ratings |
-| "Two AI screens"; the second "took all 93", "never saw the first", "passes 17 of 93" | `NLP/data/tasks/screening/agent_screen_all.csv` and the second part of its `README.md` (`NLP` pull request 665): eight AI raters, each given a random share of the 93 tasks, the task files and the written protocol, and none of the first screen's ratings; the same two questions and scales. 17 pass (both ratings 0 or 1), 76 fail; the tests are rated 2 or 3 in 76 and the statement in 19 (20 until the last rater lowered one rating before it finished; no verdict changed). An AI reviewer's rating in one pass, not checked by a person outside the 30 |
+| "Two AI screens"; the second "rated all 93", "blind to the first", "17 of 93 pass" | `NLP/data/tasks/screening/agent_screen_all.csv` and the second part of its `README.md` (`NLP` pull request 665): eight AI raters, each given a random share of the 93 tasks, the task files and the written protocol, and none of the first screen's ratings; the same two questions and scales. 17 pass (both ratings 0 or 1), 76 fail; the tests are rated 2 or 3 in 76 and the statement in 19 (20 until the last rater lowered one rating before it finished; no verdict changed). An AI reviewer's rating in one pass, not checked by a person outside the 30 |
 | "the same verdict on all 30" | `is_same_as_checked` true in all 30 rows where `is_owner_checked` is true: 25 fail and 5 pass in both screens |
 | "26 tasks rated twice by different raters got the same verdict" | stand-in raters were started on two raters' tasks when those two had written nothing for nine minutes; all the first eight then finished, so 26 tasks have two ratings from raters who did not see each other's. Pass or fail is the same on all 26; the table keeps the first eight raters' ratings (`NLP/pull_requests/pr-665-review.md`) |
 | "it resolved 4 of the 13 that pass and 1 of the 35 that fail" | the same table, `is_attempted` and `is_resolved` (from the Gemma 4 E4B run table, each task's latest run): 48 attempted, 13 of them pass the second screen with 4 resolved, 35 fail with 1 resolved (`htlnlp_116`). On the first screen's 30: 16 attempted, 1 of 3 passing resolved and 0 of 13 failing (no longer in the writeup) |
@@ -221,7 +221,7 @@ go-ahead: `NLP/kaggle/official_agent_run.py --sample 20 --seed 20261110`.
 | "The recipe, run in full on one repository only" | Section 4.5 and Section 7: the second repository was mined, not gated, verified or run |
 | 5 of 48, 2 of 23, none of a random 20 | Section 6: "Results", "A larger budget" and "Under the competition's evaluator" |
 | "Five small tasks left the loop and the rest stayed in it" | Section 6: the 5 resolved of 48, each a small change, and the 43 unresolved, which the cloud agent and the owner had done |
-| "The graph could have told it where to look in 42 of the 51 tasks that edit existing code"; "that value is there to be used" | Section 4.3 for the count; the second phrase is a reading: the tools to ask the graph exist and were called in 20 of 473 tool calls |
+| "The graph could have told it where to look in 42 of the 51 tasks that edit existing code"; "that signal is there to be used, its benefit to an agent untested" | Section 4.3 for the count; the second phrase is a reading: the tools to ask the graph exist and were called in 20 of 473 tool calls |
 | "Sending the model only the tasks that pass the screen would have kept 4 of its 5 fixes for 17% of its time" | Section 6, "Cost, and what to send" |
 | "the competition's evaluator runs on it as published" | Section 5: `NLP/data/tasks/official_verifier/published_verification.csv`, 93 of 93 reference patches and 0 of 93 empty patches on dataset version 4 with no file added |
 | `kaggle/official_verify.py` "replays the two controls" | `NLP/kaggle/official_verify.py` runs the competition's verification with a chosen patch per task: none, the reference patch, or patches from a file |
@@ -408,6 +408,18 @@ None of its three cases is in the paper now. The rows below are for what was cut
   the conclusion's list of what the person in the loop can see; and the GPU-hour totals (30.2 T4 GPU-hours for the
   baseline and its reruns, 12.8 L4 for the evaluator's runs, 2.1 for the larger budget; their rows are under
   Section 6 above).
+- Two more from a further review, the same day: the first row of Section 5's table reads "First release, with the
+  import fix below" (the review found "one file added per snapshot" at odds with "As first published, no task
+  could be scored"), and the conclusion's "that value is there to be used" became "that signal is there to be
+  used, its benefit to an agent untested", because reaching the fix is not repairing it.
+- Three more wording fixes from a review, the same day. That review read the task set as "heavily synthesized":
+  the patient records are synthetic, the tasks are real merged changes, so Section 1 now says "its tasks are real
+  changes to application code". The second screen's sentence reads "An independent second pass, blind to the
+  first, rated all 93: the same verdict on all 30, and 17 of 93 pass" (it had a stray semicolon). Section 4.5 ends
+  "Gating and releasing them is future work": the same fact as "The 133 are not gated or released". Not taken:
+  "All five resolved tasks required trivial configuration or string edits" (one is a label parser), "This isolates
+  the boundary between local agent capabilities and human intervention" (a cheapest-first sample does not), and
+  "Data repositories expose critical coverage gaps in standard AST graphs" (one repository).
 - Four wording fixes from reviews, the same day: the withheld candidate's row reads "unlicensed third-party files"
   (its patch adds third-party files with no stated licence); "The model made only 6 graph-tool calls among 145, in 4
   of the 23 runs" (the denominator stays, because the abstract's 473 is its sum with two others); "Ten of the 58
@@ -419,7 +431,7 @@ None of its three cases is in the paper now. The rows below are for what was cut
   evaluator) and which this paper added and ran on one (statement sources, controls on the published files, the
   screens, the graph counts): in the abstract, Section 1, Section 7's first bullet and the conclusion's recipe.
   "The second repository tests only the mining rule" left Section 7; Section 4.5 still says the 133 candidates are
-  not gated or released. Cut to make room: the larger-budget paragraph's sentence on output tokens and the context
+  not gated or released (from the next change on, as "Gating and releasing them is future work"). Cut to make room: the larger-budget paragraph's sentence on output tokens and the context
   limit (its rows are under Section 6 above), "it reads and edits files and rarely searches", and "of issues,
   pull requests and reviews" in the abstract (Section 3 has it).
 - Added the same day at the owner's direction: what the task set is made of and how (application work in health
