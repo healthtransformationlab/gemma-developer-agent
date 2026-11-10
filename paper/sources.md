@@ -13,8 +13,16 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 | Figure | Source |
 |---|---|
 | Twelve models: 81% on dental licensing-exam questions, 22% on questions from published patient cases | Zhao et al., *GlobalDentBench*, arXiv:2605.24636v2, abstract: accuracy "plummeted from 81.34% on multiple-choice to 64.53% on short-answer and 22.34% on case-based questions" across "12 frontier LLMs". Read November 10, 2026; also in `NLP/docs/claims.yaml` |
-| Omissions are more than 80% of severe errors on 1,100 medical consultation cases | Wu et al., *First, do NOHARM*, arXiv:2512.01241v4, abstract: "a 1,100-task benchmark of primary care-to-specialist consultation cases" and "errors of omission accounting for more than 80% of severe errors" across 20 models and 4 retrieval tools. A preprint, in general medicine, with no oral-health cases. Read November 10, 2026 |
+| Omissions are more than 80% of severe errors on 1,100 medical consultation tasks | Wu et al., *First, do NOHARM*, arXiv:2512.01241v4 (July 13, 2026), abstract: "a 1,100-task benchmark of primary care-to-specialist consultation cases" and "errors of omission accounting for more than 80% of severe errors" across 20 models and 4 retrieval tools. The 1,100 are tasks, not cases: the text gives "1,100 items (100 clinical cases with 1,000 physician-perturbed variants)". Versions 1 and 2 (December 2025) gave 76.6% of severely harmful errors, which is why the reference names version 4. A preprint, in general medicine, with no oral-health cases. Read November 10, 2026 |
 | "Better health starts with accurate health information" | the headline of [healthtransformationlab.org](https://healthtransformationlab.org) and the `NLP` repository's description on GitHub |
+
+## Section 2, related work
+
+| Figure | Source |
+|---|---|
+| MLOps-Bench: 212 tasks with fail-to-pass tests from 31 public ML repositories | Tran et al., arXiv:2610.23506 (October 16, 2026), abstract: "212 validated tasks from 31 public ML repositories, with 636 fail-to-pass tests and 856 pass-to-pass tests"; each task has "a natural-language requirement, oracle patch, plausible buggy baseline, fail-to-pass tests, pass-to-pass tests, and provenance metadata". Read November 10, 2026 |
+| data-eng-bench scores a produced artefact (dbt models) | the README and `CITATION.cff` of [`Snowflake-Labs/data-eng-bench`](https://github.com/Snowflake-Labs/data-eng-bench), version 1.0.0, released July 29, 2026: 103 dbt tasks on a retail warehouse, each scored by "a `pytest` verifier that checks the materialized tables row by row against a reference solution"; 16 of the 103 are bug fixes. Read November 10, 2026 |
+| "labels each statement's source" in place of "a field the others lack" | SWE-bench takes every statement from an issue, so it has no need of such a field; the claim kept is what this set records, not what others lack |
 
 ## Section 3, the source repository
 
@@ -34,6 +42,7 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 | Figure | Source |
 |---|---|
 | 197 changes, 116 candidates, tiers 49 / 45 / 22 | `NLP/data/tasks/task_manifest.csv` (`is_candidate`, `tier_code`) |
+| Of the 93 published: 39 / 34 / 20 | the 93 task ids of `NLP/data/tasks/official_verifier/published_verification.csv` joined to `tier_code` in the manifest (`NLP` main at `d876fa6`); 39 + 34 + 20 = 93 |
 | 67 backfilled issue records | the tier B and C candidates (45 + 22), each with an `issue_number` in the manifest |
 | 115 built, 114 pass both gates | `NLP/data/tasks/task_gates.csv` (`is_valid`) |
 | The three tasks left out, with reasons | `NLP/data/tasks/tasks_excluded.csv` |
@@ -74,7 +83,9 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 | Eight empty patches: four hit the token limit, three submit without an edit, one calls the edit tool with an argument it does not take | each run's `result.json`, downloaded from its Kaggle notebook output on November 10, 2026. `htlnlp_206`, `236`, `cfa7c008` and `pr23` each have a turn at exactly 2,048 output tokens; `htlnlp_120`, `152` and `230` call `submit_patch` without an edit; `htlnlp_71` calls `edit_file` four times with `start_line`, which the tool rejects. `NLP/pull_requests/pr-630-review.md` had attributed the first five to the limit |
 | 20.6 GPU-hours for the 58 first attempts, 9.6 for the 28 reruns, 30.2 in all; median 0.39 GPU-hours, 7 tool calls, about 91,000 prompt tokens | `gpu_hours` summed over the run table at `NLP` commit `db0a29d` (20.56) and `rerun_gpu_hours` over the paired table (9.64); the medians are over the run table's 58 rows as they are now |
 | About $21 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`: 14.19 for the first attempts, 6.65 for the reruns; `price_basis_text` |
-| Confidence intervals | Wilson, 95% |
+| Confidence intervals | Wilson, 95%; named once in the text since an outside review took them for Clopper-Pearson (which would give 3.5 to 22.7 for 5 of 48) |
+| "48 of 93 tasks, cheapest first" (Section 8) | the setup's own sentence: tasks were run cheapest first under a GPU-hour cap, so the 48 are not a sample of the 93 and 5 of 48 is not a rate for the set |
+| "No human screening" (Section 8) | no annotation pass over the tasks exists in `NLP/data/tasks/`: the checks are the two gates and the evaluator's reference-patch and empty-patch controls. SWE-bench Verified's screening, of whether a statement specifies what its tests require, was not done |
 
 ## Section 7, the three cases
 
@@ -91,3 +102,8 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
   trailing runs are simulated, and its "no conventions" condition blanks five data columns.
 - Any result for the pipeline-doctor skill or the analyzer sub-agent: neither has been run.
 - Any score on the competition's development set: not run.
+- Why most of the second repository's candidates cannot be tied to a pull request (fast-forwarded and squashed
+  merges): cut from Section 4.5 on November 10, 2026 to make room for the limits two outside reviews asked for.
+  The counts are in the Section 4 table above.
+- A human check of task quality, and a split of the tasks into fixes, features and maintenance: not done. The mining
+  rule keeps any change that touches code and tests, so the set is not only bug fixes.
