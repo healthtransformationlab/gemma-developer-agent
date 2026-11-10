@@ -31,11 +31,14 @@ Each figure is in a section below; these rows say which.
 
 | Figure | Source |
 |---|---|
+| "In fifteen days ... from nothing to 960 commits, 775 of them marked as agent-authored" | Section 3 (rows below): 960 commits on `main` from GitHub's initial commit on October 25 to November 8, 2026, fifteen days counting both ends; 775 = 710 with the agent's co-author trailer + 65 authored as the agent. The other 185 are 175 merge commits GitHub made for pull requests, 5 by an automation bot, 4 by the owner alone and the initial commit. The owner asked on November 10, 2026 for the abstract to lead with this |
+| "I typed no code" (the abstract; in Section 1 until November 10, 2026) | the four commits by the owner alone are three documentation edits and one merge of `main` into a branch (Section 3, the row on the 250 commits without a trailer); every other change came through a coding-agent session's pull request |
+| "Existing benchmarks mine mature libraries maintained by people" | Section 1 and Section 2: SWE-bench draws on twelve popular Python libraries, the competition's development set on four; SWE-Gym, SWE-smith and SWE-rebench also collect from human-maintained repositories |
 | "resolves every reference patch and no empty patch" | Section 5: the corrected release as published, 93 of 93 reference patches and 0 of 93 empty patches |
 | 25 of 30 screened | Section 6, "Task fairness" |
 | 5 of 48 under tight limits | Section 6, "Results" |
 | 2 of the 23 cheapest of those, "eight times the output budget and thinking on" | Section 6, "A larger budget": 16,384 output tokens a turn against 2,048 |
-| None of a random 20 under the competition's evaluator, "on its hardware" | Section 6, "Under the competition's evaluator": four L4 GPUs |
+| None of a random 20 run end to end by the competition's evaluator | Section 6, "Under the competition's evaluator" (four L4 GPUs; "on its hardware" was cut from the abstract for length) |
 | "across three setups, 20 of 473 tool calls were to a graph tool" | 6 of 145 in the paired rerun, 5 of 139 with the larger budget and 9 of 189 under the evaluator (Section 6, three rows below); 6 + 5 + 9 = 20 and 145 + 139 + 189 = 473. The runs of the baseline that are not in the paired rerun were not counted |
 | "names and call edges connect a task's statement to the code its fix edits in 22 of 93 tasks" | Section 4.3 (rows below): the statement names an edited function or class in 20 tasks and call edges join a named one to an edited one in 2 more |
 
@@ -268,12 +271,18 @@ One of its three cases is now in Section 1 (row above). The rows below are for w
   - Section 8: "Across the paired rerun, the larger budget and the evaluator's run" before the graph-tool count
     (the abstract's row gives the three), and the list of the dataset's four parts (`tasks.jsonl`, `snapshots/`,
     `graphs/`, `embeddings/`; Section 4.3 and the dataset's card describe them).
-  - The abstract again: "(960 commits in fifteen days, 775 of them marked as agent-authored)" (Section 3 has
-    both figures) and "The official evaluator also rejected 20 tasks my own gates had passed" (Section 4.1 and
+  - The abstract again: "The official evaluator also rejected 20 tasks my own gates had passed" (Section 4.1 and
     Section 5: 113 tasks passed both gates and were published first; the evaluator resolves the reference patch
     of 93).
   - Section 6: "(Kaggle's GPUs are free)" after the cost estimate (the abstract says "two free T4 GPUs"); the
     prompt-defect sentence shortened, with "the half of tasks with none" as before (row above).
+- Cut on November 10, 2026 (pull request for issue 43) so that the abstract could lead with the fifteen days of
+  commits without the paper growing: the abstract's first two sentences ("Coding-agent benchmarks are mined from
+  mature web libraries maintained by people. I release a task set mined from a different source ..."), now one
+  clause after the lead; "on its hardware" after the evaluator's run in the abstract; "I typed no code:" in
+  Section 1 (now in the abstract); and Section 5's "Elsewhere the two verifiers agree on every reference patch"
+  (the table's counts say it: the evaluator resolves 93 of 113, and the 20 it rejects are listed with their
+  reasons).
 - Whether embedding search finds the fix where names and call edges do not (Section 4.3): not run. It needs the
   statement embedded with the same model as the nodes.
 - An independent human screen of task quality: not done. The screen of 30 is an AI reviewer's, checked by the
