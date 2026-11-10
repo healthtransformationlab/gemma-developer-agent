@@ -38,8 +38,9 @@ paper is the owner's to edit and submit.
   in the harness follows the guide and that the guide is not redistributed.
 
 ## Should fix (non-blocking)
-- **References 5, 6, 7, 10 and 11 are unchecked.** They were written from memory. Each needs checking against the
-  paper before submission.
+- **References 5, 6, 7, 10 and 11** were first written from memory, then checked on November 10, 2026 against
+  their arXiv records (2412.21139, 2504.21798, 2505.20411, 2411.07763, 2504.04808) and given their venues. The
+  other ten were not re-checked.
 - **The baseline's two groups are split by timestamp.** The run table has no batch column; `sources.md` says the
   split is ours. A `batch` or `is_graph_available` column in the run table would make it checkable.
 - **The de-identification count (16 candidates, 8 attempted) is a keyword match on titles.** `sources.md` says so;

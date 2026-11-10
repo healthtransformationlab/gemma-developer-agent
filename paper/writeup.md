@@ -157,13 +157,13 @@ Where each number comes from is listed in `paper/sources.md`. Released: the task
 2. Chowdhury et al. Introducing SWE-bench Verified. OpenAI, 2024.
 3. Just, Jalali, Ernst. Defects4J: A Database of Existing Faults to Enable Controlled Testing Studies for Java Programs. ISSTA 2014.
 4. Widyasari et al. BugsInPy: A Database of Existing Bugs in Python Programs. ESEC/FSE 2020.
-5. Pan et al. Training Software Engineering Agents and Verifiers with SWE-Gym. 2024.
-6. Yang et al. SWE-smith: Scaling Data for Software Engineering Agents. 2025.
-7. Badertdinov et al. SWE-rebench: An Automated Pipeline for Task Collection and Decontaminated Evaluation of Software Engineering Agents. 2025.
+5. Pan et al. Training Software Engineering Agents and Verifiers with SWE-Gym. ICML 2025.
+6. Yang et al. SWE-smith: Scaling Data for Software Engineering Agents. NeurIPS 2025.
+7. Badertdinov et al. SWE-rebench: An Automated Pipeline for Task Collection and Decontaminated Evaluation of Software Engineering Agents. NeurIPS 2025.
 8. Yang et al. SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering. NeurIPS 2024.
 9. Lai et al. DS-1000: A Natural and Reliable Benchmark for Data Science Code Generation. ICML 2023.
-10. Lei et al. Spider 2.0: Evaluating Language Models on Real-World Enterprise Text-to-SQL Workflows. 2024.
-11. Jin et al. ELT-Bench: An End-to-End Benchmark for Evaluating AI Agents on ELT Pipelines. 2025.
+10. Lei et al. Spider 2.0: Evaluating Language Models on Real-World Enterprise Text-to-SQL Workflows. ICLR 2025.
+11. Jin, Zhu, Kang. ELT-Bench: An End-to-End Benchmark for Evaluating AI Agents on ELT Pipelines. PVLDB, 2026.
 12. Kahn et al. A Harmonized Data Quality Assessment Terminology and Framework for the Secondary Use of Electronic Health Record Data. eGEMs, 2016.
 13. Stubbs, Uzuner. Annotating longitudinal clinical narratives for de-identification: the 2014 i2b2/UTHealth corpus. Journal of Biomedical Informatics, 2015.
 14. Caufield et al. A Comprehensive Typing System for Information Extraction from Clinical Narratives (MACCROBAT). 2019.
