@@ -42,7 +42,7 @@ the measurements. The framing by a person's loop is the owner's, set on November
 | "each verified with the competition's own evaluator" | Section 5: the corrected release as published, 93 of 93 reference patches and 0 of 93 empty patches |
 | "one person in the loop"; "that loop" | Section 1 and Section 3: every change was made by a coding-agent session the owner directed in chat; `NLP/AGENTS.md` ("Branches and issues", rule 6) keeps limited-compute runs, publishing, deletions and rule changes for the owner's word |
 | "unattended" | each task ran from the prompt to a submitted patch with no person acting: the harness loop of `NLP` spec 035, one task per offline Kaggle notebook |
-| "5 of the 48 tasks it ran, cheapest first, all small" | Section 6, "Setup", "Results" and "How it fails" (a CI rule, a warning message, a label parser and two settings) |
+| "5 of the 48 tasks it ran, cheapest first (95% CI 4.5–22.2%), all small" | Section 6, "Setup", "Results" (the Wilson interval of 5 of 48) and "How it fails" (a CI rule, a warning message, a label parser and two settings) |
 | "eight times the output budget changed little (2 of the 23 cheapest of the 48, against 2)" | Section 6, "A larger budget": 16,384 output tokens a turn against 2,048, with thinking on |
 | "the competition's evaluator resolved none of a random 20" | Section 6, "Under the competition's evaluator": the agent run end to end on four L4 GPUs |
 | "each task's statement source" | Section 4.2, the fidelity tiers |
@@ -50,7 +50,7 @@ the measurements. The framing by a person's loop is the owner's, set on November
 | "only 17 of 93 statements say what their tests check (an AI screen, matching all 30 verdicts a person checked)" | Section 6, "Task fairness" (rows below): 17 pass the second screen; "say what their tests check" is the screen's pass, both ratings 0 or 1 |
 | "what each kind of task cost" | Section 6, "Cost" (rows below) |
 | "names and call edges lead from statement to fix in 22 of 93 tasks and embedding search in 20 more" | Section 4.3 (rows below): 20 by a name, 2 more by call edges, and an edited node in the first ten by embedding similarity for 20 of the 29 that neither reaches |
-| "only 20 of 473 tool calls asked a graph tool" | 6 of 145 in the paired rerun, 5 of 139 with the larger budget and 9 of 189 under the evaluator (Section 6, three rows below); 6 + 5 + 9 = 20 and 145 + 139 + 189 = 473. The runs of the baseline that are not in the paired rerun were not counted |
+| "only 20 of 473 tool calls, over three runs, asked a graph tool" | 6 of 145 in the paired rerun, 5 of 139 with the larger budget and 9 of 189 under the evaluator (Section 6, three rows below); 6 + 5 + 9 = 20 and 145 + 139 + 189 = 473. The runs of the baseline that are not in the paired rerun were not counted |
 
 ## Section 1, the introduction
 
@@ -96,7 +96,8 @@ the measurements. The framing by a person's loop is the owner's, set on November
 | 113 after one is withheld; median 488 nodes and 397 `calls` edges; the format check | `NLP/specs/028-dataops-task-set/tasks.md` (T009 to T011) |
 | In 31 of the 93 tasks the reference patch touches no module the graph covers | `NLP/data/tasks/graph_coverage.csv` (`is_fix_in_graph` false for 31, true for 62), written by `NLP/python/scripts/63_graph_coverage.py` from dataset version 4 as downloaded on November 10, 2026 (`NLP` pull request 660). A changed file counts when it is `python/<module path>.py` and that module holds a node of the task's graph; a module the patch adds is not in the base commit's graph. 155 of the 1,173 files the 93 patches change are such modules (not in the writeup: a patch carries documents and data too) |
 | "new modules, scripts, notebooks, configuration or documents" | the changed files of those 31 patches, grouped by path and extension (my grouping, approximate): documents in 29 of the 31, configuration, CI or pipeline files in 20, notebooks in 12, a package module that is not in the base graph in 9, data or figures in 7, scripts in 6 |
-| "in 11 more it changes no existing function or class" | the same table: `is_fix_in_graph` true and `edited_node_count` 0 in 11 rows. The patch changes a module the graph covers, but only at module level, in a decorator, or by adding new functions; no changed line falls inside a function, class or method the base commit already had |
+| "It misses the fix in 42 of the 93 tasks": 31 + 11 | the two rows around this one: `is_fix_in_graph` false in 31 rows, and true with `edited_node_count` 0 in 11 |
+| "11 change no existing function or class" | the same table: `is_fix_in_graph` true and `edited_node_count` 0 in 11 rows. The patch changes a module the graph covers, but only at module level, in a decorator, or by adding new functions; no changed line falls inside a function, class or method the base commit already had |
 | "In the other 51": the fix edits a function or class the graph holds | `edited_node_count` above 0 in 51 rows. An edited node is the innermost function, class or method that holds a line the patch removes or replaces, or that holds both neighbours of lines it only inserts, read from the task's snapshot with the graph builder's own naming (`edited_nodes`); `edited_node_text` lists them. Counting inserted lines for the def above gives 54 |
 | The statement names an edited function or class in 20 | `statement_to_fix_edge_count` 0 in 20 rows. A node is named when the last part of its id is a whole identifier in the problem statement or hints of five characters or more with an underscore or a capital, or when an inline code span is exactly that name, optionally qualified or called (`named_nodes`); `statement_node_text` lists them. A fixed rule, not a judgement: a statement that describes a function without its name names nothing, so the count is a lower bound. Thirteen of the 20 are named by the identifier rule alone; the other seven by a code span (`runlog.run`, `telemetry.setup()`, `track()`, `fit`, `readme_results.breakdown`, `rungs.HFEncoder.fit`), each read by hand |
 | Call edges lead from a named one to an edited one in 2 more | `statement_to_fix_edge_count` 1 (`htlnlp_143`) and 3 (`htlnlp_235`): the fewest `calls` edges, followed in either direction, from any named node to any edited node (`call_distance`) |
@@ -144,7 +145,7 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 | 20.6 GPU-hours for the 58 first attempts, 9.6 for the 28 reruns, 30.2 in all; median 0.39 GPU-hours, 7 tool calls, about 91,000 prompt tokens | `gpu_hours` summed over the run table at `NLP` commit `db0a29d` (20.56) and `rerun_gpu_hours` over the paired table (9.64); the medians are over the run table's 58 rows as they are now |
 | Not in the writeup since November 10, 2026: about $21 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`: 14.19 for the first attempts, 6.65 for the reruns; `price_basis_text` |
 | The screen: 30 of the 93, 5 pass, 25 with tests that need a name or text the statement never gives | `NLP/data/tasks/screening/agent_screen.csv` and its `README.md` (`NLP` pull request 653): drawn with seed 20261110 within each statement source (13 of 39, 11 of 34, 6 of 20); `is_pass` is both ratings 0 or 1, the rule of SWE-bench Verified [2]; `test_rating_num` is 2 or 3 for 25. An AI reviewer made both passes; the second agrees with the first on all 30 but had read the first's ratings |
-| "Two AI screens"; the second "took all 93", "never saw the first", "passes 17 of 93" | `NLP/data/tasks/screening/agent_screen_all.csv` and the second part of its `README.md` (`NLP` pull request 665): eight AI raters, each given a random share of the 93 tasks, the task files and the written protocol, and none of the first screen's ratings; the same two questions and scales. 17 pass (both ratings 0 or 1), 76 fail; the tests are rated 2 or 3 in 76 and the statement in 20. An AI reviewer's rating in one pass, not checked by a person outside the 30 |
+| "Two AI screens"; the second "took all 93", "never saw the first", "passes 17 of 93" | `NLP/data/tasks/screening/agent_screen_all.csv` and the second part of its `README.md` (`NLP` pull request 665): eight AI raters, each given a random share of the 93 tasks, the task files and the written protocol, and none of the first screen's ratings; the same two questions and scales. 17 pass (both ratings 0 or 1), 76 fail; the tests are rated 2 or 3 in 76 and the statement in 19 (20 until the last rater lowered one rating before it finished; no verdict changed). An AI reviewer's rating in one pass, not checked by a person outside the 30 |
 | "the same verdict on all 30" | `is_same_as_checked` true in all 30 rows where `is_owner_checked` is true: 25 fail and 5 pass in both screens |
 | "26 tasks rated twice by different raters got the same verdict" | stand-in raters were started on two raters' tasks when those two had written nothing for nine minutes; all the first eight then finished, so 26 tasks have two ratings from raters who did not see each other's. Pass or fail is the same on all 26; the table keeps the first eight raters' ratings (`NLP/pull_requests/pr-665-review.md`) |
 | "it resolved 4 of the 13 that pass and 1 of the 35 that fail" | the same table, `is_attempted` and `is_resolved` (from the Gemma 4 E4B run table, each task's latest run): 48 attempted, 13 of them pass the second screen with 4 resolved, 35 fail with 1 resolved (`htlnlp_116`). On the first screen's 30: 16 attempted, 1 of 3 passing resolved and 0 of 13 failing (no longer in the writeup) |
@@ -366,6 +367,24 @@ None of its three cases is in the paper now. The rows below are for what was cut
   - Related work names what the set adds (statement-source labels, counts of graph and embedding reach).
   Not taken: cutting the graph-tool call count from the abstract (the same review called it the most memorable
   sentence), and replacing the abstract with caveats only.
+- A third model's review the same day, of the version with the embedding search and the full screen, scored it 3.1
+  of 5 (novelty 2.5, quality 2.0, relevance 3.5, verifiability 4.0, clarity 3.5) and named "5 of the 48 tasks it
+  ran, cheapest first" as the sentence most likely to cost points, because the ordering is easy to miss. Acted on:
+  the abstract gives the interval beside the count and says the graph-tool calls are over three runs; Section 6
+  says no rate here is an unbiased estimate for the 93; the conclusion says "cheapest-first". Cut to make room:
+  "(Section 7)" after the cap, "committed as a file" became "committed", "than a person's" in Section 7, and three
+  small rewordings. What it marked down and no wording can change: one repository, one model, a standard mining
+  recipe.
+- A fourth model's review the same day scored it 3.2 of 5 (novelty 3.0, quality 2.0, relevance 3.5, verifiability
+  4.5, clarity 3.0). Acted on: the abstract's sentence on the larger budget, which it found confusing, now reads
+  "with eight times the output budget it resolved 2 of the 23 cheapest tasks, against 2 before"; Section 4.3 says
+  outright that the graph misses the fix in 42 of the 93 tasks; and Section 7 says the cloud agent was not rerun
+  on the statements alone, which answers its point that the title's comparison has no cloud baseline (every
+  reference patch is the cloud agent's own change, made with a person in the loop and with the tests written
+  beside it). Not taken: a new title (it called the repository synthetic, which only its data are), "Overfitting
+  risk" as a heading, and a sentence saying SWE-bench's screening skews outcomes. Cut to make room: "The local
+  harness ran the baseline and the larger-budget rerun" in Section 7 (Sections 5 and 6 say it), "two" before
+  "free T4 GPUs" in the abstract (Section 6 has it), and the last bullet of Section 7 is shorter.
 - Added the same day at the owner's direction: what the task set is made of and how (application work in health
   data; every step a script; the competition's exact format), the embedding-search count, the split of the
   agent's time by graph reach, and an automated screen of all 93 tasks beside the 30 the owner checked.
