@@ -41,7 +41,7 @@ Contributions:
 
 The repository holds a Python package, its tests, an R twin kept in numerical parity, SQL and Databricks pipelines, and documentation. It was written between October 25 and November 8, 2026.
 
-**Who wrote it.** Of 960 commits on `main`, 775 are marked as agent-authored, 175 are squash merges of agent pull requests made through GitHub, 5 come from an automation bot, and 4 carry only my name.
+**Who wrote it.** Of 960 commits on `main`, 775 are marked as agent-authored, 175 are merge commits GitHub made for pull requests, 5 come from an automation bot, 4 carry only my name, and one is the initial commit.
 
 **Rules the agents work under.** A checked-in `AGENTS.md` requires one issue per user story, a branch named for its issue, a pull request that closes it, and a test written before the code. CI rejects a pull request from an agent's own session branch or without an issue link. Prose rules are tests too: one fails the build on a banned phrase, another when a public function lacks its tracing decorator.
 

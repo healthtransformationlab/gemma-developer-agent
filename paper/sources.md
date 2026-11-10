@@ -22,7 +22,7 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 |---|---|
 | 960 commits, October 25 to November 8, 2026 | `git rev-list --count origin/main`; first and last commit dates |
 | 710 with a co-author trailer | `git log origin/main -i --grep='Co-authored-by: Claude'` |
-| 65 authored as the agent, 175 squash merges, 5 bot, 4 owner only | the 250 commits without a trailer, grouped by author, committer and a `(#n)` subject |
+| 65 authored as the agent, 175 merge commits, 5 bot, 4 owner only, 1 initial commit | the 250 commits without a trailer, grouped by author, committer and subject: 175 "Merge pull request #n" commits made by GitHub, 4 by the owner alone (three documentation edits and one merge of `main` into a branch), and GitHub's "Initial commit". 710 + 65 + 175 + 5 + 4 + 1 = 960. Squash merges carry the trailer and are among the 710 |
 | 240 review files, pull requests up to 634 | `NLP/pull_requests/pr-*-review.md` |
 | 192 with a verdict: 119 approve, 64 approve with minor findings, 9 other approve forms, 0 request changes | the `verdict:` line of each review's front matter |
 | The four cases reserved for the owner | `NLP/AGENTS.md`, "Branches and issues", rule 6 |
