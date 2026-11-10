@@ -1,4 +1,4 @@
-# Can a small local agent redo a cloud agent's work?
+# Silent defects in health data: can a small local agent redo a cloud agent's work?
 
 **113 issue-traced tasks from a health-data repository, with a calibrated open harness and a Gemma 4 E4B baseline**
 
@@ -10,26 +10,26 @@ Coding-agent benchmarks are mined from mature web libraries maintained by people
 
 ## 1. Introduction
 
-The best coding agents today run on large models in the cloud. This competition asks whether a model that fits on one accelerator can do the same work. The tasks available come from a narrow place: SWE-bench draws on twelve popular Python libraries [1], and the competition's development set on four (FastAPI, Requests, Rich and HTTPX).
+The best coding agents today run on large models in the cloud. This competition asks whether a model that fits on one accelerator can do the same work. The tasks available come from a narrow place: SWE-bench draws on twelve popular Python libraries [1], and the competition's development set on four.
 
 Two kinds of repository are missing.
 
-The first is the **data repository**. In a web library a bug usually announces itself: a request fails, a test goes red. In health data the costly defect is the one that raises nothing. A pipeline finishes, a table is written, and a number in it is wrong. Section 7 gives three cases, including a model whose AUC is 0.89 where it was built and 0.59 on the realistic set.
+The first is the **data repository**. In a web library a bug usually announces itself: a request fails, a test goes red. In health data the costly defect is silent. A pipeline finishes, a table is written, and a number in it is wrong (Section 7). Health answers fail the same way. Twelve large models averaged 81% on dental licensing-exam questions and 22% on questions from published patient cases [15], and on 1,100 medical consultation cases omissions made up more than 80% of severe errors in a preprint study [16]. A model can pass the exam and still leave out the warning a patient needed.
 
 The second is the **agent-built repository**. A growing share of code is written by agents under a person's direction. Such a repository leaves an unusually complete record: an issue for each change, a pull request, a review. A large cloud agent did this work. How much of it can a small local agent redo from the same problem statements?
 
-I study one repository that is both. `health-transformation-lab-nlp` is a public benchmark for finding gum disease in synthetic dental records. I typed no code: every change was made by coding-agent sessions I directed in chat and merged after an automated review.
+I study one repository that is both. `health-transformation-lab-nlp` is part of Health Transformation Lab, open benchmarks I built on one premise: better health starts with accurate health information. Its job is to surface silent defects, here in how well gum disease can be found in synthetic dental records. I typed no code: every change was made by coding-agent sessions I directed in chat and merged after an automated review.
 
 Contributions:
 
 1. **A task set** of 113 tasks in the competition's format, 93 of them verified with the competition's own evaluator, public on Kaggle under CC BY 4.0, with snapshots, code graphs, embeddings and a fidelity tier per task (Section 4).
-2. **An open harness checked against the official one**: a sandboxed re-implementation of the competition's documented harness that gives the same verdict as the competition's evaluator on every saved agent patch, with a design that keeps answers away from the model on shared GPUs (Section 5).
+2. **An open harness checked against the official one**: a sandboxed re-implementation of the competition's documented harness that agrees with the competition's evaluator on every saved agent patch and keeps answers away from the model on shared GPUs (Section 5).
 3. **A baseline** for Gemma 4 E4B with a failure breakdown and cost per task (Section 6).
 4. **Evidence that the tracing rule makes a history minable**: on a second repository without it, the same mining rule finds candidates but no issue-linked statements (Section 4.5).
 
 ## 2. Related work
 
-**Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. Defects4J [3] and BugsInPy [4] did the same for Java and Python bugs before language models. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale task collection for training and for contamination-free evaluation. All draw on human-maintained open-source libraries. This one follows the same recipe (a change that touches code and tests, a statement, fail-to-pass and pass-to-pass gates) on an agent-built data repository, and adds a field the others lack: where each statement came from.
+**Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. Defects4J [3] and BugsInPy [4] did the same for Java and Python bugs before language models. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale task collection for training and for contamination-free evaluation. All draw on human-maintained open-source libraries. This one follows the same recipe on an agent-built data repository, and adds a field the others lack: where each statement came from.
 
 **Agents.** SWE-agent showed that the interface given to a model matters as much as the model [8]; the competition fixes that interface, so this work re-implements it.
 
@@ -41,11 +41,11 @@ Contributions:
 
 The repository holds a Python package, its tests, an R twin kept in numerical parity, SQL and Databricks pipelines, and documentation. It was written between October 25 and November 8, 2026.
 
-**Who wrote it.** Of 960 commits on `main`, 775 are marked as agent-authored, 175 are squash merges of agent pull requests made through GitHub, 5 come from an automation bot, and 4 carry only my name (one merge and three documentation edits). I specified the work and directed the sessions in chat.
+**Who wrote it.** Of 960 commits on `main`, 775 are marked as agent-authored, 175 are squash merges of agent pull requests made through GitHub, 5 come from an automation bot, and 4 carry only my name.
 
 **Rules the agents work under.** A checked-in `AGENTS.md` requires one issue per user story, a branch named for its issue, a pull request that closes it, and a test written before the code. CI rejects a pull request from an agent's own session branch or without an issue link. Prose rules are tests too: one fails the build on a banned phrase, another when a public function lacks its tracing decorator.
 
-**Reviews.** Every pull request has a review committed as a file: 240 of them. Of the 192 with a structured verdict, 119 approve, 64 approve with minor findings, 9 approve with conditions, and none request changes; blocking findings are fixed on the branch before the verdict is written. Agents merge their own green pull requests except in four cases reserved for me: runs on limited compute, publishing outside the repository, deletions, and changes to the rules.
+**Reviews.** Every pull request has a review committed as a file: 240 of them. Of the 192 with a structured verdict, all approve (64 with minor findings, 9 with conditions); blocking findings are fixed on the branch first. Agents merge their own green pull requests except in four cases reserved for me: limited-compute runs, publishing outside the repository, deletions, and rule changes.
 
 **Where my time went.** By my own estimate, more than half of my time went into three things a person reads: a data-model diagram annotated per attribute, a results view that drills from sensitivity, specificity, PPV, NPV and AUC down to SHAP values, and a data-quality page. A keyword match on titles finds them in only 38 of 305 merged pull requests. The code was cheap. How a discrepancy is displayed and drilled into decides whether anyone catches it, and no test checks that.
 
@@ -86,13 +86,13 @@ A task is kept only if its tests fail at `base_commit` with the test patch alone
 
 ### 4.5 A second repository
 
-To see whether the recipe transfers, I applied the mining rule unchanged to a second public repository: Open Navigator, an open-source civic engagement platform (FastAPI, dbt, React) run by a nonprofit I lead, with several human contributors and no issue-tracing rule. Of 1,320 first-parent commits, 133 touch non-test Python and Python tests. None links an issue. Only 22 can be tied by commit subject to one of the repository's 169 merged pull requests; others came in pull requests fast-forwarded onto `main`, which history alone cannot tell from direct commits.
+To see whether the recipe transfers, I applied the mining rule unchanged to a second public repository: Open Navigator, an open-source civic engagement platform run by a nonprofit I lead, with several human contributors and no issue-tracing rule. Of 1,320 first-parent commits, 133 touch non-test Python and Python tests. None links an issue. Only 22 can be tied by commit subject to one of the repository's 169 merged pull requests; others came in pull requests fast-forwarded onto `main`, which history alone cannot tell from direct commits.
 
 So the rule finds candidates anywhere, but the problem statements come from the convention: in the source repository every candidate traces to an issue. These 133 are not gated and not released.
 
 ## 5. Harness and verification
 
-**My harness.** The competition's guide documents the initial prompt, the multi-turn loop, the nine tools with their limits, the budgets, patch extraction and verification. I re-implemented those sections before I had the competition's evaluator: it is not on PyPI or among the competition's files, and I missed the separate Kaggle dataset that carries it. The prompt, nudge messages and budget warning follow the guide's wording; the guide itself is not redistributed. Two scripted models bound the harness. Replaying each reference patch from the repository's history resolves 111 of 113 tasks (the other two need Postgres and R), and submitting nothing resolves none.
+**My harness.** The competition's guide documents the initial prompt, the multi-turn loop, the nine tools with their limits, the budgets, patch extraction and verification. I re-implemented those sections before I had the competition's evaluator: it is not on PyPI or among the competition's files, and I missed the separate Kaggle dataset that carries it. The prompt, nudge messages and budget warning follow the guide's wording. Two scripted models bound the harness. Replaying each reference patch from the repository's history resolves 111 of 113 tasks (the other two need Postgres and R), and submitting nothing resolves none.
 
 **The competition's evaluator.** I then ran the competition's own verification (`swegemma` 0.2.11, subprocess sandbox, unmodified) on the published set.
 
@@ -107,7 +107,7 @@ As published, the set cannot be scored by the evaluator. It puts the repository 
 
 The 20 it does not resolve fall into three groups. Twelve have tests that read third-party files the published snapshots withhold for licence reasons, so they cannot pass from a snapshot under any verifier; my control missed this because it ran from the repository's history. Six start a script that imports a module beside it, which the evaluator's `PYTHONSAFEPATH=1` forbids and my harness allows. Two need Postgres or R. Elsewhere the two verifiers agree on every reference patch.
 
-**Keeping answers from the model.** This repository's history contains every fix, and later snapshots contain earlier tasks' fixes. Commands and verification run in Linux user, mount, network and pid namespaces with no network and an allow-listed environment. A review before the first pull request found that an earlier version ran the model's commands on the host, where it could read the history, every reference patch and the host's credentials.
+**Keeping answers from the model.** This repository's history contains every fix, and later snapshots contain earlier tasks' fixes. Commands and verification run in Linux user, mount, network and pid namespaces with no network and an allow-listed environment. A review before the first pull request found that an earlier version ran the model's commands on the host, where it could read every reference patch.
 
 Kaggle GPUs do not allow namespaces, and a notebook can read every attached file. So each task runs alone in a private, offline notebook beside a private dataset holding that task only. The patch comes back and is verified locally.
 
@@ -154,6 +154,7 @@ All three are on synthetic data. A keyword match on titles puts 16 of the 116 ca
 - **Constrained settings.** The baseline caps output at 2,048 tokens with thinking off on T4 GPUs. My competition configuration allows 16,384 output tokens and a 4,096-token thinking budget on four L4s. The baseline is a floor for this setup, not a measure of the model.
 - **Small and partial.** 51 scorable attempts, one sampled run each at temperature 0.2, and 33 of them without the graph tools.
 - **Untested components.** The submission's analyzer sub-agent and its skill were not run.
+- **The tasks are not silent.** Each comes with a failing test. The set measures repair of the code that looks for silent defects, not noticing one unprompted.
 - **Synthetic health data.** The cases in Section 7 are agreement with a synthetic answer key, not findings about any patient or practice.
 
 ## 9. Conclusion and release
@@ -180,3 +181,5 @@ Where each number comes from is listed in `paper/sources.md`. Released: the task
 12. Kahn et al. A Harmonized Data Quality Assessment Terminology and Framework for the Secondary Use of Electronic Health Record Data. eGEMs, 2016.
 13. Stubbs, Uzuner. Annotating longitudinal clinical narratives for de-identification: the 2014 i2b2/UTHealth corpus. Journal of Biomedical Informatics, 2015.
 14. Caufield et al. A Comprehensive Typing System for Information Extraction from Clinical Narratives (MACCROBAT). 2019.
+15. Zhao, Liang, Cai et al. GlobalDentBench: A Multinational Benchmark for Evaluating LLM Clinical Reasoning in Dentistry with Expert Calibration. arXiv:2605.24636, 2026.
+16. Wu, Nateghi Haredasht, Maharaj et al. First, do NOHARM: a medical safety benchmark and randomized study of physician and AI teaming on clinical consultations. arXiv:2512.01241, 2025 (preprint).
