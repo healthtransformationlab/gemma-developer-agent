@@ -37,7 +37,8 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 | 67 backfilled issue records | the tier B and C candidates (45 + 22), each with an `issue_number` in the manifest |
 | 115 built, 114 pass both gates | `NLP/data/tasks/task_gates.csv` (`is_valid`) |
 | The three tasks left out, with reasons | `NLP/data/tasks/tasks_excluded.csv` |
-| 113 published; median 488 nodes and 397 `calls` edges; the format check | `NLP/specs/028-dataops-task-set/tasks.md` (T009 to T011) |
+| 113 after one is withheld; median 488 nodes and 397 `calls` edges; the format check | `NLP/specs/028-dataops-task-set/tasks.md` (T009 to T011) |
+| 93 published | `NLP/data/tasks/official_verifier/swegemma_verification.csv`: the tasks whose reference patch the competition's evaluator resolves and whose empty patch it does not (`task_gate.evaluator_verified`). The 20 left out, each with its reason, are in `NLP/data/tasks/tasks_excluded.csv` |
 | Second repository: 1,320 first-parent commits, 133 candidates, 22 tied to a pull request, none linking an issue | `git log --first-parent` on [`getcommunityone/open-navigator`](https://github.com/getcommunityone/open-navigator) (Apache 2.0) main at `6fa4943`; its README describes it as an "AI-powered civic engagement platform", and its owner confirmed on November 10, 2026 that it may be cited. A change counts when its diff has a non-test `.py` file and a test `.py` file (under `tests/`, or named `test_*.py` or `*_test.py`). Tied to a pull request: the commit subject ends in `(#n)` or starts with "Merge pull request". Linking an issue: the message has `closes`, `fixes`, `resolves` or `refs` followed by `#n`. Not gated |
 | 169 merged pull requests (of 204: 15 open, 20 closed without merging) | GitHub's search API, read November 10, 2026. 33 of the 169 left no `(#n)` subject on `main` (14 fast-forwarded, 18 squashed or rebased under another subject or merged elsewhere, 1 through a merge commit with another subject), so 22 is a lower bound |
 
@@ -45,9 +46,10 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 
 | Figure | Source |
 |---|---|
-| The competition's evaluator: 93 of 113 reference patches, 0 of 113 empty patches, the same verdict as the author's harness on 25 of 25 saved patches | `NLP/data/tasks/official_verifier/swegemma_verification.csv` and its `README.md` (on branch `data/636-028-official-evaluator-check` until merged). `swegemma` 0.2.11 from the Kaggle dataset `metric/gemma-4-developer-agent-wheelhouse`, its `harness.verification.verify_task` unmodified, subprocess sandbox, run November 10, 2026 on copies of the published snapshots with `kaggle/official_adapter_conftest.py` added at the root |
-| As published, all 3 tasks tried fail at import | the evaluator's own command line (`python -m swegemma eval --sandbox subprocess --skip-agent-patch`) on `htlnlp_116`, `htlnlp_143` and `htlnlp_174`: `ModuleNotFoundError` for the package during collection |
-| The 20 unresolved reference patches: 12, 6 and 2 | the `reason_text` column of the same table; each was rerun with full output and grouped by its error |
+| The competition's evaluator: 93 of 113 reference patches, 0 of 113 empty patches, the same verdict as the author's harness on 25 of 25 saved patches | `NLP/data/tasks/official_verifier/swegemma_verification.csv` and its `README.md` (`NLP` pull request 642). `swegemma` 0.2.11 from the Kaggle dataset `metric/gemma-4-developer-agent-wheelhouse`, its `harness.verification.verify_task` unmodified, subprocess sandbox, run November 10, 2026 on copies of the first release's snapshots (dataset version 3) with a `conftest.py` added at the root, the text that `task_graph.EVALUATOR_CONFTEST_TEXT` now writes into every snapshot |
+| The corrected release as published: 93 of 93 reference patches, 0 of 93 empty patches | `NLP/data/tasks/official_verifier/published_verification.csv` (`NLP` pull request 647): the same driver on dataset version 4, downloaded from Kaggle on November 10, 2026, with nothing added. Its 93 task ids are the 93 the first table vouches for, and each published snapshot's head matches `NLP/data/tasks/snapshot_index.csv` |
+| The first release as published: all 3 tasks tried fail at import | the evaluator's own command line (`python -m swegemma eval --sandbox subprocess --skip-agent-patch`) on `htlnlp_116`, `htlnlp_143` and `htlnlp_174`: `ModuleNotFoundError` for the package during collection |
+| The 20 tasks left out: 12, 6 and 2 | the `reason_text` column of the same table; each was rerun with full output and grouped by its error |
 | What was tried before the harness was re-implemented | an install in a cloud session (`NLP/pull_requests/pr-421-review.md`), PyPI (`NLP/specs/035-local-agent-harness/spec.md`), and the competition's file list (`NLP` pull request 449). None tried the wheelhouse dataset |
 | The author's control: reference patch resolves 111 of 113 | `NLP/data/tasks/agent_runs/oracle_tasks_gated.csv`. It ran from the repository's history, not from the published snapshots, which is why it did not see the withheld files |
 | Empty patch resolves 0 of 113 | `NLP/data/tasks/agent_runs/null_tasks_gated.csv` |
@@ -61,14 +63,14 @@ All from `NLP/data/tasks/agent_runs/gemma-4-e4b-it_kaggle.csv` (58 rows) and its
 
 | Figure | Source |
 |---|---|
-| 58 attempts; 7 set aside; 51 scorable with 39 non-empty patches and 5 resolved; 34 fail the tests, 12 empty | `is_resolved`, `agent_patch_bytes`, `reason_text`. The 7 set aside are the attempted tasks among the 12 whose tests read withheld files: `htlnlp_pr38`, `pr39`, `pr40`, `pr41`, `pr44`, `pr49`, `pr61` |
-| 33 scorable tasks without the code graph, 18 on the fixed harness | `NLP/specs/035-local-agent-harness/tasks.md` (T005) for the fault; the split is by `run_ts` before and after 2026-11-06 12:00 UTC, with the three pilot rows (no `run_ts`) in the first group. The table has no batch column, so this split is mine |
-| 27 and 12 non-empty patches; 5 and 0 resolved | the same split |
-| 0.53 against 0.26 GPU-hours per task | `gpu_hours` averaged over the rows of each group that record it |
-| By tier: 4 of 27, 1 of 19, 0 of 5 | joined to `tier_code` in the manifest, over the 51 |
-| 29 with failing tests, 5 with errors | `verify_exit_code` 1 and 2, over the 51 |
-| Five empty patches with no tool call | `tool_call_count` 0 among the empty-patch rows, over the 51 |
-| Six empty patches on the fixed harness: four hit the token limit, two submitted without editing | the `turns[].output_tokens` of each run's `result.json`, downloaded from its Kaggle notebook output on November 10, 2026: `htlnlp_206`, `236`, `cfa7c008` and `pr23` each have a turn at exactly 2,048; `htlnlp_120` and `122` end in two turns. `NLP/pull_requests/pr-630-review.md` had attributed all of them to the limit |
+| 58 attempts; 10 set aside; 48 scorable with 38 non-empty patches and 5 resolved; 33 fail the tests, 10 empty | `is_resolved`, `agent_patch_bytes`, `reason_text`. The 10 set aside are the attempted tasks among the 20 left out of the published set: `htlnlp_pr38`, `pr39`, `pr40`, `pr41`, `pr44`, `pr49`, `pr61` (tests read withheld files) and `htlnlp_122`, `172`, `185` (`PYTHONSAFEPATH`) |
+| 31 scorable tasks without the code graph, 17 on the fixed harness | `NLP/specs/035-local-agent-harness/tasks.md` (T005) for the fault; the split is by `run_ts` before and after 2026-11-06 12:00 UTC, with the three pilot rows (no `run_ts`) in the first group. The table has no batch column, so this split is mine |
+| 26 and 12 non-empty patches; 5 and 0 resolved | the same split |
+| 0.55 against 0.27 GPU-hours per task | `gpu_hours` averaged over the rows of each group that record it |
+| By tier: 4 of 24, 1 of 19, 0 of 5 | joined to `tier_code` in the manifest, over the 48 |
+| 28 with failing tests, 5 with errors | `verify_exit_code` 1 and 2, over the 48 |
+| Four empty patches with no tool call | `tool_call_count` 0 among the empty-patch rows, over the 48 |
+| Five empty patches on the fixed harness: four hit the token limit, one submitted without editing | the `turns[].output_tokens` of each run's `result.json`, downloaded from its Kaggle notebook output on November 10, 2026: `htlnlp_206`, `236`, `cfa7c008` and `pr23` each have a turn at exactly 2,048; `htlnlp_120` ends in two turns (so does `htlnlp_122`, one of the 10 set aside). `NLP/pull_requests/pr-630-review.md` had attributed all of them to the limit |
 | 20.6 GPU-hours, 10.3 allowance hours, median 0.32 GPU-hours, 6 tool calls, about 74,000 prompt tokens | `gpu_hours`, `gpu_hours / gpu_count`, `tool_call_count`, `prompt_token_count` |
 | $14.19 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`, `price_basis_text` |
 | Confidence intervals | Wilson, 95% |
@@ -80,7 +82,7 @@ All from `NLP/data/tasks/agent_runs/gemma-4-e4b-it_kaggle.csv` (58 rows) and its
 | De-identification 1.00 and 0.27 (`regex_v2`, hard and unseen tiers) | `NLP/data/deid/scores.csv` (`entity_recall`) |
 | Tooth-loss AUC 0.89 to 0.90 and 0.59 to 0.63 | `NLP/docs/tooth_loss.md`, "After the tooth-table fixes of #631" (completed-extraction models) |
 | The masking defect | the same section; fixed by pull request 632 |
-| 16 de-identification candidates; 5 scorable attempts, none resolved | a keyword match on `title_text` in the manifest (`de-id`, `phi`, `maccrobat`, `presidio`, `redact`, `mask`), joined to the run table. Three more were attempted but are among the 7 set aside. The match is mine and approximate |
+| 16 de-identification candidates; 5 scorable attempts, none resolved | a keyword match on `title_text` in the manifest (`de-id`, `phi`, `maccrobat`, `presidio`, `redact`, `mask`), joined to the run table. Three more were attempted but are among the 10 set aside. The match is mine and approximate |
 
 ## Not in the writeup, and why
 
