@@ -4,7 +4,8 @@ A coding agent for the Gemma 4 Developer Agent Competition, and the question beh
 
 **Does a well-run data repo make a small AI coding agent better at fixing bugs?**
 
-We test five things a well-run repo has. Each one is switched off in turn and the drop is measured.
+The idea is that five things a well-run repo has do part of the agent's thinking for it. That has not been measured
+here yet: what has been run is a baseline (below).
 
 | Ingredient | In one line |
 |---|---|
@@ -25,26 +26,31 @@ Licence: [Apache 2.0](LICENSE), the licence type the competition names for winni
 |---|---|
 | `agent.yaml`, `prompts/`, `sub_agents/`, `configs/`, `eval_config.yaml` | the competition entry (`submission.zip` layout): a coder agent and a read-only analyzer, on Gemma 4 E4B for the small-model bonus; to be rebased on the dataset's `sample_submission/` |
 | `skills/pipeline-doctor/` | the [pipeline-doctor](https://github.com/healthtransformationlab/pipeline-doctor) method as a skill: classify the issue from the repo's tables before reading code |
-| `tasks/` | the DataOps task set, in the competition's format, built from a real repo's history |
-| `paper/` | the paper-track writeup (3,000 words, due November 12, 2026) |
+| `tasks/` | a note on the task set: 113 tasks in the competition's format, built from a real repo's history. The tasks themselves are [on Kaggle](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks); the builders and run tables are in [health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp) (`data/tasks/`) |
+| `paper/` | the paper-track writeup ([`writeup.md`](paper/writeup.md), under 3,000 words, due November 12, 2026) and where each of its numbers comes from ([`sources.md`](paper/sources.md)) |
 | `docs/` | what the rules, the dataset format and the starter notebook tell us |
 
 </details>
 
 <details>
-<summary><b>The experiment</b></summary>
+<summary><b>The experiment, and what has been run</b></summary>
 
-Same agent, two task sets, two conditions:
+The plan was the same agent on two task sets under two conditions:
 
-|  | Competition dev set (129 tasks, web libraries) | DataOps task set (a data-pipeline repo) |
+|  | Competition dev set (129 tasks) | DataOps task set (113 tasks) |
 |---|---|---|
-| Agent without the skill | pass rate | pass rate |
-| Agent with the pipeline-doctor skill | pass rate | pass rate |
+| Agent without the skill | not run | **58 tasks run, 5 resolved** (8.6%, 95% CI 3.7 to 18.6) |
+| Agent with the pipeline-doctor skill | not run | not run |
 
-If the skill helps on the DataOps set and not on the web libraries, the repo's ingredients are doing the
-work, not the prompt. Alongside: the offline switch-off test from pipeline-doctor, which hides one
-ingredient at a time (the config table, the naming conventions, lineage, the telemetry metrics, the run
-history) and measures what the rules can still do.
+One cell has been run, so this repo does not yet say whether the skill, or a well-run repo, helps. What the run
+does give is a baseline and two controls, measured with a local re-implementation of the competition's documented
+harness (not the competition's evaluator): the reference patch resolves 111 of 113 tasks and an empty patch
+resolves none. Gemma 4 E4B on two T4 GPUs wrote a patch for 45 of the 58 tasks; the first 36 ran without their
+code graph (a harness fault, since fixed) and resolved 5, the next 22 resolved none. Details and limits:
+[`paper/writeup.md`](paper/writeup.md).
+
+The offline switch-off test in pipeline-doctor is not evidence for the ingredients above: its rules were written
+from the nine incidents it is scored on, and its "no conventions" condition blanks five data columns.
 
 </details>
 
@@ -52,7 +58,8 @@ history) and measures what the rules can still do.
 <summary><b>Where the task set comes from</b></summary>
 
 The source repo's own history: every merged change that touched code and tests (the competition's own
-mining rule). 116 candidates so far. Each carries a fidelity tier for its problem statement: A, from an
+mining rule). 116 candidates; 114 pass both gates and 113 are published. Each carries a fidelity tier for its
+problem statement: A, from an
 issue (49); B, from a PR description (45); C, from a commit message (22). Every one is now traced to an
 issue; 67 of those issues are backfilled records that quote the original text verbatim and say so. Format:
 [`docs/dataset-format.md`](docs/dataset-format.md).
@@ -62,7 +69,10 @@ issue; 67 of those issues are backfilled records that quote the original text ve
 <details>
 <summary><b>Status and dates</b></summary>
 
-Scaffold. No run has happened; no number here is a result until `paper/` says so with its interval.
-Paper deadline November 12, 2026; entry deadline November 25; final submission December 2.
+- **Run:** the task set (built, gated, published), the harness controls, and Gemma 4 E4B on 58 tasks. Every number
+  is in `paper/sources.md` with the file it came from.
+- **Not run:** this `agent.yaml` on the competition's own evaluator; the analyzer sub-agent; the pipeline-doctor
+  skill; the competition's development set.
+- **Dates:** paper deadline November 12, 2026; entry deadline November 25; final submission December 2.
 
 </details>

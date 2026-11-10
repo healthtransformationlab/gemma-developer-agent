@@ -1,20 +1,26 @@
 # The DataOps task set (competition format)
 
-Tasks in the Gemma 4 Developer Agent Competition's layout, built from the incident history of
-[health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp)
-(`data/ops/incident.csv`, spec 027): each incident has an issue, a snapshot commit before the fix, the
-reference patch, and the validation tests, which is exactly what the competition's curation requires.
+113 tasks in the Gemma 4 Developer Agent Competition's layout, built from the merged-change history of
+[health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp): every
+change that touched code and tests, which is the competition's own mining rule. This folder holds only this note.
+
+| What | Where |
+|---|---|
+| The tasks (`tasks.jsonl`, `snapshots/`, `graphs/`, `embeddings/`), CC BY 4.0 | [Kaggle: health-transformation-lab-coding-agent-tasks](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks) |
+| The manifest, gates, exclusions and run tables | that repository, `data/tasks/` |
+| The builders | that repository, `python/scripts/46_mine_tasks.py`, `55_build_tasks.py`, `57_gate_tasks.py` |
+| The harness and the Kaggle runner | that repository, `python/health_transformation_lab_nlp/agent_harness.py`, `python/scripts/59_run_agent.py`, `60_kaggle_agent.py` |
+| The spec | that repository, `specs/028-dataops-task-set/`, `specs/035-local-agent-harness/` |
 
 ```
-tasks/
-├── tasks.jsonl        # issue text, task id, repo, base commit, reference patch, test command
-├── snapshots/         # git working trees frozen before each fix (built by build_tasks.py; not committed)
-├── graphs/            # directed code graphs, same format as the competition's
-└── embeddings/        # 256-d vectors, same format as the competition's
+tasks.jsonl        # instance_id, repo, base_commit, problem_statement, hints_text, patch, test_patch, created_at
+snapshots/         # one .tgz per task: the tree at base_commit as a single commit
+graphs/            # directed code graphs, NetworkX node-link JSON, the competition's keys
+embeddings/        # 256-d vectors per graph node (EmbeddingGemma; parity with the competition's model unverified)
 ```
 
-`build_tasks.py` (planned) reads the incident set, finds each fix commit from `recorded_in_text`, and
-writes the rows in the exact schema in [`docs/dataset-format.md`](../docs/dataset-format.md) and the rulebook ([`docs/rulebook-notes.md`](../docs/rulebook-notes.md)), verifying
-fail-to-pass and pass-to-pass the way the competition's curation does. The comparison the paper reports: the same agent config on the competition's 129-task
-development set (FastAPI, Requests, Rich, HTTPX) and on this set, with and without the pipeline-doctor
-skill, pass rate on both.
+Counts: 197 merged changes, 116 candidates, 114 pass both gates (the tests fail before the fix and pass after it),
+113 published. Each task carries a fidelity tier for its problem statement: A from an issue (49 candidates), B from
+a pull request description (45), C from a commit message (22). Format: [`docs/dataset-format.md`](../docs/dataset-format.md).
+
+What has been measured on it, and how: [`paper/writeup.md`](../paper/writeup.md).

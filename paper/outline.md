@@ -1,5 +1,11 @@
 # Paper track writeup — outline and abstract (draft, Oct 29, 2026)
 
+> **Superseded on November 10, 2026 by [`writeup.md`](writeup.md).** Kept as the record of the plan. Since this was
+> written, the task set was built, gated and published (113 tasks) and Gemma 4 E4B was run on 58 of them, so the
+> table "What exists today" below is out of date. The planned experiments E2 and E3 (with and without the skill,
+> the competition's development set) were not run, and the writeup does not use the switch-off test (E1): see
+> [`sources.md`](sources.md), "Not in the writeup, and why".
+
 **Target:** Gemma 4 Developer Agent Paper Track, 3,000 words, due November 12, 2026. Non-archival.
 **Awards it fits:** Best New Resource (the DataOps task set), Best New Application (code graphs and the
 competition tools on a data-pipeline repository), Overall (if the experiment lands).
