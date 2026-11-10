@@ -1,17 +1,17 @@
-// Build paper/writeup.pdf (and paper/figures/figure1.png) from paper/writeup.md.
+// Build paper/small-local-agent-redo-cloud-agent-work.pdf (and paper/figures/figure1.png) from paper/small-local-agent-redo-cloud-agent-work.md.
 //
 //   python3 paper/figures/make_figure1.py   # only when a count in the figure changes
 //   node paper/build_pdf.js                 # needs pandoc and Playwright's Chromium
 //
 // The PDF is the writeup's text, unchanged: this script only lays it out (title block, page numbers,
-// tables that do not split across pages). Change the words in writeup.md, never here.
+// tables that do not split across pages). Change the words in small-local-agent-redo-cloud-agent-work.md, never here.
 const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 
 const here = __dirname;
-const md = path.join(here, 'writeup.md');
+const md = path.join(here, 'small-local-agent-redo-cloud-agent-work.md');
 const css = fs.readFileSync(path.join(here, 'pdf.css'), 'utf8');
 const svgPath = path.join(here, 'figures', 'figure1.svg');
 
@@ -19,7 +19,7 @@ function html() {
   let body = execFileSync('pandoc', [md, '-f', 'gfm', '-t', 'html5', '--wrap=none'], { encoding: 'utf8' });
   // Everything before the abstract is the title block.
   const cut = body.indexOf('<h2 id="abstract">');
-  if (cut < 0) throw new Error('writeup.md has no "## Abstract" heading');
+  if (cut < 0) throw new Error('small-local-agent-redo-cloud-agent-work.md has no "## Abstract" heading');
   body = `<header class="title-block">${body.slice(0, cut)}</header>\n<main>${body.slice(cut)}</main>`;
   // The abstract and the "Data and code" paragraph sit in a box on page 1.
   body = body.replace(/<h2 id="abstract">Abstract<\/h2>\s*(<p>[\s\S]*?<\/p>)\s*(<p><strong>Data and code\.<\/strong>[\s\S]*?<\/p>)/,
@@ -27,8 +27,8 @@ function html() {
   // The figure goes in as vector art, with the image's alt text kept for screen readers.
   body = body.replace(/<p><img src="figures\/figure1\.png" alt="([^"]*)"\s*\/?><\/p>/,
     (_, alt) => `<figure><img src="file://${svgPath}" alt="${alt}"></figure>`);
-  if (!body.includes('class="abstract"')) throw new Error('writeup.md has no "Data and code." paragraph under the abstract');
-  if (!body.includes('<figure>')) throw new Error('writeup.md does not include figures/figure1.png');
+  if (!body.includes('class="abstract"')) throw new Error('small-local-agent-redo-cloud-agent-work.md has no "Data and code." paragraph under the abstract');
+  if (!body.includes('<figure>')) throw new Error('small-local-agent-redo-cloud-agent-work.md does not include figures/figure1.png');
   const title = (body.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] || 'Writeup';
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${title.replace(/<[^>]+>/g, '')}</title>` +
     `<meta name="author" content="John Bowyer"><style>${css}</style></head><body>${body}</body></html>`;
@@ -43,7 +43,7 @@ function html() {
   await fig.setViewportSize({ width: Math.ceil(box.w), height: Math.ceil(box.h) });
   await fig.screenshot({ path: path.join(here, 'figures', 'figure1.png') });
   // 2. The paper.
-  const out = process.argv[2] || path.join(here, 'writeup.pdf');
+  const out = process.argv[2] || path.join(here, 'small-local-agent-redo-cloud-agent-work.pdf');
   const tmp = path.join(here, '.writeup.build.html');
   fs.writeFileSync(tmp, html());
   const page = await browser.newPage();

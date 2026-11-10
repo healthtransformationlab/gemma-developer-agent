@@ -1,4 +1,4 @@
-/* Layout for paper/writeup.pdf (paper/build_pdf.js). Print only: no dark mode, white paper. */
+/* Layout for paper/small-local-agent-redo-cloud-agent-work.pdf (paper/build_pdf.js). Print only: no dark mode, white paper. */
 @page { size: Letter; }
 html { font-size: 10.6pt; }
 body { margin: 0; color: #111; background: #fff; font-family: 'Liberation Serif', 'Times New Roman', Times, serif;

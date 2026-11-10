@@ -1,6 +1,6 @@
 # Paper track writeup — outline and abstract (draft, Oct 29, 2026)
 
-> **Superseded on November 10, 2026 by [`writeup.md`](writeup.md).** Kept as the record of the plan. Since this was
+> **Superseded on November 10, 2026 by [`small-local-agent-redo-cloud-agent-work.md`](small-local-agent-redo-cloud-agent-work.md).** Kept as the record of the plan. Since this was
 > written, the task set was built, gated and published (113 tasks) and Gemma 4 E4B was run on 58 of them, so the
 > table "What exists today" below is out of date. The planned experiments E2 and E3 (with and without the skill,
 > the competition's development set) were not run, and the writeup does not use the switch-off test (E1): see
@@ -90,7 +90,7 @@ development set and on the DataOps set, with and without the skill. [Results to 
 | Task set in competition format (`tasks.jsonl`, snapshots, graphs) | no | NLP repo spec 028 US3-US4 (`47_build_tasks.py`, planned); format in `docs/dataset-format.md` |
 | Agent run on the dev set (E2 baseline) | no | one Kaggle L4x4 run |
 | Agent run on the DataOps set, both conditions | no | two runs |
-| Paper text | this outline | `paper/writeup.md` |
+| Paper text | this outline | `paper/small-local-agent-redo-cloud-agent-work.md` |
 
 ## Schedule to November 12
 
