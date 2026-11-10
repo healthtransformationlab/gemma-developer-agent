@@ -50,8 +50,8 @@ paper is the owner's to edit and submit.
 - Kaggle's word counter may differ from `wc -w`; the margin is 30 words.
 
 ## For the owner
-- Confirm `getcommunityone/open-navigator` may be cited, or remove Section 4.5's first paragraph and the fourth
-  contribution.
+- `getcommunityone/open-navigator`: confirmed by the owner on November 10, 2026 as the repository of a nonprofit
+  the owner leads, and citable. Section 4.5 now says so. The wording of that role is the owner's to adjust.
 - The statement "its author typed no code" is the owner's own; the commit counts beside it are in `sources.md`.
 
 ## Not covered

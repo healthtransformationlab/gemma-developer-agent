@@ -83,7 +83,7 @@ A task is kept only if its tests fail at `base_commit` with the test patch alone
 
 ### 4.5 A second repository
 
-To see whether the recipe transfers, we applied the mining rule unchanged to a second public repository by the same author: a civic-data monorepo (FastAPI, dbt, React) with several human contributors and no issue-tracing rule. Of 1,320 first-parent commits, 133 touch non-test Python and Python tests. Only 22 of those arrived through a pull request; the other 111 are direct commits whose only statement is a commit message.
+To see whether the recipe transfers, we applied the mining rule unchanged to a second public repository: Open Navigator, an open-source civic engagement platform (FastAPI, dbt, React) run by a nonprofit the author leads, with several human contributors and no issue-tracing rule. Of 1,320 first-parent commits, 133 touch non-test Python and Python tests. Only 22 of those arrived through a pull request; the other 111 are direct commits whose only statement is a commit message. The author committed all 133.
 
 So the rule finds candidates anywhere, but the problem statements come from the convention. In the source repository every candidate traces to an issue, 49 natively and 67 through backfilled records. These 133 candidates are not gated and are not part of the release.
 

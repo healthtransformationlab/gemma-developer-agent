@@ -27,7 +27,7 @@ documented harness. None is a score from the competition's evaluator.
 | 115 built, 114 pass both gates | `NLP/data/tasks/task_gates.csv` (`is_valid`) |
 | The three tasks left out, with reasons | `NLP/data/tasks/tasks_excluded.csv` |
 | 113 published; median 488 nodes and 397 `calls` edges; the format check | `NLP/specs/028-dataops-task-set/tasks.md` (T009 to T011) |
-| Second repository: 1,320 first-parent commits, 133 candidates, 22 through a pull request | `git log --first-parent` on `getcommunityone/open-navigator` main at `6fa4943`; a change counts when its diff has a non-test `.py` file and a test `.py` file (under `tests/`, or named `test_*.py` or `*_test.py`). Not gated |
+| Second repository: 1,320 first-parent commits, 133 candidates (all committed by the author), 22 through a pull request | `git log --first-parent` on [`getcommunityone/open-navigator`](https://github.com/getcommunityone/open-navigator) (Apache 2.0) main at `6fa4943`; its README describes it as an "AI-powered civic engagement platform", and its owner confirmed on November 10, 2026 that it may be cited; a change counts when its diff has a non-test `.py` file and a test `.py` file (under `tests/`, or named `test_*.py` or `*_test.py`). Not gated |
 
 ## Section 5, the controls
 
