@@ -6,7 +6,7 @@
 
 ## Abstract
 
-Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored). It has 93 tasks in the competition's format, each verified with the competition's own evaluator and labelled with where its problem statement came from: an issue, a pull request or a commit message. Under tight limits (2,048 output tokens, thinking off), Gemma 4 E4B on two free T4 GPUs resolved 5 of 48 tasks, run cheapest first. A paired rerun of 23 with the code-graph tools resolved 2, as without them; the model rarely called the tools. The agent ran on my open re-implementation of the competition's harness; the official evaluator, which did not run the agent, gives the same verdict on all 48 patches compared. I report how the model fails and what each task costs. Data, harness and run tables are public.
+Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored). It has 93 tasks in the competition's format, each verified with the competition's own evaluator and labelled with where its problem statement came from: an issue, a pull request or a commit message. Under tight limits (2,048 output tokens, thinking off), Gemma 4 E4B on two free T4 GPUs resolved 5 of 48 tasks, run cheapest first. A paired rerun of 23 with the code-graph tools resolved 2, as without them; the model rarely called the tools. An AI-assisted screen of 30 finds 25 with tests needing names the statement never gives. The agent ran on my open re-implementation of the competition's harness; the official evaluator, which did not run the agent, gives the same verdict on all 48 patches compared. I report how the model fails and what each task costs. Data, harness and run tables are public.
 
 ## 1. Introduction
 
@@ -14,7 +14,7 @@ The best coding agents today run on large models in the cloud. This competition 
 
 Two kinds of repository are scarce.
 
-The first is the **data repository**. In a web library a bug usually announces itself: a request fails, a test goes red. In health data the costly defect is silent. A pipeline finishes, a table is written, and a number in it is wrong (Section 7). Health answers fail the same way. Twelve large models averaged 81% on dental licensing-exam questions and 22% on questions from published patient cases [15], and on 1,100 medical consultation tasks omissions made up more than 80% of severe errors in a preprint study [16]. A model can pass the exam and still leave out the warning a patient needed.
+The first is the **data repository**. In a web library a bug usually announces itself: a request fails, a test goes red. In health data the costly defect is silent. A pipeline finishes, a table is written, and a number in it is wrong (Section 7).
 
 The second is the **agent-built repository**. A growing share of code is written by agents under a person's direction. Such a repository leaves an unusually complete record: an issue for each change, a pull request, a review. A large cloud agent did this work. How much of it can a small local agent redo from the same problem statements?
 
@@ -33,7 +33,7 @@ Contributions:
 
 **Agents.** SWE-agent showed that the interface given to a model matters as much as the model [8]; the competition fixes that interface, so this work re-implements it.
 
-**Data work.** DS-1000 tests data-science code generation [9]; Spider 2.0 [10], ELT-Bench [11] and data-eng-bench [18] score an artefact agents produce: SQL, a pipeline, dbt models. MLOps-Bench [17] is closest: 212 tasks with fail-to-pass tests from 31 public ML repositories. These tasks score repairs to one tested, agent-built health-data codebase.
+**Data work.** DS-1000 tests data-science code generation [9]; Spider 2.0 [10], ELT-Bench [11] and data-eng-bench [16] score an artefact agents produce: SQL, a pipeline, dbt models. MLOps-Bench [15] is closest: 212 tasks with fail-to-pass tests from 31 public ML repositories. These tasks score repairs to one tested, agent-built health-data codebase.
 
 **Health-data quality.** The repository's checks follow the harmonized data-quality terms of Kahn et al. [12]; its de-identification tests follow the i2b2/UTHealth categories [13] and use MACCROBAT [14].
 
@@ -47,7 +47,7 @@ The repository holds a Python package, its tests, an R twin kept in numerical pa
 
 **Reviews.** Every pull request has a review committed as a file: 240 of them. Of the 192 with a structured verdict, all approve (64 with minor findings, 9 with conditions); blocking findings are fixed on the branch first. Agents merge their own green pull requests except in four cases reserved for me: limited-compute runs, publishing outside the repository, deletions, and rule changes.
 
-**Where my time went.** By my own estimate, more than half of my time went into three things a person reads: a data-model diagram annotated per attribute, a results view that drills from sensitivity, specificity, PPV, NPV and AUC down to SHAP values, and a data-quality page. A keyword match on titles finds them in only 38 of 305 merged pull requests. How a discrepancy is displayed and drilled into decides whether anyone catches it, and no test checks that.
+**Where my time went.** By my own estimate, more than half of my time went into three things a person reads: a data-model diagram annotated per attribute, a results view that drills from sensitivity, specificity, PPV, NPV and AUC down to SHAP values, and a data-quality page. How a discrepancy is displayed and drilled into decides whether anyone catches it, and no test checks that.
 
 ## 4. Building the task set
 
@@ -86,7 +86,7 @@ A task is kept only if its tests fail at `base_commit` with the test patch alone
 
 ### 4.5 A second repository
 
-To see whether the recipe transfers, I applied the mining rule unchanged to a second public repository: Open Navigator, an open-source civic engagement platform run by a nonprofit I lead, with several human contributors and no issue-tracing rule. Of 1,320 first-parent commits, 133 touch non-test Python and Python tests. None links an issue. Only 22 can be tied by commit subject to one of the repository's 169 merged pull requests.
+To see whether the recipe transfers, I applied the mining rule unchanged to a second public repository: Open Navigator, run by a nonprofit I lead, with several human contributors and no issue-tracing rule. Of 1,320 first-parent commits, 133 touch non-test Python and Python tests. None links an issue. Only 22 can be tied by commit subject to one of the repository's 169 merged pull requests.
 
 So the rule finds candidates anywhere, but statements depend on what the history recorded: 67 of this paper's 116 candidates got their issue record afterwards. These 133 are not gated and not released.
 
@@ -133,6 +133,8 @@ One task was resolved only without the tools, one only with them, one both times
 
 **How it fails.** Of the 43 unresolved tasks, 35 submitted a patch that fails the target tests (30 with failing tests, 5 with errors before any test ran) and 8 submitted nothing. In those eight transcripts, four have a turn that hit the 2,048-token limit, three submit without an edit, and one calls the edit tool four times with an argument it does not take. The five resolved tasks are small: a CI rule, a warning message, a label parser, a training setting, a notebook setting.
 
+**Task fairness.** An AI reviewer screened 30 of the 93 on SWE-bench Verified's two questions [2]; I checked its findings in summary and agreed with all 30. Five pass. In 25 the tests need a name or text the statement never gives. Of 16 the model attempted, it resolved 1 of the 3 that pass and none of the 13 that fail, so the baseline may measure the tasks more than the model.
+
 **Cost.** The 58 first attempts used 20.6 GPU-hours and the 28 reruns 9.6: 30.2 in all, about $21 at an estimated $0.69 per T4-hour; Kaggle's GPUs are free. The median task takes 0.39 GPU-hours, 7 tool calls and about 91,000 prompt tokens. Five resolved tasks cost 6.0 GPU-hours each.
 
 ## 7. What these tasks contain that web-library tasks do not
@@ -145,8 +147,6 @@ Three cases from the repository show the defect class that motivates it: everyth
 | Tooth-loss model, AUC | 0.89–0.90 (held-out labelled extractions) | 0.59–0.63 (teeth missing at the first visit) |
 | A masking defect in the feature table | every test passed | the measures of about a quarter of charted teeth were blank in every earlier run |
 
-A keyword match on titles puts 16 of the 116 candidates in de-identification; the baseline attempted 5 of those published and resolved none.
-
 ## 8. Limitations
 
 - **One repository, one author's rules.** The second repository tests only the mining rule.
@@ -154,7 +154,7 @@ A keyword match on titles puts 16 of the 116 candidates in de-identification; th
 - **My harness ran the agent.** The competition's evaluator verified patches afterwards but did not run the agent, so no score here is comparable to the leaderboard.
 - **Constrained settings.** The baseline caps output at 2,048 tokens with thinking off on T4 GPUs. My competition configuration allows 16,384 output tokens and a 4,096-token thinking budget on four L4s. It is a constrained baseline, not an estimate of the model under the competition's budgets.
 - **Small.** 48 of 93 tasks, cheapest first, one sampled run per condition at temperature 0.2. One task flipping moves the paired result.
-- **No human screening.** Passing the evaluator does not show a statement specifies what its tests check [2].
+- **A screen checked only in summary.** I did not read the tests; the AI's verdict was shown first. 63 tasks are unscreened.
 - **Untested components.** The submission's analyzer sub-agent and its skill were not run.
 - **The tasks are not silent.** Each comes with a failing test. The set measures repair of the code that looks for silent defects, not noticing one unprompted.
 - **Synthetic health data.** The cases in Section 7 are agreement with a synthetic answer key, not findings about any patient or practice.
@@ -163,7 +163,7 @@ A keyword match on titles puts 16 of the 116 candidates in de-identification; th
 
 A cloud agent built this repository in fifteen days. From the same problem statements, a model that runs on free GPUs resolved 5 of 48 tasks, all of them small, and left the graph tools almost unused. The released tasks let others measure that gap.
 
-The recipe should transfer to any repository that traces its changes to issues: mine the changes that touch code and tests, record where each statement came from, gate, and run a reference-patch control and an empty-patch control on the published files, with the official evaluator where there is one, before trusting any model's score.
+The recipe should transfer to any repository that traces its changes to issues: mine the changes that touch code and tests, record where each statement came from, gate, and run a reference-patch control and an empty-patch control on the published files, with the official evaluator where there is one, then screen statements against tests, before trusting any model's score.
 
 Where each number comes from is listed in `paper/sources.md`. Released: the task set (Kaggle, `jcblearning/health-transformation-lab-coding-agent-tasks`, CC BY 4.0), the harness and builders (`healthtransformationlab/health-transformation-lab-nlp`, Apache 2.0), the agent configuration (`healthtransformationlab/gemma-developer-agent`, Apache 2.0), and every run table cited here.
 
@@ -183,7 +183,5 @@ Where each number comes from is listed in `paper/sources.md`. Released: the task
 12. Kahn et al. A Harmonized Data Quality Assessment Terminology and Framework for the Secondary Use of Electronic Health Record Data. eGEMs, 2016.
 13. Stubbs, Uzuner. Annotating longitudinal clinical narratives for de-identification: the 2014 i2b2/UTHealth corpus. Journal of Biomedical Informatics, 2015.
 14. Caufield et al. A Comprehensive Typing System for Information Extraction from Clinical Narratives (MACCROBAT). 2019.
-15. Zhao, Liang, Cai et al. GlobalDentBench: A Multinational Benchmark for Evaluating LLM Clinical Reasoning in Dentistry with Expert Calibration. arXiv:2605.24636, 2026.
-16. Wu, Nateghi Haredasht, Maharaj et al. First, do NOHARM: a medical safety benchmark and randomized study of physician and AI teaming on clinical consultations. arXiv:2512.01241v4, 2026 (preprint).
-17. Tran, Patel, Mahajan et al. MLOps-Bench: Benchmarking AI Agents on Production ML Engineering in Real Repositories. arXiv:2610.23506, 2026.
-18. Snowflake Inc. data-eng-bench: a data-engineering benchmark for coding agents. Version 1.0.0, github.com/Snowflake-Labs/data-eng-bench, 2026.
+15. Tran, Patel, Mahajan et al. MLOps-Bench: Benchmarking AI Agents on Production ML Engineering in Real Repositories. arXiv:2610.23506, 2026.
+16. Snowflake Inc. data-eng-bench: a data-engineering benchmark for coding agents. Version 1.0.0, github.com/Snowflake-Labs/data-eng-bench, 2026.
