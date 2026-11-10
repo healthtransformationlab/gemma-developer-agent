@@ -36,10 +36,9 @@ The framing by a person's loop, and the wish to show what the graph is worth, ar
 | "In fifteen days, one person in the loop with a cloud coding agent ... from nothing to 960 commits, 775 of them marked as agent-authored" | Section 3 (rows below): 960 commits on `main` from GitHub's initial commit on October 25 to November 8, 2026, fifteen days counting both ends; 775 = 710 with the agent's co-author trailer + 65 authored as the agent. The other 185 are 175 merge commits GitHub made for pull requests, 5 by an automation bot, 4 by the owner alone and the initial commit. The owner asked on November 10, 2026 for the abstract to lead with this |
 | "without typing code" | the four commits by the owner alone are three documentation edits and one merge of `main` into a branch (Section 3, the row on the 250 commits without a trailer); every other change came through a coding-agent session's pull request |
 | "one person in the loop"; "that loop" | Section 1 and Section 3: every change was made by a coding-agent session the owner directed in chat; `NLP/AGENTS.md` ("Branches and issues", rule 6) keeps limited-compute runs, publishing, deletions and rule changes for the owner's word |
-| "Scripts turn its CI-enforced record of issues, pull requests and reviews into 93 ... tasks" | Section 1's row on the scripts, and Section 3: `NLP/AGENTS.md` requires an issue per user story and a pull request tied to it, CI rejects a pull request without an issue link, and 240 reviews are committed as files. The issue rule was adopted partway through (Section 4.2), so this says what the record holds, not that every change has all three |
+| "Scripts turn its CI-enforced record into 93 ... tasks" (the record: issues, pull requests and reviews) | Section 1's row on the scripts, and Section 3: `NLP/AGENTS.md` requires an issue per user story and a pull request tied to it, CI rejects a pull request without an issue link, and 240 reviews are committed as files. The issue rule was adopted partway through (Section 4.2), so this says what the record holds, not that every change has all three |
 | "health-data modelling tasks" | Section 1's row on the kinds of work, below |
-| "in the competition's format" | Section 4.3: the format check against the competition's own files (snapshot layout, graph keys, embedding shape) |
-| "each verified with the competition's own evaluator" | Section 5: the corrected release as published, 93 of 93 reference patches and 0 of 93 empty patches |
+| "made the way the competition's own are: its mining rule, its format, its evaluator on every task" | Section 4.1 (a candidate touches both non-test code and test files, the competition's own mining rule), Section 5 (its evaluator on all 93) and Section 4.3: the format check against the competition's own files (snapshot layout, graph keys, embedding shape) |
 | "unattended" | each task ran from the prompt to a submitted patch with no person acting: the harness loop of `NLP` spec 035, one task per offline Kaggle notebook |
 | "5 of the 48 tasks it ran, cheapest first (95% CI 4.5–22.2%), all small" | Section 6, "Setup", "Results" (the Wilson interval of 5 of 48) and "How it fails" (a CI rule, a warning message, a label parser and two settings) |
 | "with eight times the output budget, 2 of the 23 cheapest, against 2 before" | Section 6, "A larger budget": 16,384 output tokens a turn against 2,048, with thinking on |
@@ -54,6 +53,7 @@ The framing by a person's loop, and the wish to show what the graph is worth, ar
 
 | Figure | Source |
 |---|---|
+| "adds one repository that is both, set beside the competition's four by the competition's mining rule, format and evaluator" | "four" is the count Section 1 already gives for the competition's development set, two sentences earlier; this change adds no count. The set is not part of the competition's data and the paper does not say it is: "beside", not "in". The rule, format and evaluator are the rows of Sections 4.1, 4.3 and 5. The owner's point of November 10, 2026: the method is the competition's and is already run on several repositories; this set adds one of a different kind |
 | "its tasks are application work: de-identification, record checks, model scoring, pipelines" | the 93 reference patches by the package modules they change, read from `NLP/data/tasks/graph_coverage.csv` (`edited_node_text`) and the manifest's titles: de-identification (`deid`, `deid_eval`, `phi_challenge`), record plausibility and data-quality checks (`plausibility`, `grader_tables`), model scoring and reliability (`judge`, `reliability`, `rungs`, `mlflow_judge`), and pipelines, tracking and dashboards (`runlog`, `tracking`, `telemetry`, `dashboards`). A description, not a count |
 | "every step from merged change to published task is a script" | mining `NLP/python/health_transformation_lab_nlp/task_mine.py`; building tasks, snapshots, graphs and embeddings `python/scripts/55_build_tasks.py`; gates `57_gate_tasks.py`; publishing `kaggle/publish_tasks.py` and `.github/workflows/kaggle-publish-tasks.yml`; the evaluator's controls `kaggle/official_verify.py`. The set was mined as of October 29, 2026; rebuilding it on later history has not been done |
 | "with a person in the loop"; "what does the person need for the rest?" | the abstract's rows above: the owner directed every session; the question is the paper's framing |
@@ -136,7 +136,7 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 
 | Figure | Source |
 |---|---|
-| 58 tasks attempted; 10 set aside; 48 scorable with 40 non-empty patches and 5 resolved; 35 fail the tests, 8 empty | `is_resolved`, `agent_patch_bytes`, `reason_text`, each task's latest run. The 10 set aside are the attempted tasks among the 20 left out of the published set: `htlnlp_pr38`, `pr39`, `pr40`, `pr41`, `pr44`, `pr49`, `pr61` (tests read withheld files) and `htlnlp_122`, `172`, `185` (`PYTHONSAFEPATH`) |
+| 58 tasks attempted; 10 excluded from the set (set aside); 48 scorable with 40 non-empty patches and 5 resolved; 35 fail the tests, 8 empty | `is_resolved`, `agent_patch_bytes`, `reason_text`, each task's latest run. The 10 set aside are the attempted tasks among the 20 left out of the published set: `htlnlp_pr38`, `pr39`, `pr40`, `pr41`, `pr44`, `pr49`, `pr61` (tests read withheld files) and `htlnlp_122`, `172`, `185` (`PYTHONSAFEPATH`) |
 | The paired rerun: 23 published tasks; resolved 2 and 2, one in common (patches 18 and 20, and the table, are no longer in the writeup) | the paired table, rows with `is_published`: `is_first_resolved`, `is_rerun_resolved`, `first_patch_bytes`, `rerun_patch_bytes`. The first run is the run table's row at `NLP` commit `db0a29d`, before the harness fault of `NLP/specs/035-local-agent-harness/tasks.md` (T005) was fixed. 28 tasks were rerun; five are not in the published set. Lost `htlnlp_144`, gained `htlnlp_226`, both `htlnlp_pr63` |
 | A graph tool called in 4 of 23 runs, 6 calls among 145 | `rerun_graph_tool_call_count` and `rerun_tool_call_count` in the paired table, published rows. The calls are counted from each run's transcript; all six are `search_similar_code` |
 | By tier: 4 of 24, 1 of 19, 0 of 5 | joined to `tier_code` in the manifest, over the 48 |
@@ -408,6 +408,20 @@ None of its three cases is in the paper now. The rows below are for what was cut
   the conclusion's list of what the person in the loop can see; and the GPU-hour totals (30.2 T4 GPU-hours for the
   baseline and its reruns, 12.8 L4 for the evaluator's runs, 2.1 for the larger budget; their rows are under
   Section 6 above).
+- Four wording fixes from reviews, the same day: the withheld candidate's row reads "unlicensed third-party files"
+  (its patch adds third-party files with no stated licence); "The model made only 6 graph-tool calls among 145, in 4
+  of the 23 runs" (the denominator stays, because the abstract's 473 is its sum with two others); "Ten of the 58
+  tasks attempted were excluded from the set (Section 5)"; and Section 4.3 now says how chance is worked out: for
+  each task, the probability that a random ranking of its graph's nodes puts an edited one in the first k (one
+  minus a hypergeometric zero term, `chance_top` in `64_statement_search.py`), summed over the tasks.
+- Every review marked the paper down for "one repository". At the owner's direction the paper now says which parts
+  are the competition's own and already run on its four development repositories (the mining rule, the format, the
+  evaluator) and which this paper added and ran on one (statement sources, controls on the published files, the
+  screens, the graph counts): in the abstract, Section 1, Section 7's first bullet and the conclusion's recipe.
+  "The second repository tests only the mining rule" left Section 7; Section 4.5 still says the 133 candidates are
+  not gated or released. Cut to make room: the larger-budget paragraph's sentence on output tokens and the context
+  limit (its rows are under Section 6 above), "it reads and edits files and rarely searches", and "of issues,
+  pull requests and reviews" in the abstract (Section 3 has it).
 - Added the same day at the owner's direction: what the task set is made of and how (application work in health
   data; every step a script; the competition's exact format), the embedding-search count, the split of the
   agent's time by graph reach, and an automated screen of all 93 tasks beside the 30 the owner checked.
