@@ -21,6 +21,11 @@ GROUPS = [
         ("Wrote a patch", 40),
         ("Resolved", 5),
     ]),
+    ("Run by the competition's own evaluator on a random sample (Section 6)", [
+        ("Sampled, stratified by tier", 20),
+        ("Wrote a patch", 16),
+        ("Resolved", 0),
+    ]),
     ("AI-assisted screen of a random sample of the published tasks (Section 6)", [
         ("Screened", 30),
         ("Tests need a name or text the statement never gives", 25),
@@ -30,7 +35,7 @@ GROUPS = [
 TITLE = "Figure 1. Task counts at each step, on one scale."
 
 WIDTH, LEFT, BAR_X, BAR_MAX = 720, 12, 356, 300      # px; BAR_MAX is the length of the longest bar
-BAR_H, ROW, HEAD, GAP, TOP = 14, 24, 26, 12, 34       # bar thickness, row pitch, group heading, gap between groups
+BAR_H, ROW, HEAD, GAP, TOP = 12, 20, 22, 8, 32        # bar thickness, row pitch, group heading, gap between groups
 INK, INK_2, RULE, BAR = "#0b0b0b", "#52514e", "#c9c8c2", "#2a78d6"
 FONT = "Inter, 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif"
 

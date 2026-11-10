@@ -10,7 +10,7 @@ Gemma 4 Developer Agent Competition, Paper Track [17]. Topic: Tasks & Benchmarks
 
 ## Abstract
 
-Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored). It has 93 tasks in the competition's format, each verified with the competition's own evaluator and labelled with where its problem statement came from: an issue, a pull request or a commit message. Under tight limits (2,048 output tokens, thinking off), Gemma 4 E4B on two free T4 GPUs resolved 5 of 48 tasks, run cheapest first. A paired rerun of 23 with the code-graph tools resolved 2, as without them; the model rarely called the tools. An AI-assisted screen of 30 finds 25 with tests needing names the statement never gives. The agent ran on my open re-implementation of the competition's harness; the official evaluator, which did not run the agent, gives the same verdict on all 48 patches compared. I report how the model fails and what each task costs.
+Coding-agent benchmarks are mined from mature web libraries maintained by people. I release a task set mined from a different kind of repository: a health-data benchmark built by cloud coding-agent sessions under written rules that CI enforces (960 commits in fifteen days, 775 of them marked as agent-authored). It has 93 tasks in the competition's format, each verified with the competition's own evaluator and labelled with where its problem statement came from: an issue, a pull request or a commit message. Under tight limits (2,048 output tokens, thinking off), Gemma 4 E4B on two free T4 GPUs resolved 5 of 48 tasks, run cheapest first. A paired rerun of 23 with the code-graph tools resolved 2, as without them; the model rarely called the tools. An AI-assisted screen of 30 finds 25 with tests needing names the statement never gives. The agent ran on my open re-implementation of the competition's harness; the official evaluator gives the same verdict on all 48 patches compared. Run end to end by that evaluator on a seeded sample of 20, with the competition's hardware and my competition settings, the agent resolved none. I report how the model fails and what each task costs.
 
 **Data and code.** Tasks (CC BY 4.0): [kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks). Harness, builders and run tables (Apache 2.0): [github.com/healthtransformationlab/health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp). Agent configuration and each number's source (Apache 2.0): [github.com/healthtransformationlab/gemma-developer-agent](https://github.com/healthtransformationlab/gemma-developer-agent).
 
@@ -28,7 +28,7 @@ Contributions:
 
 1. **A task set** of 93 tasks in the competition's format, each verified with the competition's own evaluator, public on Kaggle under CC BY 4.0, with a fidelity tier per task (Section 4).
 2. **An open harness checked against the official one**: a sandboxed re-implementation that agrees with the competition's evaluator on every saved agent patch and keeps answers from the model (Section 5).
-3. **A baseline** for Gemma 4 E4B with a failure breakdown, cost per task and a paired test of the code-graph tools (Section 6).
+3. **A baseline** for Gemma 4 E4B with a failure breakdown, cost per task, a paired test of the code-graph tools, and a run under the competition's own evaluator (Section 6).
 4. **A check on a second repository**: without the tracing rule, the same mining rule finds candidates but no issue-linked statements (Section 4.5).
 
 ## 2. Related work
@@ -131,13 +131,15 @@ Kaggle GPUs do not allow namespaces, and a notebook can read every attached file
 | Graph tools unavailable | 18 | 2 (8.7%, 2.4–26.8) |
 | Graph tools available | 20 | 2 (8.7%, 2.4–26.8) |
 
-One task was resolved only without the tools, one only with them, one both times. The transcripts suggest why: with the tools available the model called one in 4 of the 23 runs, 6 calls among 145. It reads and edits files and rarely searches. The figures above and below use each task's latest run; eight tasks have none with the tools.
+One task was resolved only without the tools, one only with them, one both times. The transcripts suggest why: with the tools available the model called one in 4 of the 23 runs, 6 calls among 145. It reads and edits files and rarely searches. The figures use each task's latest run; eight tasks have none with the tools.
 
 **How it fails.** Of the 43 unresolved tasks, 35 submitted a patch that fails the target tests (30 with failing tests, 5 with errors before any test ran) and 8 submitted nothing. In those eight transcripts, four have a turn that hit the 2,048-token limit, three submit without an edit, and one calls the edit tool four times with an argument it does not take. The five resolved tasks are small: a CI rule, a warning message, a label parser, a training setting, a notebook setting.
 
 **Task fairness.** An AI reviewer screened 30 of the 93 on SWE-bench Verified's two questions [2]; I checked its findings in summary and agreed with all 30. Five pass. In 25 the tests need a name or text the statement never gives. Of 16 the model attempted, it resolved 1 of the 3 that pass and none of the 13 that fail, so the baseline may measure the tasks more than the model.
 
-**Cost.** The 58 first attempts used 20.6 GPU-hours and the 28 reruns 9.6: 30.2 in all, about $21 at an estimated $0.69 per T4-hour; Kaggle's GPUs are free. The median task takes 0.39 GPU-hours, 7 tool calls and about 91,000 prompt tokens. Five resolved tasks cost 6.0 GPU-hours each.
+**Under the competition's evaluator.** I also ran the agent end to end with the official harness: `swegemma`'s agent loop, vLLM from the competition's wheelhouse, four L4 GPUs, and my competition settings (16,384 output tokens, a 4,096-token thinking budget, 40 tool calls, 5 minutes). The sample is 20 of the 93, drawn with a fixed seed and stratified by tier, not by cost. Each task ran alone, without its patch or tests; the same evaluator then verified the patch on the published snapshot. It resolved 0 of 20 (95% CI 0–16.1): 16 patches fail and 4 runs submit nothing. No run reached a budget. In 189 tool calls the model called a graph tool 9 times, the analyzer sub-agent 3 times and the skill never. Thirteen of the 20 are also in the screen above; 11 of them fail it. The run also found a defect my harness had hidden: my prompt required a hints variable, which ends the agent on the half of the tasks that have no hints. I fixed it before those tasks ran.
+
+**Cost.** The 58 first attempts used 20.6 GPU-hours and the 28 reruns 9.6: 30.2 in all, about $21 at an estimated $0.69 per T4-hour; Kaggle's GPUs are free. The median task takes 0.39 GPU-hours. Five resolved tasks cost 6.0 GPU-hours each. The evaluator's 21 runs used 12.8 L4 GPU-hours.
 
 ## 7. What these tasks contain that web-library tasks do not
 
@@ -153,17 +155,16 @@ Three cases show the defect class that motivates the set: everything ran, and a 
 
 - **One repository, one author's rules.** The second repository tests only the mining rule.
 - **Agent-written statements.** The issue text was largely written by a cloud agent at my direction, which may make it easier or harder to follow than a person's.
-- **My harness ran the agent.** The competition's evaluator verified patches afterwards but did not run the agent, so no score here is comparable to the leaderboard.
-- **Constrained settings.** The baseline caps output at 2,048 tokens with thinking off on T4 GPUs. My competition configuration allows 16,384 output tokens and a 4,096-token thinking budget on four L4s. It is a constrained baseline, not an estimate of the model under the competition's budgets.
-- **Small.** 48 of 93 tasks, cheapest first, one sampled run per condition at temperature 0.2. One task flipping moves the paired result.
+- **My harness ran the baseline.** The competition's evaluator ran the agent on 20 of my tasks only, so no score here is comparable to the leaderboard.
+- **Constrained settings.** The baseline caps output at 2,048 tokens with thinking off on T4 GPUs. Only the 20 tasks under the evaluator ran with my competition settings, which allow 5 minutes and 40 tool calls against the default 60 and 100.
+- **Small.** 48 of 93 tasks, cheapest first, and a random 20 under the evaluator; one sampled run per condition at temperature 0.2. One task flipping moves the paired result.
 - **A screen checked only in summary.** I saw the AI's verdict first and did not read the tests; 63 tasks are unscreened.
-- **Untested components.** The submission's analyzer sub-agent and its skill were not run.
 - **The tasks are not silent.** Each comes with a failing test. The set measures repair of the code that looks for silent defects, not noticing one unprompted.
 - **Synthetic health data.** The cases in Section 7 are agreement with a synthetic answer key, not findings about any patient or practice.
 
 ## 9. Conclusion and release
 
-A cloud agent built this repository in fifteen days. From the same problem statements, a model that runs on free GPUs resolved 5 of 48 tasks, all of them small, and left the graph tools almost unused. The released tasks let others test other models and settings.
+A cloud agent built this repository in fifteen days. From the same problem statements, a model that runs on free GPUs resolved 5 of 48 tasks, all of them small, and none of a random 20 under the competition's own evaluator; it left the graph tools almost unused. The released tasks let others test other models and settings.
 
 The recipe should transfer to any repository that traces changes to issues: mine changes that touch code and tests, record each statement's source, gate, run reference-patch and empty-patch controls on the published files with the official evaluator, and screen statements against tests before trusting any model's score.
 
