@@ -162,7 +162,7 @@ A cloud agent built this repository in fifteen days. From the same problem state
 
 The recipe generalises to any repository that traces its changes to issues: mine the changes that touch code and tests, record where each statement came from, gate, and run a reference-patch control and an empty-patch control on the published files, with the official evaluator where there is one, before trusting any model's score.
 
-Where each number comes from is listed in `paper/sources.md`. Released: the task set (Kaggle, `jcblearning/health-transformation-lab-coding-agent-tasks`, CC BY 4.0), the harness and builders (`healthtransformationlab/health-transformation-lab-nlp`, MIT), the agent configuration (`healthtransformationlab/gemma-developer-agent`, Apache 2.0), and every run table cited here.
+Where each number comes from is listed in `paper/sources.md`. Released: the task set (Kaggle, `jcblearning/health-transformation-lab-coding-agent-tasks`, CC BY 4.0), the harness and builders (`healthtransformationlab/health-transformation-lab-nlp`, Apache 2.0), the agent configuration (`healthtransformationlab/gemma-developer-agent`, Apache 2.0), and every run table cited here.
 
 ## References
 
