@@ -1,0 +1,17 @@
+# The paper against the competition's rules (#37): paper/check_rules.py on every change to the paper.
+name: Paper rules check
+on:
+  pull_request:
+    paths: ["paper/**", "LICENSE", ".github/workflows/paper-rules.yml"]
+  push:
+    branches: [main]
+    paths: ["paper/**"]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.12"}
+      - run: pip install --quiet "pypdf==6.1.3"
+      - run: python paper/check_rules.py --check
