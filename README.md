@@ -49,7 +49,9 @@ patches: on the published files it resolves 93 of 93 reference patches and 0 of 
 the same verdict as the local harness on all 48 agent patches compared. Gemma 4 E4B on two T4 GPUs wrote a patch
 for 40 of the 48 published tasks it attempted and resolved 5. A paired rerun of 23 of them, with and without the
 code-graph tools, resolved 2 either way; with the tools available the model called one in 4 of the 23 runs. Ten
-more attempts were on tasks since left out of the published set. Details and limits: [`paper/small-local-agent-redo-cloud-agent-work.md`](paper/small-local-agent-redo-cloud-agent-work.md).
+more attempts were on tasks since left out of the published set. Run end to end by the competition's own evaluator
+(four L4 GPUs, this repo's competition settings) on a seeded sample of 20 tasks, the agent resolved none. Details
+and limits: [`paper/small-local-agent-redo-cloud-agent-work.md`](paper/small-local-agent-redo-cloud-agent-work.md).
 
 The offline switch-off test in pipeline-doctor is not evidence for the ingredients above: its rules were written
 from the nine incidents it is scored on, and its "no conventions" condition blanks five data columns.
@@ -74,8 +76,10 @@ issue; 67 of those issues are backfilled records that quote the original text ve
 
 - **Run:** the task set (built, gated, verified with the competition's evaluator, published), the harness controls, and Gemma 4 E4B on 58 tasks, 28 of them twice. Every number
   is in `paper/sources.md` with the file it came from.
-- **Not run:** this `agent.yaml` on the competition's own evaluator (it has verified patches, not run the agent); the analyzer sub-agent; the pipeline-doctor
-  skill; the competition's development set.
+- **Run under the competition's own evaluator:** this `agent.yaml`, end to end, on a seeded sample of 20 published tasks
+  (0 resolved). The analyzer sub-agent and the skill were available there; the model called the sub-agent 3 times and
+  the skill never.
+- **Not run:** the competition's development set; a comparison with and without the pipeline-doctor skill.
 - **Dates:** paper deadline November 12, 2026; entry deadline November 25; final submission December 2.
 
 </details>

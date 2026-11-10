@@ -21,6 +21,11 @@ GROUPS = [
         ("Wrote a patch", 40),
         ("Resolved", 5),
     ]),
+    ("Run by the competition's own evaluator on a random sample (Section 6)", [
+        ("Sampled, stratified by tier", 20),
+        ("Wrote a patch", 16),
+        ("Resolved", 0),
+    ]),
     ("AI-assisted screen of a random sample of the published tasks (Section 6)", [
         ("Screened", 30),
         ("Tests need a name or text the statement never gives", 25),

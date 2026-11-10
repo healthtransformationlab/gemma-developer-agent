@@ -17,9 +17,10 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 | "Data and code": three links and their licences | the same three releases the closing paragraph named until November 10, 2026: the Kaggle dataset (CC BY 4.0), `NLP` (Apache 2.0) and this repository (Apache 2.0). All three answered on November 10, 2026 |
 | Figure 1: 197, 116, 113, 93 | the Section 4.1 table. "Built, pass both gates, licensed" is the 113 left after one task was withdrawn, one failed a gate and one was withheld |
 | Figure 1: 48, 40, 5 | Section 6, "Results": 48 scored, a patch for 40, 5 resolved |
+| Figure 1: 20, 16, 0 | Section 6, "Under the competition's evaluator": 20 sampled, a patch for 16, none resolved |
 | Figure 1: 30, 25, 5 | Section 6, "Task fairness": 30 screened, 25 whose tests need a name or text the statement never gives, 5 that pass |
 
-Figure 1 adds no number. `paper/figures/make_figure1.py` holds its ten counts and draws `figure1.svg`;
+Figure 1 adds no number. `paper/figures/make_figure1.py` holds its thirteen counts and draws `figure1.svg`;
 `paper/build_pdf.js` makes `figure1.png` from it and lays `small-local-agent-redo-cloud-agent-work.md` out as `small-local-agent-redo-cloud-agent-work.pdf` without changing a word.
 
 ## Section 1, the introduction
@@ -103,6 +104,26 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 | Confidence intervals | Wilson, 95%; named once in the text since an outside review took them for Clopper-Pearson (which would give 3.5 to 22.7 for 5 of 48) |
 | "48 of 93 tasks, cheapest first" (Section 8) | the setup's own sentence: tasks were run cheapest first under a GPU-hour cap, so the 48 are not a sample of the 93 and 5 of 48 is not a rate for the set |
 | "No human screening" (Section 8) | no annotation pass over the tasks exists in `NLP/data/tasks/`: the checks are the two gates and the evaluator's reference-patch and empty-patch controls. SWE-bench Verified's screening, of whether a statement specifies what its tests require, was not done |
+
+## Section 6, the agent under the competition's evaluator
+
+All from `NLP/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma.csv` (21 rows), its
+`_settings.json` and its `README.md` (`NLP` pull request 658). The run was made on November 10, 2026 with the owner's
+go-ahead: `NLP/kaggle/official_agent_run.py --sample 20 --seed 20261110`.
+
+| Figure | Source |
+|---|---|
+| The harness, server and hardware | `_settings.json`: `swegemma` 0.2.11 (`Evaluator.evaluate_task`, subprocess sandbox), vLLM 0.19.1, four NVIDIA L4 per kernel (`gpu_count`, `gpu_name` in every row), tensor parallel 4, bfloat16 |
+| 16,384 output tokens, 4,096 thinking budget, 40 tool calls, 5 minutes | `budgets` and `generation_defaults` in `_settings.json`; they are this repository's `eval_config.yaml` and `configs/sampling.yaml`. `differences_from_competition_defaults` lists the four that differ (120 s per command against 300, 40 tool calls against 100, 5 minutes against 60, 60 turns against no limit) |
+| 20 of the 93, a fixed seed, stratified by tier | `sample` in `_settings.json`: seed 20261110, the 20 ids, and the method (`official_agent_run.sample`: proportional to each tier's size, largest remainder; A 9, B 7, C 4). The rows with `is_in_sample` true |
+| Each task alone, without its patch or tests; verified by the same evaluator | `NLP/kaggle/official_agent_bundle.py` (the bundle's `tasks.jsonl` has no `patch` and no `test_patch`; a test checks it) and `official_agent_run._verify`, which calls `NLP/kaggle/official_verify.py` on the published snapshot |
+| 0 of 20 resolved; 95% CI 0 to 16.1 | `is_resolved` over the 20 `is_in_sample` rows; Wilson |
+| 16 patches fail, 4 runs submit nothing | `reason_text`: 11 "tests fail with the agent's patch", 5 "errors before any test ran", 4 "empty patch" |
+| No run reached a budget | `agent_seconds` at most 238.4 of 300; `tool_call_count` at most 22 of 40 |
+| 189 tool calls: 9 graph-tool, 3 sub-agent, 0 skill | `tool_call_count`, `graph_tool_call_count`, `sub_agent_call_count`, `skill_call_count` summed over the 20; counted from the evaluator's own trace of each task |
+| 13 of the 20 are in the screen; 11 of them fail it | joined on `instance_id` to `NLP/data/tasks/screening/agent_screen.csv` (`is_pass`): 13 rows, 2 pass, 11 fail |
+| The prompt defect, and "half the tasks" | `_hints_defect.csv`: three sampled tasks, 0 model calls, "Context variable not found: `hints`". Fixed in this repository's pull request 34 (`{hints?}`). 48 of the 93 published tasks have an empty `hints_text`. The settings' notes say which tasks ran on which side of the fix |
+| 21 runs, 12.8 L4 GPU-hours | `script_seconds` summed over the 21 rows (11,524 s, 3.2 hours) times four GPUs. The 21st row is the pilot, `htlnlp_143`, outside the sample and in no rate; it resolved |
 
 ## Section 7, the three cases
 
