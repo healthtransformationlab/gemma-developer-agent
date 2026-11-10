@@ -48,6 +48,7 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 |---|---|
 | The competition's evaluator: 93 of 113 reference patches, 0 of 113 empty patches, the same verdict as the author's harness on 25 of 25 saved patches | `NLP/data/tasks/official_verifier/swegemma_verification.csv` and its `README.md` (`NLP` pull request 642). `swegemma` 0.2.11 from the Kaggle dataset `metric/gemma-4-developer-agent-wheelhouse`, its `harness.verification.verify_task` unmodified, subprocess sandbox, run November 10, 2026 on copies of the first release's snapshots (dataset version 3) with a `conftest.py` added at the root, the text that `task_graph.EVALUATOR_CONFTEST_TEXT` now writes into every snapshot |
 | The corrected release as published: 93 of 93 reference patches, 0 of 93 empty patches | `NLP/data/tasks/official_verifier/published_verification.csv` (`NLP` pull request 647): the same driver on dataset version 4, downloaded from Kaggle on November 10, 2026, with nothing added. Its 93 task ids are the 93 the first table vouches for, and each published snapshot's head matches `NLP/data/tasks/snapshot_index.csv` |
+| The rerun's patches: the same verdict as the author's harness on 23 of 23; 48 agent patches compared in all | the `gemma-4-e4b-it` rows of `NLP/data/tasks/official_verifier/published_verification.csv` against `is_rerun_resolved` in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.csv` (`NLP` pull request 648); 25 + 23 = 48 |
 | The first release as published: all 3 tasks tried fail at import | the evaluator's own command line (`python -m swegemma eval --sandbox subprocess --skip-agent-patch`) on `htlnlp_116`, `htlnlp_143` and `htlnlp_174`: `ModuleNotFoundError` for the package during collection |
 | The 20 tasks left out: 12, 6 and 2 | the `reason_text` column of the same table; each was rerun with full output and grouped by its error |
 | What was tried before the harness was re-implemented | an install in a cloud session (`NLP/pull_requests/pr-421-review.md`), PyPI (`NLP/specs/035-local-agent-harness/spec.md`), and the competition's file list (`NLP` pull request 449). None tried the wheelhouse dataset |
@@ -59,20 +60,20 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 ## Section 6, the baseline
 
 All from `NLP/data/tasks/agent_runs/gemma-4-e4b-it_kaggle.csv` (58 rows) and its settings file
-`gemma-4-e4b-it_kaggle_settings.json`, as merged by pull requests 620, 623 and 630.
+`gemma-4-e4b-it_kaggle_settings.json`, as merged by pull requests 620, 623, 630 and 648. Pull request 648 is the
+rerun of November 10, 2026 (workflow run 42742256439): it replaced 28 rows, and the rows it replaced are kept
+beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.csv` (the paired table).
 
 | Figure | Source |
 |---|---|
-| 58 attempts; 10 set aside; 48 scorable with 38 non-empty patches and 5 resolved; 33 fail the tests, 10 empty | `is_resolved`, `agent_patch_bytes`, `reason_text`. The 10 set aside are the attempted tasks among the 20 left out of the published set: `htlnlp_pr38`, `pr39`, `pr40`, `pr41`, `pr44`, `pr49`, `pr61` (tests read withheld files) and `htlnlp_122`, `172`, `185` (`PYTHONSAFEPATH`) |
-| 31 scorable tasks without the code graph, 17 on the fixed harness | `NLP/specs/035-local-agent-harness/tasks.md` (T005) for the fault; the split is by `run_ts` before and after 2026-11-06 12:00 UTC, with the three pilot rows (no `run_ts`) in the first group. The table has no batch column, so this split is mine |
-| 26 and 12 non-empty patches; 5 and 0 resolved | the same split |
-| 0.55 against 0.27 GPU-hours per task | `gpu_hours` averaged over the rows of each group that record it |
+| 58 tasks attempted; 10 set aside; 48 scorable with 40 non-empty patches and 5 resolved; 35 fail the tests, 8 empty | `is_resolved`, `agent_patch_bytes`, `reason_text`, each task's latest run. The 10 set aside are the attempted tasks among the 20 left out of the published set: `htlnlp_pr38`, `pr39`, `pr40`, `pr41`, `pr44`, `pr49`, `pr61` (tests read withheld files) and `htlnlp_122`, `172`, `185` (`PYTHONSAFEPATH`) |
+| The paired rerun: 23 published tasks; resolved 2 and 2; patches 18 and 20; one task lost, one gained, one both | the paired table, rows with `is_published`: `is_first_resolved`, `is_rerun_resolved`, `first_patch_bytes`, `rerun_patch_bytes`. The first run is the run table's row at `NLP` commit `db0a29d`, before the harness fault of `NLP/specs/035-local-agent-harness/tasks.md` (T005) was fixed. 28 tasks were rerun; five are not in the published set. Lost `htlnlp_144`, gained `htlnlp_226`, both `htlnlp_pr63` |
+| A graph tool called in 4 of 23 runs, 6 calls among 145 | `rerun_graph_tool_call_count` and `rerun_tool_call_count` in the paired table, published rows. The calls are counted from each run's transcript; all six are `search_similar_code` |
 | By tier: 4 of 24, 1 of 19, 0 of 5 | joined to `tier_code` in the manifest, over the 48 |
-| 28 with failing tests, 5 with errors | `verify_exit_code` 1 and 2, over the 48 |
-| Four empty patches with no tool call | `tool_call_count` 0 among the empty-patch rows, over the 48 |
-| Five empty patches on the fixed harness: four hit the token limit, one submitted without editing | the `turns[].output_tokens` of each run's `result.json`, downloaded from its Kaggle notebook output on November 10, 2026: `htlnlp_206`, `236`, `cfa7c008` and `pr23` each have a turn at exactly 2,048; `htlnlp_120` ends in two turns (so does `htlnlp_122`, one of the 10 set aside). `NLP/pull_requests/pr-630-review.md` had attributed all of them to the limit |
-| 20.6 GPU-hours, 10.3 allowance hours, median 0.32 GPU-hours, 6 tool calls, about 74,000 prompt tokens | `gpu_hours`, `gpu_hours / gpu_count`, `tool_call_count`, `prompt_token_count` |
-| $14.19 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`, `price_basis_text` |
+| 30 with failing tests, 5 with errors | `verify_exit_code` 1 and 2, over the 48 |
+| Eight empty patches: four hit the token limit, three submit without an edit, one calls the edit tool with an argument it does not take | each run's `result.json`, downloaded from its Kaggle notebook output on November 10, 2026. `htlnlp_206`, `236`, `cfa7c008` and `pr23` each have a turn at exactly 2,048 output tokens; `htlnlp_120`, `152` and `230` call `submit_patch` without an edit; `htlnlp_71` calls `edit_file` four times with `start_line`, which the tool rejects. `NLP/pull_requests/pr-630-review.md` had attributed the first five to the limit |
+| 20.6 GPU-hours for the 58 first attempts, 9.6 for the 28 reruns, 30.2 in all; median 0.39 GPU-hours, 7 tool calls, about 91,000 prompt tokens | `gpu_hours` summed over the run table at `NLP` commit `db0a29d` (20.56) and `rerun_gpu_hours` over the paired table (9.64); the medians are over the run table's 58 rows as they are now |
+| About $21 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`: 14.19 for the first attempts, 6.65 for the reruns; `price_basis_text` |
 | Confidence intervals | Wilson, 95% |
 
 ## Section 7, the three cases
