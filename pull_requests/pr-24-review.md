@@ -31,6 +31,7 @@ owner because it changes what the paper claims and removes three of the author's
 | NOHARM: 1,100 tasks, not cases; version 4, 2026 | the preprint's text: "1,100 items (100 clinical cases with 1,000 physician-perturbed variants)"; version 4 is dated July 13, 2026 and carries the title the reference gives; versions 1 and 2 gave 76.6%, not "more than 80%" |
 | "No human screening" | no annotation pass over the tasks is recorded in either repository; the sentence that follows is true whether or not one was done |
 | Nothing else changed a number | the diff was read line by line: 13 changed lines in the writeup, no table value altered except the tier column's added counts |
+| 28 reruns, of which 23 are published | a third outside review found "23 of those tasks" and "the 28 reruns" unexplained. The paired table on `NLP` pull request 648 has 28 rows, 23 with `is_published`; the other five (`htlnlp_172`, `185`, `pr41`, `pr44`, `pr61`) are among the ten set aside. Section 6 now says "I reran 28 of them ...; the 23 published give a paired comparison" |
 | Citations and references agree | [1] to [18]: each cited, each listed |
 | Word count | 2,997 without references by `wc` (2,988 before); 2,878 real words; limit 3,000 |
 | `paper/sources.md` | a row for each new figure, a new "Section 2" block, and the cut sentence recorded under "Not in the writeup" |

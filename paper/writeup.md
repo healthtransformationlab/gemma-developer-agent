@@ -122,7 +122,7 @@ Kaggle GPUs do not allow namespaces, and a notebook can read every attached file
 
 **Results.** Ten of the 58 tasks attempted are among the twenty left out (Section 5), so they are set aside. On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% Wilson CI 4.5–22.2). By tier, it resolved 4 of 24 tasks whose statement is an issue, 1 of 19 from a pull request and 0 of 5 from a commit message. The intervals overlap.
 
-**Do the graph tools help?** A fault in my harness served the first tasks without their code graph and embeddings, so the three graph tools had nothing to query. After fixing it I ran 23 of those tasks again with the same settings, which gives a paired comparison.
+**Do the graph tools help?** A fault in my harness served the first tasks without their code graph and embeddings, so the three graph tools had nothing to query. After fixing it I reran 28 of them with the same settings; the 23 published give a paired comparison.
 
 | 23 tasks, each run twice | Non-empty patch | Resolved (95% CI) |
 |---|---|---|
