@@ -36,8 +36,10 @@ better information); the figures under each heading are the measurements.
 | "In fifteen days, one person directing a cloud coding agent ... from nothing to 960 commits, 775 of them marked as agent-authored" | Section 3 (rows below): 960 commits on `main` from GitHub's initial commit on October 25 to November 8, 2026, fifteen days counting both ends; 775 = 710 with the agent's co-author trailer + 65 authored as the agent. The other 185 are 175 merge commits GitHub made for pull requests, 5 by an automation bot, 4 by the owner alone and the initial commit. The owner asked on November 10, 2026 for the abstract to lead with this |
 | "without typing code" | the four commits by the owner alone are three documentation edits and one merge of `main` into a branch (Section 3, the row on the 250 commits without a trailer); every other change came through a coding-agent session's pull request |
 | "The person stayed in the loop" | Section 1 and Section 3: every change was made by a coding-agent session the owner directed in chat; `NLP/AGENTS.md` ("Branches and issues", rule 6) keeps limited-compute runs, publishing, deletions and rule changes for the owner's word |
-| "written rules that CI enforces gave that loop a record of issues, pull requests and reviews" | Section 3: `NLP/AGENTS.md` requires an issue per user story and a pull request tied to it, CI rejects a pull request without an issue link, and 240 reviews are committed as files. The issue rule was adopted partway through (Section 4.2), so the sentence says what the record holds, not that every change has all three |
-| "resolves every reference patch and no empty patch" | Section 5: the corrected release as published, 93 of 93 reference patches and 0 of 93 empty patches |
+| "CI-enforced rules gave that loop a record of issues, pull requests and reviews" | Section 3: `NLP/AGENTS.md` requires an issue per user story and a pull request tied to it, CI rejects a pull request without an issue link, and 240 reviews are committed as files. The issue rule was adopted partway through (Section 4.2), so the sentence says what the record holds, not that every change has all three |
+| "The rest stays in the loop for now" | a reading of the two figures under it: a larger budget did not change the result on the cheapest tasks and the evaluator's run resolved none of 20. It says the small model did not take those tasks out of the loop; it does not say no model could. Until a review on November 10, 2026 the heading read "The rest stays with a person", which says more than the runs show |
+| "the flaw SWE-bench Verified screens for" | Chowdhury et al., "Introducing SWE-bench Verified" (OpenAI, August 2024): annotators screened samples for issue descriptions that are underspecified and for tests that reject valid solutions, the two questions this screen reuses (Section 6) |
+| "each verified with the competition's own evaluator" | Section 5: the corrected release as published, 93 of 93 reference patches and 0 of 93 empty patches |
 | "unattended" | each task ran from the prompt to a submitted patch with no person acting: the harness loop of `NLP` spec 035, one task per offline Kaggle notebook |
 | 5 of 48 on two free T4 GPUs, "all small (a CI rule, a warning message, a label parser, two settings)" | Section 6, "Results" and "How it fails" |
 | "eight times the output budget changed little (2 of the 23 cheapest of the 48, against 2)" | Section 6, "A larger budget": 16,384 output tokens a turn against 2,048, with thinking on |
@@ -45,7 +47,7 @@ better information); the figures under each heading are the measurements.
 | "each task is labelled with its statement's source" | Section 4.2, the fidelity tiers |
 | 25 of 30 screened | Section 6, "Task fairness" |
 | "names and call edges lead from statement to fix in 22 of 93 tasks" | Section 4.3 (rows below): the statement names an edited function or class in 20 tasks and call edges join a named one to an edited one in 2 more |
-| "the model asked a graph tool in only 20 of 473 tool calls" | 6 of 145 in the paired rerun, 5 of 139 with the larger budget and 9 of 189 under the evaluator (Section 6, three rows below); 6 + 5 + 9 = 20 and 145 + 139 + 189 = 473. The runs of the baseline that are not in the paired rerun were not counted |
+| "only 20 of 473 tool calls asked a graph tool" | 6 of 145 in the paired rerun, 5 of 139 with the larger budget and 9 of 189 under the evaluator (Section 6, three rows below); 6 + 5 + 9 = 20 and 145 + 139 + 189 = 473. The runs of the baseline that are not in the paired rerun were not counted |
 
 ## Section 1, the introduction
 
@@ -96,7 +98,9 @@ better information); the figures under each heading are the measurements.
 | "call edges lead there from one it names" | the same two rows: "there" is an edited function or class |
 | "in 29 neither does" | the column is blank in 29 of the 51 rows: the statement names no node of the graph in 25 of them and names only nodes with no path to an edit in 4 (`dental_omop_nlp.judge.Verdict` and `labels.Status` match as plain capitalised words in three of the four; without them the split is 27 and 2, and the 20, 2 and 29 do not change) |
 | 22 of 93 (the abstract and the conclusion) | 20 + 2. In the other 71 tasks nothing joins statement and fix by names and call edges: the 29 above, and the 42 whose fix edits no node the graph holds (31 + 11) |
-| "which leaves embedding search, not tested here" | the published embeddings (`embeddings/`) let a tool rank nodes by similarity to a query; no run here measured whether a statement's embedding ranks an edited node near the top |
+| "Call edges thus add two tasks to what names find" | the two rows above: 20 tasks by a name, 2 more by call edges |
+| "the rest is left to embedding search, untested here" | the published embeddings (`embeddings/`) let a tool rank nodes by similarity to a query; no run here measured whether a statement's embedding ranks an edited node near the top |
+| "or to what this graph lacks: nodes for scripts, notebooks and configuration, and edges other than calls" | an inference from the rows above, not a measurement: in 31 tasks the fix is in files the graph has no node for, and every edge in the 84 published graphs is of type `calls` (`task_graph.build_graph`) |
 | How the 93 rows were checked | two implementations written separately (their own diff parsers and AST walks) give the same edited nodes, named nodes and distance on all 93 tasks; all 1,926 definitions in the 159 modified package files are graph nodes whose text equals the snapshot's source (`NLP/pull_requests/pr-660-review.md`) |
 | 93 published | `NLP/data/tasks/official_verifier/swegemma_verification.csv`: the tasks whose reference patch the competition's evaluator resolves and whose empty patch it does not (`task_gate.evaluator_verified`). The 20 left out, each with its reason, are in `NLP/data/tasks/tasks_excluded.csv` |
 | Second repository: 1,320 first-parent commits, 133 candidates (commits that touch non-test Python and Python tests), 22 tied to a pull request, none linking an issue | `git log --first-parent` on [`getcommunityone/open-navigator`](https://github.com/getcommunityone/open-navigator) (Apache 2.0) main at `6fa4943`; its README describes it as an "AI-powered civic engagement platform", and its owner confirmed on November 10, 2026 that it may be cited. A change counts when its diff has a non-test `.py` file and a test `.py` file (under `tests/`, or named `test_*.py` or `*_test.py`). Tied to a pull request: the commit subject ends in `(#n)` or starts with "Merge pull request". Linking an issue: the message has `closes`, `fixes`, `resolves` or `refs` followed by `#n`. Not gated |
@@ -135,6 +139,8 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 | 20.6 GPU-hours for the 58 first attempts, 9.6 for the 28 reruns, 30.2 in all; median 0.39 GPU-hours, 7 tool calls, about 91,000 prompt tokens | `gpu_hours` summed over the run table at `NLP` commit `db0a29d` (20.56) and `rerun_gpu_hours` over the paired table (9.64); the medians are over the run table's 58 rows as they are now |
 | Not in the writeup since November 10, 2026: about $21 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`: 14.19 for the first attempts, 6.65 for the reruns; `price_basis_text` |
 | The screen: 30 of the 93, 5 pass, 25 with tests that need a name or text the statement never gives | `NLP/data/tasks/screening/agent_screen.csv` and its `README.md` (`NLP` pull request 653): drawn with seed 20261110 within each statement source (13 of 39, 11 of 34, 6 of 20); `is_pass` is both ratings 0 or 1, the rule of SWE-bench Verified [2]; `test_rating_num` is 2 or 3 for 25. An AI reviewer made both passes; the second agrees with the first on all 30 but had read the first's ratings |
+| "Each verdict and its reason are in the repository" | `NLP/data/tasks/screening/agent_screen.csv`: one row per screened task with both ratings, the reason for each, what the tests need that the statement lacks, the second check and the owner's answer; the protocol is in its `README.md` |
+| SWE-bench's human screen "filtered out 68.3% of 1,699 annotated samples" | Chowdhury et al. (OpenAI, August 2024): 1,699 randomly drawn samples annotated by software developers; 68.3% filtered out for underspecified issue descriptions, tests that reject valid solutions, or other issues. The method was read from the announcement and the 68.3% confirmed through a summary of it on November 10, 2026. The comparison is of kind, not of rate: theirs is a human screen of a random sample of twelve libraries, this one an AI reviewer's of 30 tasks |
 | "the author checked its findings in summary and agreed with all 30" | the same table, `owner_fair_code` and `owner_note_text`: on November 10, 2026 the author answered one question per task (is the test fair) from two plain-language sentences, with the AI's verdict already selected: fair 5, unfair 25, cannot tell 0. The author did not read the test code. It is a check of the AI's findings, not an independent rating, which is what Section 7 says |
 | Of 16 screened tasks the model attempted: 1 of the 3 that pass resolved, 0 of the 13 that fail | the same table, `is_attempted` and `is_resolved` against `is_pass`; the resolved one is `htlnlp_pr63` |
 | Not in the writeup from the same table | 10 of 30 statements rated vague or worse; 4 fixes, 14 features, 12 maintenance changes; the statement names the fix fully in 10 and partly in 17 |
@@ -177,15 +183,15 @@ go-ahead: `NLP/kaggle/official_agent_run.py --sample 20 --seed 20261110`.
 | No run reached a budget | `agent_seconds` at most 238.4 of 300; `tool_call_count` at most 22 of 40 |
 | 189 tool calls: 9 graph-tool, 3 sub-agent, 0 skill | `tool_call_count`, `graph_tool_call_count`, `sub_agent_call_count`, `skill_call_count` summed over the 20; counted from the evaluator's own trace of each task |
 | 13 of the 20 are in the screen; 11 of them fail it | joined on `instance_id` to `NLP/data/tasks/screening/agent_screen.csv` (`is_pass`): 13 rows, 2 pass, 11 fail |
-| The prompt defect, and "half the tasks" | `_hints_defect.csv`: three sampled tasks, 0 model calls, "Context variable not found: `hints`". Fixed in this repository's pull request 34 (`{hints?}`). 48 of the 93 published tasks have an empty `hints_text`. The settings' notes say which tasks ran on which side of the fix |
-| 21 runs, 12.8 L4 GPU-hours | `script_seconds` summed over the 21 rows (11,524 s, 3.2 hours) times four GPUs. The 21st row is the pilot, `htlnlp_143`, outside the sample and in no rate; it resolved |
+| Not in the writeup since November 10, 2026: the prompt defect, and "half the tasks" | `_hints_defect.csv`: three sampled tasks, 0 model calls, "Context variable not found: `hints`". Fixed in this repository's pull request 34 (`{hints?}`). 48 of the 93 published tasks have an empty `hints_text`. The settings' notes say which tasks ran on which side of the fix |
+| 12.8 L4 GPU-hours for the evaluator's runs (21 of them) | `script_seconds` summed over the 21 rows (11,524 s, 3.2 hours) times four GPUs. The 21st row is the pilot, `htlnlp_143`, outside the sample and in no rate; it resolved |
 
 ## Section 8, the conclusion
 
 | Figure | Source |
 |---|---|
 | 5 of 48, 2 of 23, none of a random 20 | Section 6: "Results", "A larger budget" and "Under the competition's evaluator" |
-| "Some small upkeep can leave the loop; the rest stays with a person, who gains a map of the work" | the abstract's rows above; "whether its tests are fair" is the screen of Section 6, "22 of 93" and "20 of 473" are the abstract's figures |
+| "Some small upkeep can leave the loop; the rest stays in it for now, and the person in the loop gains a map of the work" | the abstract's rows above; "whether its tests are fair" is the screen of Section 6, "22 of 93" and "20 of 473" are the abstract's figures |
 | "the competition's evaluator runs on it as published" | Section 5: `NLP/data/tasks/official_verifier/published_verification.csv`, 93 of 93 reference patches and 0 of 93 empty patches on dataset version 4 with no file added |
 | `kaggle/official_verify.py` "replays the two controls" | `NLP/kaggle/official_verify.py` runs the competition's verification with a chosen patch per task: none, the reference patch, or patches from a file |
 | `63_graph_coverage.py` replays "the graph counts" | `NLP/python/scripts/63_graph_coverage.py --published <the downloaded dataset>` writes `graph_coverage.csv` and prints the counts of Section 4.3; about ten seconds, no model needed |
@@ -302,15 +308,31 @@ None of its three cases is in the paper now. The rows below are for what was cut
     "To test the tight limits"; "which ships in" became "in"; and the conclusion's "Whether graphs help a small
     model on a data repository cannot be told until the model asks them and they cover more than its package"
     (Section 4.3 says the graph covers the package only).
-- Another model's review, November 10, 2026 (the owner gave it the Paper Track's rubric and the PDF). Of its five
-  proposed changes, two were taken in part: "can leave it" became "can leave the loop" in the abstract, and
-  Section 6 gives the larger budget's settings as one list. Not taken, because the paper cannot support them or
-  a reader needs what they remove: dropping "Some", the model's name and the five tasks' examples from the
-  abstract; "the first benchmark derived specifically from an agent-built health data repository" (no source
-  for "first"); "full verification requires extensive manual test screening" in place of the conclusion's recipe
-  (the screen was an AI reviewer's, checked in summary); a sentence on data repositories in place of "Two kinds
-  of repository are scarce"; and a shorter larger-budget sentence without "of the 48", "on the same harness",
-  "per turn" and the 20,000-token context.
+- Another model's review, November 10, 2026 (the owner gave it the Paper Track's rubric and the PDF). It scored the
+  paper 3.2 of 5 as a strict judge (novelty 3.0, quality 2.0, relevance 3.5, verifiability 3.5, clarity 4.0) and
+  proposed five wording changes. Acted on:
+  - Its finding that "The rest stays with a person" says more than the experiments show: the heading is now "The
+    rest stays in the loop for now", in the abstract and the conclusion.
+  - Its reading of the 25 of 30 as a weakness of this set alone: the abstract and Section 6 now say what the
+    screen is modelled on and what SWE-bench's own screen found, and Section 6 says where each verdict is.
+  - Its reading of "2 more by call edges" as a small result: Section 4.3 now says what it means for a graph tool.
+  - Two of its five wordings, in part: "can leave it" became "can leave the loop", and Section 6 gives the larger
+    budget's settings as one list.
+  Not taken, because the paper cannot support them or a reader needs what they remove: dropping "Some", the
+  model's name and the five tasks' examples from the abstract; "the first benchmark derived specifically from an
+  agent-built health data repository" (no source for "first"); "full verification requires extensive manual test
+  screening" in place of the conclusion's recipe (the screen was an AI reviewer's, checked in summary); a sentence
+  on data repositories in place of "Two kinds of repository are scarce"; and a shorter larger-budget sentence
+  without "of the 48", "on the same harness", "per turn" and the 20,000-token context.
+  Cut to make room: Section 1's "part of the author's open health-data benchmarks"; Section 6's sentence on the
+  prompt defect the evaluator's run exposed (its row is above), "58 first attempts and 28 reruns" and "6.0 for
+  each task resolved" in the cost line, and the detail of how eight runs submitted nothing (shortened); the
+  conclusion's "A cloud agent built this repository in fifteen days" and "all of them small" (both in the
+  abstract). The abstract's "resolves every reference patch and no empty patch" became "each verified with
+  the competition's own evaluator" (Section 5 has the counts). In Section 7, "One task flipping moves a paired
+  result" is cut and four bullets are shortened without losing a figure. Reference 13 no longer gives the
+  version (1.0.0; its row is under Section 2). What the review marked down and no wording can change: one repository, 63 tasks unscreened, a
+  screen checked only in summary.
 - Whether embedding search finds the fix where names and call edges do not (Section 4.3): not run. It needs the
   statement embedded with the same model as the nodes.
 - An independent human screen of task quality: not done. The screen of 30 is an AI reviewer's, checked by the
