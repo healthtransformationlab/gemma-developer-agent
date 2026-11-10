@@ -89,7 +89,7 @@ So the rule finds candidates anywhere, but the problem statements come from the 
 
 ## 5. Harness and controls
 
-The competition's evaluator, `swegemma`, is available to participants as wheels in a separate Kaggle dataset that the starter notebook attaches. I looked for it only among the competition's own files, did not find it, and built a re-implementation from its guide. That was a mistake, and it shapes everything below: every score here comes from the re-implementation, and scoring this task set with the official evaluator is the first thing to do next.
+The competition's evaluator, `swegemma`, is available to participants as wheels in a separate Kaggle dataset that the starter notebook attaches. I tried to install it (it is not on PyPI), looked for it among the competition's own files, found neither, and built a re-implementation from its guide. I missed that dataset, and it shapes everything below: every score here comes from the re-implementation, and scoring this task set with the official evaluator is the first thing to do next.
 
 The guide documents the initial prompt, the multi-turn loop, the nine tools with their limits, the budgets, patch extraction and verification. The harness implements those sections. The prompt, nudge messages and budget warning follow the guide's wording; the guide itself is not redistributed.
 

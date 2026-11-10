@@ -15,8 +15,10 @@ Removes a false statement from the paper. The writeup said the competition's eva
 starter notebook installs it from a public Kaggle dataset. Two files, documentation only. Nothing blocking.
 
 ## How the error got in
-`health-transformation-lab-nlp` issue 449 looked for a `swegemma` wheel among the competition's own files, found
-none, and concluded the evaluator was not distributed. The writeup, drafted on November 10, repeated that without
+The owner did try to get the evaluator, and the records show three attempts: it could not be installed in a cloud
+session (`health-transformation-lab-nlp` pull request 421), it is not on PyPI (spec 035), and a workflow listed the
+competition's 524 files and found no `swegemma` wheel (pull request 449). From those it was concluded that the
+evaluator was not distributed. No record shows the separate wheelhouse dataset being tried. The writeup, drafted on November 10, repeated that without
 checking it. This repository's `docs/starter-notebook-notes.md` (October 29) had already said the packages come
 "from the dataset's wheelhouse".
 
