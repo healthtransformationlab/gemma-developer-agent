@@ -28,8 +28,9 @@ owner's name on the paper, and for pull request 30, which it is stacked on.
 | Figure 1 adds no number | its ten counts are the Section 4.1 table (197, 116, 113, 93), Section 6 "Results" (48, 40, 5) and Section 6 "Task fairness" (30, 25, 5). All bars share one scale, so the 5 resolved reads as small as it is |
 | Figure 1's colour | one hue for one measure; the palette check passes against a light surface (lightness, chroma, contrast at least 3:1). Every bar carries its value, so nothing depends on colour |
 | The two removed sentences | "Data, harness and run tables are public." and the closing "Released: ..." paragraph. The new paragraph names the same three releases and licences. "Every run table cited here" is now "run tables" beside the harness repository's link, where they are |
-| Nothing else changed | the diff of `paper/writeup.md` was read line by line: 6 places, all listed in the pull request |
-| Word count | 2,997 without references by `wc` (2,992 before); 2,877 real words; limit 3,000. The title block and the image line are counted |
+| Three wording changes after an outside review of version 6 | (1) Section 1's "A growing share of code is written by agents under a person's direction" had no measurement or citation behind it; the sentence now describes this repository only, and "leaves an unusually complete record" is "can leave". (2) Section 9's "let others measure that gap" is "let others test other models and settings": the paper does not score the cloud agent on the same statements. (3) The title block says "(resource paper)", the author's own description of the contribution. None changes a number |
+| Nothing else changed | the diff of `paper/writeup.md` was read line by line: 9 places, all listed in the pull request |
+| Word count | 2,996 without references by `wc` (2,992 before); 2,876 real words; limit 3,000. The title block and the image line are counted |
 | Citations and references agree | [1] to [17]: each cited, each listed |
 | The PDF | 7 pages, built by `node paper/build_pdf.js` from `writeup.md` as committed. Read page by page at 80 dpi: no table or figure splits across pages, the three links and reference 17 are live, the footer carries the author, title, track and page number. `pdftotext` gives back the abstract word for word |
 | The build script changes no word | it wraps the lines before "## Abstract" as the title block, boxes the abstract with the links, swaps the PNG for the SVG, and prints. It fails if the abstract heading, the "Data and code." paragraph or the figure is missing |
@@ -40,7 +41,7 @@ owner's name on the paper, and for pull request 30, which it is stacked on.
 - Do not merge before pull request 30.
 - The owner should confirm the name and whether "Health Transformation Lab" belongs beside it. The disclaimer under
   it still says the project is personal and not affiliated with any employer, institution or vendor.
-- The count stands three words under the limit. A result from the run under the competition's evaluator will need
+- The count stands four words under the limit. A result from the run under the competition's evaluator will need
   a cut of its own size.
 - The body font in the PDF is Liberation Serif and the headings Inter, the faces installed where it was built. A
   rebuild elsewhere may pick other faces and paginate differently.

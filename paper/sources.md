@@ -13,7 +13,7 @@ reply in the competition's "Word Count" discussion, October 27, 2026).
 | Figure | Source |
 |---|---|
 | "Gemma 4 Developer Agent Competition, Paper Track [17]" and reference 17 | the "Citation" block of the competition's Overview page (kaggle.com/competitions/gemma-4-developer-agent), as the owner pasted it on November 10, 2026. Reference 17 gives the ten authors' surnames, the title, Kaggle and 2026 as that block does |
-| "Topic: Tasks & Benchmarks" | the same page's list of paper topics: "Tasks & Benchmarks: Development of new tasks, evaluation datasets, or resources targeting code structure, graphs, and structured code generation" |
+| "Topic: Tasks & Benchmarks (resource paper)" | the same page's list of paper topics: "Tasks & Benchmarks: Development of new tasks, evaluation datasets, or resources targeting code structure, graphs, and structured code generation". "Resource paper" is the author's own description: the main contribution is the released task set |
 | "Data and code": three links and their licences | the same three releases the closing paragraph named until November 10, 2026: the Kaggle dataset (CC BY 4.0), `NLP` (Apache 2.0) and this repository (Apache 2.0). All three answered on November 10, 2026 |
 | Figure 1: 197, 116, 113, 93 | the Section 4.1 table. "Built, pass both gates, licensed" is the 113 left after one task was withdrawn, one failed a gate and one was withheld |
 | Figure 1: 48, 40, 5 | Section 6, "Results": 48 scored, a patch for 40, 5 resolved |
@@ -139,6 +139,11 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
   three releases: replaced on November 10, 2026 by the "Data and code" paragraph under the abstract, which names the
   same three releases and licences as links a reader can open from page 1. "Where each number comes from is listed
   in `paper/sources.md`" became "each number's source" beside this repository's link.
+- "A growing share of code is written by agents under a person's direction" (Section 1): cut on November 10, 2026.
+  An outside review of version 6 pointed out that nothing in the paper measures or cites it. The sentence now
+  describes this repository only. The same review prompted "The released tasks let others measure that gap" to become
+  "... test other models and settings": the paper does not score the cloud agent on the same statements, so it shows
+  no gap between two measured systems.
 - An independent human screen of task quality: not done. The screen of 30 is an AI reviewer's, checked by the
   author in summary (Section 6 above).
 - A split of all 93 tasks into fixes, features and maintenance: not done; the screen classifies its 30. The mining

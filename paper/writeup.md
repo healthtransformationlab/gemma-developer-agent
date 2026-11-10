@@ -4,7 +4,7 @@
 
 **John Bowyer**, Health Transformation Lab
 
-Gemma 4 Developer Agent Competition, Paper Track [17]. Topic: Tasks & Benchmarks. November 2026.
+Gemma 4 Developer Agent Competition, Paper Track [17]. Topic: Tasks & Benchmarks (resource paper). November 2026.
 
 *A personal learning project, not affiliated with or endorsed by any employer, institution or vendor. Every patient record in the source repository is synthetic.*
 
@@ -24,7 +24,7 @@ Two kinds of repository are scarce.
 
 The first is the **data repository**. In a web library a bug usually announces itself: a request fails, a test goes red. In health data the costly defect is silent. A pipeline finishes, a table is written, and a number in it is wrong (Section 7).
 
-The second is the **agent-built repository**. A growing share of code is written by agents under a person's direction. Such a repository leaves an unusually complete record: an issue for each change, a pull request, a review. A large cloud agent did this work. How much of it can a small local agent redo from the same problem statements?
+The second is the **agent-built repository**, written by agents under a person's direction. Such a repository can leave an unusually complete record: an issue for each change, a pull request, a review. A large cloud agent did this work. How much of it can a small local agent redo from the same problem statements?
 
 I study one repository that is both. `health-transformation-lab-nlp` is part of Health Transformation Lab, open benchmarks I built on one premise: better health starts with accurate health information. Its job is to surface silent defects, here in how well gum disease can be found in synthetic dental records. I typed no code: every change was made by coding-agent sessions I directed in chat and merged after an automated review.
 
@@ -169,7 +169,7 @@ Three cases from the repository show the defect class that motivates it: everyth
 
 ## 9. Conclusion and release
 
-A cloud agent built this repository in fifteen days. From the same problem statements, a model that runs on free GPUs resolved 5 of 48 tasks, all of them small, and left the graph tools almost unused. The released tasks let others measure that gap.
+A cloud agent built this repository in fifteen days. From the same problem statements, a model that runs on free GPUs resolved 5 of 48 tasks, all of them small, and left the graph tools almost unused. The released tasks let others test other models and settings.
 
 The recipe should transfer to any repository that traces its changes to issues: mine the changes that touch code and tests, record where each statement came from, gate, and run a reference-patch control and an empty-patch control on the published files, with the official evaluator where there is one, then screen statements against tests, before trusting any model's score.
 
