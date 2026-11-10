@@ -46,13 +46,13 @@ All from `NLP/data/tasks/agent_runs/gemma-4-e4b-it_kaggle.csv` (58 rows) and its
 | Figure | Source |
 |---|---|
 | 58 tasks, 45 non-empty patches, 5 resolved, 40 fail the tests, 13 empty | `is_resolved`, `agent_patch_bytes`, `reason_text` |
-| 36 tasks without the code graph, 22 on the fixed harness | `NLP/specs/035-local-agent-harness/tasks.md` (T005) for the fault; the split is by `run_ts` before and after 2026-11-06 12:00 UTC, with the three pilot rows (no `run_ts`) in the first group. The table has no batch column, so this split is ours |
+| 36 tasks without the code graph, 22 on the fixed harness | `NLP/specs/035-local-agent-harness/tasks.md` (T005) for the fault; the split is by `run_ts` before and after 2026-11-06 12:00 UTC, with the three pilot rows (no `run_ts`) in the first group. The table has no batch column, so this split is mine |
 | 30 and 15 non-empty patches; 5 and 0 resolved | the same split |
 | 0.53 against 0.27 GPU-hours per task | `gpu_hours` summed over each group (11.75 over 22; 8.81 over the 33 rows that record it) |
 | By tier: 4 of 27, 1 of 26, 0 of 5 | joined to `tier_code` in the manifest |
 | 35 with failing tests, 5 with errors | `verify_exit_code` 1 and 2 |
 | Six empty patches with no tool call | `tool_call_count` 0 among the empty-patch rows |
-| Empty patches traced to the 2,048-token limit | `NLP/pull_requests/pr-630-review.md`. We did not re-read the transcripts |
+| Empty patches traced to the 2,048-token limit | `NLP/pull_requests/pr-630-review.md`. I did not re-read the transcripts |
 | 20.6 GPU-hours, 10.3 allowance hours, median 0.32 GPU-hours, 6 tool calls, about 74,000 prompt tokens | `gpu_hours`, `gpu_hours / gpu_count`, `tool_call_count`, `prompt_token_count` |
 | $14.19 at $0.69 per T4-hour (an estimate) | `estimated_cost_usd`, `price_basis_text` |
 | Confidence intervals | Wilson, 95% |
@@ -64,7 +64,7 @@ All from `NLP/data/tasks/agent_runs/gemma-4-e4b-it_kaggle.csv` (58 rows) and its
 | De-identification 1.00 and 0.27 (`regex_v2`, hard and unseen tiers) | `NLP/data/deid/scores.csv` (`entity_recall`) |
 | Tooth-loss AUC 0.89 to 0.90 and 0.59 to 0.63 | `NLP/docs/tooth_loss.md`, "After the tooth-table fixes of #631" (completed-extraction models) |
 | The masking defect | the same section; fixed by pull request 632 |
-| 16 de-identification candidates, 8 attempted, none resolved | a keyword match on `title_text` in the manifest (`de-id`, `phi`, `maccrobat`, `presidio`, `redact`, `mask`), joined to the run table. The match is ours and approximate |
+| 16 de-identification candidates, 8 attempted, none resolved | a keyword match on `title_text` in the manifest (`de-id`, `phi`, `maccrobat`, `presidio`, `redact`, `mask`), joined to the run table. The match is mine and approximate |
 
 ## Not in the writeup, and why
 
