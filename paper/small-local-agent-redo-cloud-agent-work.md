@@ -20,20 +20,20 @@ In fifteen days, one person in the loop with a cloud coding agent took a health-
 
 This competition [14] asks whether a model that fits on one accelerator can do the work of the large cloud models behind today's best coding agents. Available tasks come from a narrow place: SWE-bench draws on twelve popular Python libraries [1], and the competition's development set on four.
 
-Two kinds of repository are scarce. In a **data repository** the costly defect is silent: a pipeline finishes and a number in its table is wrong. An **agent-built repository** can leave an unusually complete record: an issue, a pull request and a review for each change. Which changes can a small local agent take out of the person's loop, and what does the person need for the rest?
+Two kinds of repository are scarce. In a **data repository** the costly defect is silent: a pipeline finishes and a number in its table is wrong. An **agent-built repository** can leave an unusually complete record: an issue, a pull request and a review for each change.
 
-This paper adds one repository that is both, set beside the competition's four by the competition's mining rule, format and evaluator. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are real changes to application code: de-identification, record checks, model scoring, pipelines. Every change was made by coding-agent sessions directed in chat and merged after an automated review, and every step from merged change to published task is a script.
+This paper adds one repository that is both, set beside the competition's four by the competition's mining rule, format and evaluator. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are real changes to application code: de-identification, record checks, model scoring, pipelines. Coding-agent sessions made every change, and scripts make every step from merged change to published task.
 
 Contributions:
 
 1. **A task set**: 93 tasks from health-data modelling work in the competition's format, so its harness, evaluator and graph tools run on both sets; each verified with the competition's own evaluator and labelled with its statement's source (Section 4).
 2. **An open harness** that agrees with the competition's evaluator on every saved agent patch and keeps answers from the model (Section 5).
 3. **A baseline under three settings** for Gemma 4 E4B, with a failure breakdown, a paired test of the code-graph tools, and its time split by graph reach (Section 6).
-4. **Three checks on the recipe**: whether statements say what their tests check (Section 6), whether names, call edges or embedding search lead from statement to fix (Section 4.3), and a second repository (Section 4.5).
+4. **Three checks on the recipe**: whether statements say what their tests check (Section 6), whether names, call edges, embedding search or a failing test's report lead from statement to fix (Section 4.3), and a second repository (Section 4.5).
 
 ## 2. Related work
 
-**Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale task collection for training and for contamination-free evaluation. These draw on public open-source projects; this set comes from an agent-built data repository and adds statement-source labels and counts of how often the graph leads to the fix.
+**Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale task collection for training and for contamination-free evaluation. These draw on open-source libraries; this set comes from an agent-built data repository.
 
 **Agents and graphs.** SWE-agent showed that the interface matters as much as the model [8]. RepoGraph [3] and LocAgent [4] lead an agent to the code to edit by finding an issue's terms in a code graph and walking its edges; Section 4.3 counts how often such a walk exists here.
 
@@ -80,6 +80,8 @@ A snapshot is the tree at `base_commit` as a single commit, so no later history 
 
 The graph reaches only part of what a data repository changes. It misses the fix in 42 of the 93 tasks: 31 touch no module it covers (new modules, scripts, notebooks, configuration or documents) and 11 change no existing function or class. In the other 51, the statement names an edited function or class (by its identifier) in 20, call edges lead there from one it names in 2 more, and in 29 neither does. Embedding search does more: ranking a graph's nodes (median 398) by similarity to the statement puts an edited one first in 15 of the 51 (0.6 expected by chance: each graph's nodes ranked at random, hypergeometric, summed over tasks) and in the first ten in 30 (5.4 by chance), 20 of them among those 29. So by name, call edge or embedding search the graph leads to the fix in 42 of the 51. These are counts from the published files, not agent runs.
 
+A failing test's report adds 6 more. The repository is test-first, so each failing test exists before its fix. Run at the base commit, the tests of 23 of the 51 tasks call an edited function (among a median of 7 public functions, which its OpenTelemetry spans would record), but only 1 in a task those three miss. In 15 the tests fail at import, and 13 of those errors name a module the fix changes, 5 in tasks those three miss. Statement and report together reach 48 of the 51. The report uses the hidden test: a test-first workflow's context, not a benchmark condition.
+
 ### 4.4 Gates
 
 A task is kept only if its tests fail at `base_commit` with the test patch alone, and pass once the reference patch is applied with the files the grader strips removed. All 115 fail without the fix; 114 pass with it.
@@ -90,7 +92,7 @@ Applied unchanged to Open Navigator, a public repository run by a nonprofit the 
 
 ## 5. Harness and verification
 
-**The local harness.** This work re-implemented the harness the competition's guide documents before finding its evaluator in a separate Kaggle dataset. Two scripted models bound it: replaying each reference patch from the repository's history resolves 111 of 113 tasks (the other two need Postgres and R), and submitting nothing resolves none.
+**The local harness.** This work first re-implemented the harness the competition's guide documents. Replaying each reference patch from the repository's history resolves 111 of 113 tasks; submitting nothing, none.
 
 **The competition's evaluator.** The competition's own verification (`swegemma` 0.2.11, subprocess sandbox, unmodified) was then run on the 113 tasks first published and on the corrected release.
 
@@ -99,19 +101,19 @@ Applied unchanged to Open Navigator, a public repository run by a nonprofit the 
 | First release, with the import fix below | 93 of 113 resolved | 0 of 113 | both verifiers agree on 25 of 25 |
 | Corrected release, as published | 93 of 93 resolved | 0 of 93 | both verifiers agree on 23 of 23 |
 
-As first published, no task could be scored (all three tried fail at import): the evaluator puts the repository root on the import path, and this package sits in `python/`. The corrected release adds a short `conftest.py` at each snapshot's root and keeps only the 93.
+As first published, no task could be scored: the evaluator imports from the repository root, and this package sits in `python/`. The corrected release adds a short root `conftest.py` and keeps only the 93.
 
-Of the 20 left out, twelve have tests that read third-party files the published snapshots withhold for licence reasons, six start a script that imports a module beside it, which the evaluator's `PYTHONSAFEPATH=1` forbids and the local harness allows, and two need Postgres or R.
+Of the 20 left out, twelve read third-party files withheld for licence reasons, six run a script that imports a module beside it, which the evaluator's `PYTHONSAFEPATH=1` forbids, and two need Postgres or R.
 
-**Keeping answers from the model.** This repository's history contains every fix, and later snapshots contain earlier tasks' fixes, so commands and verification run in Linux namespaces with no network and an allow-listed environment. On Kaggle, where namespaces are not allowed, each task runs alone in a private, offline notebook beside a private dataset holding that task only.
+**Keeping answers from the model.** Later snapshots hold earlier tasks' fixes, so locally each task runs in Linux namespaces with no network, and on Kaggle alone, in a private offline notebook beside a dataset holding that task only.
 
-**Known differences.** Namespaces instead of a container; no ADK context compaction or prefix caching; sub-agents and skills are not run; `PYTHONSAFEPATH` is not set. No number here is a competition score.
+**Known differences.** Namespaces, not a container; no context compaction, prefix caching, sub-agents or skills; `PYTHONSAFEPATH` unset. No number here is a competition score.
 
 ## 6. Baseline
 
-**Setup.** `gemma-4-e4b-it` in fp16 with transformers on two T4 GPUs, internet off, thinking off, at most 2,048 new tokens per turn, a 24,576-token context, 40 tool calls, 60 turns and 30 minutes per task. Tasks were run cheapest first under a GPU-hour cap, so no rate here is an unbiased estimate for the 93.
+**Setup.** `gemma-4-e4b-it` in fp16 with transformers on two T4 GPUs, internet off, thinking off, at most 2,048 new tokens per turn, a 24,576-token context, 40 tool calls, 60 turns and 30 minutes per task. Tasks ran cheapest first under a GPU-hour cap, so no rate here estimates the 93.
 
-**Results.** Ten of the 58 tasks attempted were excluded from the set (Section 5). On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% Wilson CI 4.5–22.2). By statement source: 4 of 24 from issues, 1 of 19 from pull requests, 0 of 5 from commit messages; the intervals overlap.
+**Results.** Ten of the 58 tasks attempted were excluded from the set (Section 5). On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% Wilson CI 4.5–22.2).
 
 **Do the graph tools help?** A harness fault served the first tasks without their code graph; after the fix, 28 were rerun with the same settings. On the 23 published, 2 were resolved either way (one in common). The model made only 6 graph-tool calls among 145, in 4 of the 23 runs.
 
@@ -123,7 +125,7 @@ Of the 20 left out, twelve have tests that read third-party files the published 
 
 **Under the competition's evaluator.** The agent was also run end to end with the official harness: `swegemma`'s agent loop, vLLM from the competition's wheelhouse, four L4 GPUs, and its competition settings (16,384 output tokens, a 4,096-token thinking budget, 40 tool calls, 5 minutes). The sample is 20 of the 93, seeded and stratified by tier, not by cost. Each task ran alone, without patch or tests. The agent resolved 0 of 20 (95% CI 0–16.1): 16 patches fail and 4 runs submit nothing. In 189 tool calls the model called a graph tool 9 times. Seventeen of the 20 fail the second screen.
 
-**Cost, and what to send.** Of the agent's 9.0 hours on the 48 tasks, 17% went to the 13 that pass the second screen, which gave 4 of the 5 fixes, and 20% to the 12 a name or call edge reaches, which gave 3: 0.38 and 0.61 hours a fix, against 1.80 overall. The screen reads the tests, which a test-first workflow has before the fix; graph reach here uses the reference fix, so it is not yet a routing rule.
+**Cost, and what to send.** Of the agent's 9.0 hours on the 48 tasks, 17% went to the 13 that pass the second screen, which gave 4 of the 5 fixes, and 20% to the 12 a name or call edge reaches, which gave 3: 0.38 and 0.61 hours a fix, against 1.80 overall (about $0.53 and $0.84 against $2.49 on two T4s at a median rental of $0.69 an hour each; Kaggle's were free). The screen reads the tests, which a test-first workflow has before the fix; graph reach here uses the reference fix, so it is not yet a routing rule.
 
 ## 7. Limitations
 
@@ -136,11 +138,11 @@ Of the 20 left out, twelve have tests that read third-party files the published 
 
 ## 8. Conclusion and release
 
-From a cloud agent's own problem statements, a model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, 2 of 23 with a larger budget and none of a random 20 under the competition's evaluator. The graph could have told it where to look in 42 of the 51 tasks that edit existing code, yet only 20 of 473 tool calls asked a graph tool: that signal is there to be used, its benefit to an agent untested. Sending the model only the tasks that pass the screen would have kept 4 of its 5 fixes for 17% of its time.
+From a cloud agent's own problem statements, a model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, 2 of 23 with a larger budget and none of a random 20 under the competition's evaluator. The graph could have told it where to look in 42 of the 51 tasks that edit existing code, and a failing test's report in 6 more, yet only 20 of 473 tool calls asked a graph tool: that signal is there to be used, its benefit to an agent untested. Sending the model only the tasks that pass the screen would have kept 4 of its 5 fixes for 17% of its time.
 
-**Using the set.** The dataset has the competition's layout, so its evaluator runs on it as published. In the repository, `kaggle/official_verify.py` replays the two controls and scripts 63 to 66 the graph, search, cost and routing counts; the quickstart notebook loads a task with its snapshot, graph and embeddings.
+**Using the set.** The dataset has the competition's layout, so its evaluator runs on it as published. In the repository, `kaggle/official_verify.py` replays the two controls and scripts 63 to 66 and 68 the graph, search, cost, routing and failing-test counts; the quickstart notebook loads a task with its snapshot, graph and embeddings.
 
-The recipe is the competition's (changes that touch code and tests, its format, its evaluator) plus what this paper adds on one repository: record each statement's source, run reference-patch and empty-patch controls on the published files, screen statements against tests, and count where the graph leads to the fix.
+The recipe is the competition's (changes that touch code and tests, its format, its evaluator) plus what this paper adds on one repository: record each statement's source, run reference-patch and empty-patch controls on the published files, screen statements against tests, and count where the graph and a failing test's report lead to the fix.
 
 ## References
 

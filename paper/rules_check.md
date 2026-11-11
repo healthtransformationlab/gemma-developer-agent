@@ -6,7 +6,7 @@ advice.
 
 | Rule | Requirement | How checked | Result |
 |---|---|---|---|
-| Paper track: length | at most 3,000 words, references excluded | words before "## References" in the paper's text | PASS (2,812 words) |
+| Paper track: length | at most 3,000 words, references excluded | words before "## References" in the paper's text | PASS (2,808 words) |
 | Paper track: the file submitted | the PDF carries the same text as the paper | PDF exists; its word count within 10% of the text's (layout adds page numbers, captions); title in it | PASS |
 | 2.4.a Data access and use | Competition Data used only as the Website and Rules permit | the paper reports the evaluator's verdicts on this project's own tasks; no competition task is published | PASS |
 | 2.4.b Data security | Competition Data not redistributed | no competition file (wheels, sample_submission, HARNESS_README, swegemma, adk_submission) is tracked | PASS |
