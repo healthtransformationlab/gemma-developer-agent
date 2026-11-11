@@ -1,8 +1,8 @@
 # gemma-developer-agent
 
-A coding agent for the Gemma 4 Developer Agent Competition, and the question behind it:
+**Paper Track submission:** [Can a small local agent redo a cloud agent's work?](https://kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/can-a-small-local-agent-redo-a-cloud-agents-work)
 
-View submission: [Kaggle Submission: Can a small local agent redo a cloud agents work](https://kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/can-a-small-local-agent-redo-a-cloud-agents-work)
+A coding agent for the Gemma 4 Developer Agent Competition, and the question behind it:
 
 **Does a well-run data repo make a small AI coding agent better at fixing bugs?**
 
@@ -20,6 +20,38 @@ The idea is that five things a well-run repo has do part of the agent's thinking
 
 Licence: [Apache 2.0](LICENSE), the licence type the competition names for winning submissions.
 
+## What has been run, and what it cost
+
+Gemma 4 E4B on the 93 tasks built from
+[`health-transformation-lab-nlp`](https://github.com/healthtransformationlab/health-transformation-lab-nlp)'s history.
+One row per run. Time and tokens are averages for one task, from each run's own log.
+
+| Run | Hardware and budget | Resolved | Agent time a task | Tokens a task |
+|---|---|---|---|---|
+| Local harness, cheapest tasks first | 2 × T4 on Kaggle; 2,048 output tokens a turn | **5 of 48** (10.4%, 95% CI 4.5–22.2) | 11.3 min | 112k in, 4.4k out |
+| The same, larger budget | 1 × L4 on Colab; 16,384 output tokens a turn, thinking on | 2 of the 23 cheapest (2 before) | 5.4 min | not logged |
+| The competition's own evaluator, end to end | 4 × L4 on Kaggle; the competition's 5-minute budget | 0 of a random 20 (95% CI 0–16.1) | 1.7 min, plus 5.9 min to load the model | 124k in, 6.7k out |
+| The competition's development set, same evaluator | 4 × L4 on Kaggle | not run yet (129 tasks) | | |
+
+- **Controls.** On the published files the competition's evaluator resolves 93 of 93 reference patches and 0 of
+  93 empty patches, and gives the same verdict as the local harness on all 48 agent patches.
+- **Cost of a fix.** 1.80 hours of agent time a fix across the 48. The 13 attempted tasks whose statements say
+  what their tests check (an AI screen of all 93; a person checked 30) gave 4 of the 5 fixes for 17% of that
+  time: 0.38 hours a fix.
+- **What the graph could tell it.** By name, call edge or embedding search (first ten results), the code graph
+  leads from statement to fix in 42 of the 51 tasks that edit existing code. The model asked a graph tool in 20 of
+  its 473 tool calls, and a paired rerun of 23 tasks resolved 2 with the graph tools and 2 without.
+
+Sources, at the commit the paper used: the [local harness](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/agent_runs/gemma-4-e4b-it_kaggle.csv)
+table (its 48 rows of published tasks; tokens over the 46 that logged them), the
+[larger budget](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/agent_reruns/gemma-4-e4b-it_larger_budget.csv),
+[official evaluator](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma.csv) (the 20 in
+its sample) and [routing](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/screening/screen_routing.csv) tables. The Kaggle kernels run with
+internet off, so they send no telemetry: the harness writes each task's timing, tokens and tool calls into these
+tables instead. The source repo's pipelines send theirs to Azure Application Insights
+([`docs/telemetry.md`](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/docs/telemetry.md)). Every number in the paper is traced in
+[`paper/sources.md`](paper/sources.md).
+
 <details>
 <summary><b>What's in this repo</b></summary>
 
@@ -34,27 +66,14 @@ Licence: [Apache 2.0](LICENSE), the licence type the competition names for winni
 </details>
 
 <details>
-<summary><b>The experiment, and what has been run</b></summary>
+<summary><b>The plan, and what is still to run</b></summary>
 
-The plan was the same agent on two task sets under two conditions:
-
-|  | Competition dev set (129 tasks) | DataOps task set (93 tasks) |
-|---|---|---|
-| Agent without the skill | not run | **48 tasks run, 5 resolved** (10.4%, 95% CI 4.5 to 22.2) |
-| Agent with the pipeline-doctor skill | not run | not run |
-
-One cell has been run, so this repo does not yet say whether the skill, or a well-run repo, helps. What the run
-does give is a baseline and its controls. The agent ran on a local re-implementation of the competition's
-documented harness, not the competition's evaluator. The competition's evaluator then checked the task set and the
-patches: on the published files it resolves 93 of 93 reference patches and 0 of 93 empty patches, and it gives
-the same verdict as the local harness on all 48 agent patches compared. Gemma 4 E4B on two T4 GPUs wrote a patch
-for 40 of the 48 published tasks it attempted and resolved 5. A paired rerun of 23 of them, with and without the
-code-graph tools, resolved 2 either way; with the tools available the model called one in 4 of the 23 runs. Ten
-more attempts were on tasks since left out of the published set. Run end to end by the competition's own evaluator
-(four L4 GPUs, this repo's competition settings) on a seeded sample of 20 tasks, the agent resolved none. A rerun of
-the 23 cheapest of the 48 with eight times the output budget and thinking on (one L4 GPU on Colab, the local harness) resolved
-2, against 2 under the tight limits. By names and call edges, a task's code graph leads from its statement to
-its fix in 22 of the 93 tasks. Details and limits: [`paper/small-local-agent-redo-cloud-agent-work.md`](paper/small-local-agent-redo-cloud-agent-work.md).
+The plan is the same agent on two task sets, with and without the pipeline-doctor skill: the competition's
+development set (129 tasks) and this task set (93). Only this task set without the skill has been run (above), so
+this repo does not yet say whether the skill, or a well-run repo, helps. The local harness re-implements the
+competition's documented harness; the competition's own evaluator then checked the task set and the agent's
+patches. Ten more attempts were on tasks since left out of the published set. Details and limits:
+[`paper/small-local-agent-redo-cloud-agent-work.md`](paper/small-local-agent-redo-cloud-agent-work.md).
 
 The offline switch-off test in pipeline-doctor is not evidence for the ingredients above: its rules were written
 from the nine incidents it is scored on, and its "no conventions" condition blanks five data columns.
