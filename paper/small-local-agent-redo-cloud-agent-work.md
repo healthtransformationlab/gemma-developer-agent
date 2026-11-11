@@ -22,20 +22,20 @@ This competition [14] asks whether a model that fits on one accelerator can do t
 
 Two kinds of repository are scarce. In a **data repository** the costly defect is silent: a pipeline finishes and a number in its table is wrong. An **agent-built repository** can leave an unusually complete record: an issue, a pull request and a review for each change.
 
-This paper adds one repository that is both, set beside the competition's four by its mining rule, format and evaluator, and compared with its own tasks. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are real changes to application code: de-identification, record checks, model scoring, pipelines. Coding-agent sessions made every change, and scripts make every step from merged change to published task.
+This paper adds one repository that is both, set beside the competition's four by its mining rule, format and evaluator, and compared with its own tasks. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are real changes to application code: de-identification, record checks, model scoring, pipelines.
 
 Contributions:
 
 1. **A task set**: 93 health-data modelling tasks in the competition's format, each verified by its evaluator and labelled with its statement's source, with a 17-task core split (Sections 4 and 6).
 2. **An open harness** that agrees with the competition's evaluator on every saved agent patch and keeps answers from the model (Section 5).
-3. **A baseline and a pre-registered experiment** for Gemma 4 E4B: a local harness, the competition's evaluator on this set and its own, and all 93 tasks again with graph retrieval and with a failing test's report as added context (Section 6).
+3. **A baseline and a pre-registered experiment** for Gemma 4 E4B: a local harness, the competition's evaluator on this set and its own, and all 93 tasks with graph retrieval or a failing test's report added (Section 6).
 4. **Checks on the recipe**: whether statements say what their tests check, and where the graph leads from statement to fix, both also on the competition's tasks (Sections 4.3 and 6).
 
 ## 2. Related work
 
-**Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale collection for training and fresh evaluation. These draw on open-source libraries; this set comes from an agent-built data repository.
+**Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale collection for training and fresh evaluation.
 
-**Agents and graphs.** SWE-agent showed that the interface matters as much as the model [8]. RepoGraph [3] and LocAgent [4] lead an agent to the code to edit by finding an issue's terms in a code graph and walking its edges; Sections 4.3 and 6 count how often such a walk exists, and Section 6 runs the agent with the walk done for it. In this track, one entry counts such signals on the competition's 129 tasks [15], close to the counts here.
+**Agents and graphs.** SWE-agent showed that the interface matters as much as the model [8]. RepoGraph [3] and LocAgent [4] lead an agent to the code to edit by finding an issue's terms in a code graph and walking its edges; Section 4.3 counts how often such a walk exists, and Section 6 runs the agent with the walk done for it. In this track, one entry counts such signals on the competition's 129 tasks [15], close to the counts here.
 
 **Data work.** DS-1000 tests data-science code generation [9]; Spider 2.0 [10], ELT-Bench [11] and data-eng-bench [13] score a produced artefact. MLOps-Bench [12] is closest: 212 fail-to-pass tasks from 31 public ML repositories.
 
@@ -65,13 +65,11 @@ Each task records where its `problem_statement` came from.
 | B | the pull request's title and body (no issue existed) | 45 (34) |
 | C | the commit message (no pull request existed) | 22 (20) |
 
-Tiers B and C exist because the issue rule was adopted partway through.
-
 ### 4.3 Snapshots, graphs, embeddings
 
 A snapshot is the tree at `base_commit` as a single commit. The code graph is an AST walk over the package into NetworkX node-link JSON with the competition's keys: a node for each function, class and method with its source text, and a `calls` edge where one calls another (medians: 488 nodes, 397 edges). Embeddings come from EmbeddingGemma, cut to 256 dimensions; a format check against the competition's own files matched.
 
-The graph reaches only part of what a data repository changes. It misses the fix in 42 of the 93 tasks: 31 touch no module it covers and 11 change no existing function or class. In the other 51, the statement names an edited function or class in 20, call edges lead there from one it names in 2 more, and in 29 neither does. Embedding search does more: ranking a graph's nodes (median 398) by similarity to the statement puts an edited one first in 15 of the 51 (0.6 expected by chance) and in the first ten in 30 (5.4 by chance), 20 of them among those 29. So by name, call edge or embedding search the graph leads to the fix in 42 of the 51.
+The graph misses the fix in 42 of the 93 tasks: 31 touch no module it covers and 11 change no existing function or class. In the other 51, the statement names an edited function or class in 20, call edges lead there from one it names in 2 more, and in 29 neither does. Embedding search does more: ranking a graph's nodes (median 398) by similarity to the statement puts an edited one first in 15 of the 51 (0.6 expected by chance) and in the first ten in 30 (5.4 by chance), 20 of them among those 29. So by name, call edge or embedding search the graph leads to the fix in 42 of the 51.
 
 An oracle-assisted analysis adds a failing test's report, which a test-first repository has before the fix. Run at the base commit, the tests of 23 of the 51 tasks call an edited function, but only 1 in a task those three miss. In 15 the tests fail at import, and 13 of those errors name a module the fix changes, 5 in tasks those three miss: with the report, 48 of the 51. This analysis uses the hidden test and the reference fix, so it is not a result an agent achieved; Section 6 gives an agent the report.
 
@@ -102,7 +100,7 @@ Of the 20 left out, twelve read withheld third-party files, six run a script tha
 
 **Setup.** `gemma-4-e4b-it` in fp16 with transformers on two T4 GPUs, internet off, thinking off, at most 2,048 new tokens per turn, a 24,576-token context, 40 tool calls, 60 turns and 30 minutes per task. Tasks ran cheapest first under a GPU-hour cap, so no rate here estimates the 93.
 
-**Results.** Ten of the 58 tasks attempted were excluded from the set (Section 5). On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% Wilson CI 4.5–22.2), all small: a CI rule, a warning message, a label parser and two settings. Of the other 43, 35 submitted a patch that fails the target tests and 8 submitted nothing.
+**Results.** Ten of the 58 tasks attempted were excluded from the set (Section 5). On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% Wilson CI 4.5–22.2), all small: a CI rule, a warning message, a label parser and two settings.
 
 **A larger budget.** Rerun on one Colab L4 with eight times the output tokens, thinking on and 100 tool calls, the 23 cheapest of the 48 resolved 2, against 2 under the tight limits.
 
@@ -136,15 +134,15 @@ The baseline arm's model server stopped answering after 21 tasks. The other 72 c
 - **One new repository**, compared with the competition's development set (Section 6).
 - **No cloud baseline.** The cloud agent that made these changes, with a person in the loop, was not rerun on the statements alone.
 - **No baseline for 72 tasks.** The experiment's baseline arm ran 21 of 93, so neither context is tested against it; the rerun is owed (source repository, issue 681).
-- **No leaderboard score.** Every run under the competition's evaluator used 5 minutes and 40 tool calls, not 60 and 100, once per arm at temperature 0.2. The report arm's context comes from the hidden test, so it is not a benchmark condition. The first baseline covers 48 of 93 tasks, cheapest first.
+- **No leaderboard score.** Every run under the competition's evaluator used 5 minutes and 40 tool calls, not 60 and 100, once per arm at temperature 0.2. The report arm's context comes from the hidden test, so it is not a benchmark condition.
 - **AI screens.** A person checked 30 verdicts, in summary, after seeing the AI's; 63 of ours, 12 of the core split's 17 and all 40 development tasks have AI ratings only.
 - **Prompted repair.** Each task comes with a failing test: noticing a silent defect unprompted is not measured.
 
 ## 8. Conclusion and release
 
-A model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, and 3 of 23 of the competition's own under its evaluator. With graph retrieval done for it, it resolved 4 of all 93, and with a failing test's report 5, in an experiment registered before it ran; its baseline arm failed after 21 tasks, so whether either context helps is still open. Over every run, 8 of the 9 tasks this model has resolved are in the core split of 17, which is where a result on this set should be quoted. On the competition's tasks the graph holds more fixes and the screen passes half: the two sets differ in their tests more than their statements.
+A model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, and 3 of 23 of the competition's own under its evaluator. With graph retrieval done for it, it resolved 4 of all 93, and with a failing test's report (from the hidden test) 5, in an experiment registered before it ran; its baseline arm failed after 21 tasks, so whether either context helps is still open. Over every run, 8 of the 9 tasks this model has resolved are in the core split of 17, which is where a result on this set should be quoted. On the competition's tasks the graph holds more fixes and the screen passes half: the two sets differ in their tests more than their statements.
 
-**Using the set.** The dataset has the competition's layout, so its evaluator runs on it as published. In the repository, `kaggle/official_verify.py` replays the two controls and scripts 63 to 72 rebuild the graph, cost, failing-test, experiment and telemetry tables; the quickstart notebook loads a task.
+**Using the set.** The dataset has the competition's layout, so its evaluator runs on it as published. In the repository, `kaggle/official_verify.py` replays the two controls; the quickstart notebook loads a task.
 
 ## References
 
