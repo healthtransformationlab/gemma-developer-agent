@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 418" width="720" height="418" role="img" aria-label="Figure 1. Task counts at each step, on one scale. Merged changes mined: 197; Touch code and tests (candidates): 116; Built, pass both gates, licensed: 113; Verified by the competition&#x27;s evaluator (published): 93; Attempted and scored: 48; Wrote a patch: 40; Resolved: 5; Sampled, stratified by tier: 20; Wrote a patch: 16; Resolved: 0; Screened: 30; Tests need a name or text the statement never gives: 25; Pass both questions: 5" font-family="Inter, 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 418" width="720" height="418" role="img" aria-label="Figure 1. Task counts at each step, on one scale. Merged changes mined: 197; Touch code and tests (candidates): 116; Built, pass both gates, licensed: 113; Verified by the competition&#x27;s evaluator (published): 93; Attempted and scored: 48; Wrote a patch: 40; Resolved: 5; Resolved as published (of 21 run): 0; Resolved with graph retrieval (of 93): 4; Resolved with the failing test&#x27;s report (of 93): 5; Screened: 93; Tests need a name or text the statement never gives: 76; Pass both questions (the core split): 17" font-family="Inter, 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif">
 <rect width="720" height="418" fill="#ffffff"/>
 <text x="12" y="20" font-size="13" font-weight="600" fill="#0b0b0b">Figure 1. Task counts at each step, on one scale.</text>
 <text x="12" y="52" font-size="11.5" font-weight="600" fill="#0b0b0b">Building the task set (Sections 4 and 5)</text>
@@ -26,26 +26,26 @@
 <path d="M356,212 h3.8 a3.8071065989847717,3.8071065989847717 0 0 1 3.8071065989847717,3.8071065989847717 v4.4 a3.8071065989847717,3.8071065989847717 0 0 1 -3.8071065989847717,3.8071065989847717 h-3.8 z" fill="#2a78d6"><title>Resolved: 5</title></path>
 <text x="370.6" y="222.0" font-size="11.5" font-weight="600" fill="#0b0b0b">5</text>
 <line x1="356" y1="168" x2="356" y2="228" stroke="#c9c8c2" stroke-width="1"/>
-<text x="12" y="252" font-size="11.5" font-weight="600" fill="#0b0b0b">Run by the competition&#x27;s own evaluator on a random sample (Section 6)</text>
-<text x="346" y="272.0" font-size="11.5" text-anchor="end" fill="#52514e">Sampled, stratified by tier</text>
-<path d="M356,262 h26.5 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-26.5 z" fill="#2a78d6"><title>Sampled, stratified by tier: 20</title></path>
-<text x="393.5" y="272.0" font-size="11.5" font-weight="600" fill="#0b0b0b">20</text>
-<text x="346" y="292.0" font-size="11.5" text-anchor="end" fill="#52514e">Wrote a patch</text>
-<path d="M356,282 h20.4 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-20.4 z" fill="#2a78d6"><title>Wrote a patch: 16</title></path>
-<text x="387.4" y="292.0" font-size="11.5" font-weight="600" fill="#0b0b0b">16</text>
-<text x="346" y="312.0" font-size="11.5" text-anchor="end" fill="#52514e">Resolved</text>
-<path d="M356,302 h0.0 a0.0,0.0 0 0 1 0.0,0.0 v12.0 a0.0,0.0 0 0 1 -0.0,0.0 h-0.0 z" fill="#2a78d6"><title>Resolved: 0</title></path>
-<text x="363.0" y="312.0" font-size="11.5" font-weight="600" fill="#0b0b0b">0</text>
+<text x="12" y="252" font-size="11.5" font-weight="600" fill="#0b0b0b">Pre-registered experiment under the competition&#x27;s evaluator (Section 6)</text>
+<text x="346" y="272.0" font-size="11.5" text-anchor="end" fill="#52514e">Resolved as published (of 21 run)</text>
+<path d="M356,262 h0.0 a0.0,0.0 0 0 1 0.0,0.0 v12.0 a0.0,0.0 0 0 1 -0.0,0.0 h-0.0 z" fill="#2a78d6"><title>Resolved as published (of 21 run): 0</title></path>
+<text x="363.0" y="272.0" font-size="11.5" font-weight="600" fill="#0b0b0b">0</text>
+<text x="346" y="292.0" font-size="11.5" text-anchor="end" fill="#52514e">Resolved with graph retrieval (of 93)</text>
+<path d="M356,282 h3.0 a3.045685279187817,3.045685279187817 0 0 1 3.045685279187817,3.045685279187817 v5.9 a3.045685279187817,3.045685279187817 0 0 1 -3.045685279187817,3.045685279187817 h-3.0 z" fill="#2a78d6"><title>Resolved with graph retrieval (of 93): 4</title></path>
+<text x="369.1" y="292.0" font-size="11.5" font-weight="600" fill="#0b0b0b">4</text>
+<text x="346" y="312.0" font-size="11.5" text-anchor="end" fill="#52514e">Resolved with the failing test&#x27;s report (of 93)</text>
+<path d="M356,302 h3.8 a3.8071065989847717,3.8071065989847717 0 0 1 3.8071065989847717,3.8071065989847717 v4.4 a3.8071065989847717,3.8071065989847717 0 0 1 -3.8071065989847717,3.8071065989847717 h-3.8 z" fill="#2a78d6"><title>Resolved with the failing test&#x27;s report (of 93): 5</title></path>
+<text x="370.6" y="312.0" font-size="11.5" font-weight="600" fill="#0b0b0b">5</text>
 <line x1="356" y1="258" x2="356" y2="318" stroke="#c9c8c2" stroke-width="1"/>
-<text x="12" y="342" font-size="11.5" font-weight="600" fill="#0b0b0b">AI-assisted screen of a random sample of the published tasks (Section 6)</text>
+<text x="12" y="342" font-size="11.5" font-weight="600" fill="#0b0b0b">AI-assisted screen of the published tasks (Section 6)</text>
 <text x="346" y="362.0" font-size="11.5" text-anchor="end" fill="#52514e">Screened</text>
-<path d="M356,352 h41.7 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-41.7 z" fill="#2a78d6"><title>Screened: 30</title></path>
-<text x="408.7" y="362.0" font-size="11.5" font-weight="600" fill="#0b0b0b">30</text>
+<path d="M356,352 h137.6 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-137.6 z" fill="#2a78d6"><title>Screened: 93</title></path>
+<text x="504.6" y="362.0" font-size="11.5" font-weight="600" fill="#0b0b0b">93</text>
 <text x="346" y="382.0" font-size="11.5" text-anchor="end" fill="#52514e">Tests need a name or text the statement never gives</text>
-<path d="M356,372 h34.1 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-34.1 z" fill="#2a78d6"><title>Tests need a name or text the statement never gives: 25</title></path>
-<text x="401.1" y="382.0" font-size="11.5" font-weight="600" fill="#0b0b0b">25</text>
-<text x="346" y="402.0" font-size="11.5" text-anchor="end" fill="#52514e">Pass both questions</text>
-<path d="M356,392 h3.8 a3.8071065989847717,3.8071065989847717 0 0 1 3.8071065989847717,3.8071065989847717 v4.4 a3.8071065989847717,3.8071065989847717 0 0 1 -3.8071065989847717,3.8071065989847717 h-3.8 z" fill="#2a78d6"><title>Pass both questions: 5</title></path>
-<text x="370.6" y="402.0" font-size="11.5" font-weight="600" fill="#0b0b0b">5</text>
+<path d="M356,372 h111.7 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-111.7 z" fill="#2a78d6"><title>Tests need a name or text the statement never gives: 76</title></path>
+<text x="478.7" y="382.0" font-size="11.5" font-weight="600" fill="#0b0b0b">76</text>
+<text x="346" y="402.0" font-size="11.5" text-anchor="end" fill="#52514e">Pass both questions (the core split)</text>
+<path d="M356,392 h21.9 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-21.9 z" fill="#2a78d6"><title>Pass both questions (the core split): 17</title></path>
+<text x="388.9" y="402.0" font-size="11.5" font-weight="600" fill="#0b0b0b">17</text>
 <line x1="356" y1="348" x2="356" y2="408" stroke="#c9c8c2" stroke-width="1"/>
 </svg>
