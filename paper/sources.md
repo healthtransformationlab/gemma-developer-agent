@@ -2,7 +2,7 @@
 
 `AGENTS.md`: no number is a result until a run produced it, and a figure names the run it came from. Paths are in
 [health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp) (`NLP/`)
-unless another repository is named. Checked on November 10, 2026 against `NLP` main at `b12e2e0`.
+unless another repository is named. Checked on November 10, 2026 against `NLP` main at `b12e2e0`; the rows on what a failing test's report adds and on the cost in dollars were added on November 11, 2026.
 
 Every agent number was measured with `htlnlp-harness-v1`, that repository's re-implementation of the competition's
 documented harness, except the 20 tasks of "the agent under the competition's evaluator" below. None is a
@@ -55,8 +55,8 @@ The framing by a person's loop, and the wish to show what the graph is worth, ar
 |---|---|
 | "adds one repository that is both, set beside the competition's four by the competition's mining rule, format and evaluator" | "four" is the count Section 1 already gives for the competition's development set, two sentences earlier; this change adds no count. The set is not part of the competition's data and the paper does not say it is: "beside", not "in". The rule, format and evaluator are the rows of Sections 4.1, 4.3 and 5. The owner's point of November 10, 2026: the method is the competition's and is already run on several repositories; this set adds one of a different kind |
 | "its tasks are application work: de-identification, record checks, model scoring, pipelines" | the 93 reference patches by the package modules they change, read from `NLP/data/tasks/graph_coverage.csv` (`edited_node_text`) and the manifest's titles: de-identification (`deid`, `deid_eval`, `phi_challenge`), record plausibility and data-quality checks (`plausibility`, `grader_tables`), model scoring and reliability (`judge`, `reliability`, `rungs`, `mlflow_judge`), and pipelines, tracking and dashboards (`runlog`, `tracking`, `telemetry`, `dashboards`). A description, not a count |
-| "every step from merged change to published task is a script" | mining `NLP/python/health_transformation_lab_nlp/task_mine.py`; building tasks, snapshots, graphs and embeddings `python/scripts/55_build_tasks.py`; gates `57_gate_tasks.py`; publishing `kaggle/publish_tasks.py` and `.github/workflows/kaggle-publish-tasks.yml`; the evaluator's controls `kaggle/official_verify.py`. The set was mined as of October 29, 2026; rebuilding it on later history has not been done |
-| "with a person in the loop"; "what does the person need for the rest?" | the abstract's rows above: the owner directed every session; the question is the paper's framing |
+| "Coding-agent sessions made every change, and scripts make every step from merged change to published task" (the sessions: Section 3's rows) | mining `NLP/python/health_transformation_lab_nlp/task_mine.py`; building tasks, snapshots, graphs and embeddings `python/scripts/55_build_tasks.py`; gates `57_gate_tasks.py`; publishing `kaggle/publish_tasks.py` and `.github/workflows/kaggle-publish-tasks.yml`; the evaluator's controls `kaggle/official_verify.py`. The set was mined as of October 29, 2026; rebuilding it on later history has not been done |
+| "with a person in the loop" ("what does the person need for the rest?": not in the writeup since november 11, 2026) | the abstract's rows above: the owner directed every session; the question is the paper's framing |
 | Every record is synthetic | `NLP/DISCLAIMER.md`; stated in the title block and in "synthetic dental records" |
 
 ## Section 2, related work
@@ -113,6 +113,21 @@ The framing by a person's loop, and the wish to show what the graph is worth, ar
 | Second repository: 1,320 first-parent commits, 133 candidates (commits that touch non-test Python and Python tests), 22 tied to a pull request, none linking an issue | `git log --first-parent` on [`getcommunityone/open-navigator`](https://github.com/getcommunityone/open-navigator) (Apache 2.0) main at `6fa4943`; its README describes it as an "AI-powered civic engagement platform", and its owner confirmed on November 10, 2026 that it may be cited. A change counts when its diff has a non-test `.py` file and a test `.py` file (under `tests/`, or named `test_*.py` or `*_test.py`). Tied to a pull request: the commit subject ends in `(#n)` or starts with "Merge pull request". Linking an issue: the message has `closes`, `fixes`, `resolves` or `refs` followed by `#n`. Not gated |
 | 169 merged pull requests (of 204: 15 open, 20 closed without merging) | GitHub's search API, read November 10, 2026. 33 of the 169 left no `(#n)` subject on `main` (14 fast-forwarded, 18 squashed or rebased under another subject or merged elsewhere, 1 through a merge commit with another subject), so 22 is a lower bound |
 
+## Section 4.3, what a failing test's report adds
+
+Added on November 11, 2026 (this repository's issue 61). All from `NLP/data/tasks/trace_reach.csv`, written by
+`NLP/python/scripts/68_trace_reach.py` (`NLP` pull requests 671 and 673; spec 028 T023): each of the 51 tasks'
+snapshot as published, its test patch applied, and its test files run under the pytest plugin `_trace_plugin.py`,
+which records names only.
+
+| Figure | Source |
+|---|---|
+| "the tests of 23 of the 51 tasks call an edited function (among a median of 7 public functions ...), but only 1 in a task those three miss" | `is_edited_in_trace` true in 23 rows; median `traced_node_count` 7 (public: no part of the name starts with an underscore). "Those three" are the name, the call edge and the embedding search of the paragraph above, which reach 42 of the 51. Of the 23, one is outside the 42: `htlnlp_pr21`. A failure's traceback holds an edited function in 7, all among the 23 (not in the writeup) |
+| "which its OpenTelemetry spans would record" | `NLP/AGENTS.md`: every public function or method in the package gets `@traced` (`telemetry.py`, spec 014), and a test fails without it. The functions were recorded by a profiler, not read from exported spans; the span cap per caller (`MAX_SPANS_PER_CALLER`) limits repeated calls, not distinct functions |
+| "In 15 the tests fail at import, and 13 of those errors name a module the fix changes, 5 in tasks those three miss" | `is_import_error` in 15 rows; `is_error_module_changed_by_fix` in 13 (the error's module is one the reference patch changes); outside the 42: `htlnlp_c5e54000`, `htlnlp_c7c49998`, `htlnlp_ca9964a0`, `htlnlp_cb988381`, `htlnlp_pr6`. In 9 the error names a name the patch defines on an added line (`is_missing_name_added_by_fix`), 3 of them outside the 42 and all among the 5 (not in the writeup) |
+| "A failing test's report adds 6 more"; "Statement and report together reach 48 of the 51" | the script's summary on the committed table: `statement_count` 42, `trace_not_statement_count` 1, `import_error_not_statement_count` 5, `report_not_statement_count` 6, `statement_or_report_count` 48. The report leads to the fix when an edited function is called by the tests or on a failure's traceback, or an import error names a name the fix adds or a module it changes (36 of the 51). Reached by neither: `htlnlp_109`, `htlnlp_cc73f4cf`, `htlnlp_pr8`. The review of `NLP` pull request 671 had credited all 6 to the functions called; a second session's check found they add 1 and the import errors 5, and `NLP` pull request 673 corrected the record |
+| "The report uses the hidden test" | the test patch is the task's `test_patch`, which the agent is never given (Section 6, "Under the competition's evaluator"); 68's docstring says the same. No agent run had the report: these are counts from files |
+
 ## Section 5, the controls
 
 | Figure | Source |
@@ -120,7 +135,7 @@ The framing by a person's loop, and the wish to show what the graph is worth, ar
 | The competition's evaluator: 93 of 113 reference patches, 0 of 113 empty patches, the same verdict as the author's harness on 25 of 25 saved patches | `NLP/data/tasks/official_verifier/swegemma_verification.csv` and its `README.md` (`NLP` pull request 642). `swegemma` 0.2.11 from the Kaggle dataset `metric/gemma-4-developer-agent-wheelhouse`, its `harness.verification.verify_task` unmodified, subprocess sandbox, run November 10, 2026 on copies of the first release's snapshots (dataset version 3) with a `conftest.py` added at the root, the text that `task_graph.EVALUATOR_CONFTEST_TEXT` now writes into every snapshot |
 | The corrected release as published: 93 of 93 reference patches, 0 of 93 empty patches | `NLP/data/tasks/official_verifier/published_verification.csv` (`NLP` pull request 647): the same driver on dataset version 4, downloaded from Kaggle on November 10, 2026, with nothing added. Its 93 task ids are the 93 the first table vouches for, and each published snapshot's head matches `NLP/data/tasks/snapshot_index.csv` |
 | The rerun's patches: the same verdict as the author's harness on 23 of 23; 48 agent patches compared in all | the `gemma-4-e4b-it` rows of `NLP/data/tasks/official_verifier/published_verification.csv` against `is_rerun_resolved` in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.csv` (`NLP` pull request 648); 25 + 23 = 48 |
-| The first release as published: all 3 tasks tried fail at import | the evaluator's own command line (`python -m swegemma eval --sandbox subprocess --skip-agent-patch`) on `htlnlp_116`, `htlnlp_143` and `htlnlp_174`: `ModuleNotFoundError` for the package during collection |
+| The first release as published: all 3 tasks tried fail at import (not in the writeup since november 11, 2026; the text keeps "no task could be scored") | the evaluator's own command line (`python -m swegemma eval --sandbox subprocess --skip-agent-patch`) on `htlnlp_116`, `htlnlp_143` and `htlnlp_174`: `ModuleNotFoundError` for the package during collection |
 | The 20 tasks left out: 12, 6 and 2 | the `reason_text` column of the same table; each was rerun with full output and grouped by its error |
 | What was tried before the harness was re-implemented | an install in a cloud session (`NLP/pull_requests/pr-421-review.md`), PyPI (`NLP/specs/035-local-agent-harness/spec.md`), and the competition's file list (`NLP` pull request 449). None tried the wheelhouse dataset |
 | The author's control: reference patch resolves 111 of 113 | `NLP/data/tasks/agent_runs/oracle_tasks_gated.csv`. It ran from the repository's history, not from the published snapshots, which is why it did not see the withheld files |
@@ -140,7 +155,7 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 | 58 tasks attempted; 10 excluded from the set (set aside); 48 scorable with 40 non-empty patches and 5 resolved; 35 fail the tests, 8 empty | `is_resolved`, `agent_patch_bytes`, `reason_text`, each task's latest run. The 10 set aside are the attempted tasks among the 20 left out of the published set: `htlnlp_pr38`, `pr39`, `pr40`, `pr41`, `pr44`, `pr49`, `pr61` (tests read withheld files) and `htlnlp_122`, `172`, `185` (`PYTHONSAFEPATH`) |
 | The paired rerun: 23 published tasks; resolved 2 and 2, one in common (patches 18 and 20, and the table, are no longer in the writeup) | the paired table, rows with `is_published`: `is_first_resolved`, `is_rerun_resolved`, `first_patch_bytes`, `rerun_patch_bytes`. The first run is the run table's row at `NLP` commit `db0a29d`, before the harness fault of `NLP/specs/035-local-agent-harness/tasks.md` (T005) was fixed. 28 tasks were rerun; five are not in the published set. Lost `htlnlp_144`, gained `htlnlp_226`, both `htlnlp_pr63` |
 | A graph tool called in 4 of 23 runs, 6 calls among 145 | `rerun_graph_tool_call_count` and `rerun_tool_call_count` in the paired table, published rows. The calls are counted from each run's transcript; all six are `search_similar_code` |
-| By tier: 4 of 24, 1 of 19, 0 of 5 | joined to `tier_code` in the manifest, over the 48 |
+| By tier: 4 of 24, 1 of 19, 0 of 5 (not in the writeup since november 11, 2026) | joined to `tier_code` in the manifest, over the 48 |
 | 30 with failing tests, 5 with errors | `verify_exit_code` 1 and 2, over the 48 |
 | Eight empty patches: four hit the token limit, three submit without an edit, one calls the edit tool with an argument it does not take | each run's `result.json`, downloaded from its Kaggle notebook output on November 10, 2026. `htlnlp_206`, `236`, `cfa7c008` and `pr23` each have a turn at exactly 2,048 output tokens; `htlnlp_120`, `152` and `230` call `submit_patch` without an edit; `htlnlp_71` calls `edit_file` four times with `start_line`, which the tool rejects. `NLP/pull_requests/pr-630-review.md` had attributed the first five to the limit |
 | 20.6 GPU-hours for the 58 first attempts, 9.6 for the 28 reruns, 30.2 in all; median 0.39 GPU-hours, 7 tool calls, about 91,000 prompt tokens | `gpu_hours` summed over the run table at `NLP` commit `db0a29d` (20.56) and `rerun_gpu_hours` over the paired table (9.64); the medians are over the run table's 58 rows as they are now |
@@ -173,6 +188,7 @@ beside the new ones in `NLP/data/tasks/agent_reruns/gemma-4-e4b-it_graph_tools.c
 | Figure | Source |
 |---|---|
 | "17% went to the 13 that pass the second screen, which gave 4 of the 5 fixes"; "0.38 ... hours a fix, against 1.80 overall" | `NLP/data/tasks/screening/screen_routing.csv`, written by `NLP/python/scripts/66_screen_routing.py` (`NLP` pull request 665): the 13 attempted tasks that pass took 1.53 of the agent's 9.01 hours (17.0%) with 4 resolved, 0.38 hours each; all 48 took 9.01 hours with 5 resolved, 1.80 each; the 35 that fail took 83.0% with 1 resolved. A what-if on the one run, not a new run |
+| "about $0.53 and $0.84 against $2.49 on two T4s at a median rental of $0.69 an hour each; Kaggle's were free" | an estimate, not anything paid. `NLP/ops/cost_settings.yaml` declares `t4_usd_per_gpu_hour` 0.69: the median on-demand price of a T4 across the providers listed at getdeploying.com/gpus/nvidia-t4 on October 26, 2026, read November 4 (`NLP` spec 036). The baseline ran on two T4s (Section 6, "Setup"), so an agent hour is two GPU-hours: 1.53 hours for 4 fixes is 1.53 × 2 × 0.69 / 4 = 0.53 dollars a fix; 1.82 hours for the 3 fixes a name or call edge reaches is 1.82 × 2 × 0.69 / 3 = 0.84; 9.01 hours for 5 is 9.01 × 2 × 0.69 / 5 = 2.49. It prices the agent's own time only: loading the model and starting each notebook are not in the 9.0 hours |
 | "0.61 hours a fix" for the 12 a name or call edge reaches | `named_or_called` in `cost_by_graph_reach.csv`: 1.82 hours, 3 resolved |
 | "The screen reads the tests, which a test-first workflow has before the fix" | the screen's second question compares the statement with the test patch; `NLP/AGENTS.md` requires the failing test before the code, so in this repository's own process the test exists when the fix is assigned. Whether routing by the screen works in advance was not run |
 | "graph reach here uses the reference fix, so it is not yet a routing rule" | `named_or_called` is computed from the nodes the reference patch edits. The one graph signal known in advance, whether the statement names any node, sends 31 of the 48 tasks for 67% of the time and 4 of the 5 fixes (not in the writeup) |
@@ -222,11 +238,12 @@ go-ahead: `NLP/kaggle/official_agent_run.py --sample 20 --seed 20261110`.
 | "The recipe, run in full on one repository only" | Section 4.5 and Section 7: the second repository was mined, not gated, verified or run |
 | 5 of 48, 2 of 23, none of a random 20 | Section 6: "Results", "A larger budget" and "Under the competition's evaluator" |
 | "Five small tasks left the loop and the rest stayed in it" | Section 6: the 5 resolved of 48, each a small change, and the 43 unresolved, which the cloud agent and the owner had done |
+| "and a failing test's report in 6 more" | Section 4.3, "what a failing test's report adds" (rows above) |
 | "The graph could have told it where to look in 42 of the 51 tasks that edit existing code"; "that signal is there to be used, its benefit to an agent untested" | Section 4.3 for the count; the second phrase is a reading: the tools to ask the graph exist and were called in 20 of 473 tool calls |
 | "Sending the model only the tasks that pass the screen would have kept 4 of its 5 fixes for 17% of its time" | Section 6, "Cost, and what to send" |
 | "the competition's evaluator runs on it as published" | Section 5: `NLP/data/tasks/official_verifier/published_verification.csv`, 93 of 93 reference patches and 0 of 93 empty patches on dataset version 4 with no file added |
 | `kaggle/official_verify.py` "replays the two controls" | `NLP/kaggle/official_verify.py` runs the competition's verification with a chosen patch per task: none, the reference patch, or patches from a file |
-| "scripts 63 to 65 the graph, search and cost counts" | `NLP/python/scripts/63_graph_coverage.py --published <the downloaded dataset>` (about ten seconds, no model), `64_statement_search.py --published <the same>` (the gated embedding model, about three minutes on a CPU) and `65_cost_by_graph_reach.py` (no model) |
+| "scripts 63 to 66 and 68 the graph, search, cost, routing and failing-test counts" (66: `66_screen_routing.py`; 68: `68_trace_reach.py`, the Section 4.3 rows above) | `NLP/python/scripts/63_graph_coverage.py --published <the downloaded dataset>` (about ten seconds, no model), `64_statement_search.py --published <the same>` (the gated embedding model, about three minutes on a CPU) and `65_cost_by_graph_reach.py` (no model) |
 | "the quickstart notebook loads a task with its snapshot, graph and embeddings" | the "Quickstart notebook" row under the title block above |
 
 ## The former Section 7 (cut on November 10, 2026)
@@ -455,6 +472,15 @@ None of its three cases is in the paper now. The rows below are for what was cut
   requests" and "Candidates are everywhere" (Section 4.5); "The best coding agents today run on large models in
   the cloud", "a table is written" and "written by agents under a person's direction" (Section 1); the five
   resolved tasks' examples in the abstract (Section 6 has them); the sentence on what this graph lacks.
+- Added on November 11, 2026 (this repository's issue 61): what a failing test's report adds to the graph's reach
+  (Section 4.3), and the cost of a fix in dollars (Section 6). Cut to make room: the introduction's question
+  ("Which changes can a small local agent take out of the person's loop, and what does the person need for the
+  rest?"; the abstract asks it); "directed in chat and merged after an automated review" (Section 3 has the rules);
+  Related work's clause on what the set adds (the contributions list has it); in Section 5, "before finding its
+  evaluator in a separate Kaggle dataset", "Two scripted models bound it", "(the other two need Postgres and R)",
+  "(all three tried fail at import)", "and the local harness allows", and the detail of the namespaces (an
+  allow-listed environment; Kaggle does not allow them); "ADK" and "are not run" in the known differences; "is an
+  unbiased estimate for" became "estimates"; and the results by statement source (4 of 24, 1 of 19, 0 of 5).
 - An independent human screen of task quality: not done. Both screens are AI reviewers'; a person checked the
   first screen's 30 verdicts in summary (Section 6 above). The second screen's 63 other verdicts have no person's
   check.
