@@ -46,8 +46,10 @@ runs Phase 2 with an empty patch, which is exactly the fail-to-pass gate our tas
 Results: `summary.json`, `task_results.jsonl`, `patches/`, `test_outputs/`, `traces/`, `logs/`.
 
 ## What this changed here
-- `agent.yaml`: the analyzer is an `agent_tool` with `skip_summarization: true` (keeps its `read_file`
-  output out of the coder's context), not a `sub_agents` include.
+- `agent.yaml`: a `SequentialAgent` that runs the analyzer, then the coder, on every task; the analyzer's answer
+  reaches the coder's prompt as `{code_map?}` (`docs/adr/0001-analyzer-runs-first.md`, issue 59; not yet checked
+  by `validate_directory`). Before that the analyzer was an `agent_tool` with `skip_summarization: true`, which
+  the model called 3 times in 20 runs.
 - `configs/sampling.yaml`: `max_output_tokens` 16,384, `thinking_budget` 4,096, `include_thoughts`.
 - `eval_config.yaml`: 5 min, 40 calls, 60 turns, 120 s per command.
 - `prompts/system.md`: `{problem_description}` and `{hints?}` (optional: the evaluator sets `hints` only for a task that has
