@@ -21,15 +21,15 @@ GROUPS = [
         ("Wrote a patch", 40),
         ("Resolved", 5),
     ]),
-    ("Run by the competition's own evaluator on a random sample (Section 6)", [
-        ("Sampled, stratified by tier", 20),
-        ("Wrote a patch", 16),
-        ("Resolved", 0),
+    ("Pre-registered experiment, tasks resolved (Section 6). No arm resolved any of the 21 the baseline ran.", [
+        ("As published (21 of 93 run)", 0),
+        ("With graph retrieval (93 run)", 4),
+        ("With the failing test's report, from the hidden test (93 run)", 5),
     ]),
-    ("AI-assisted screen of a random sample of the published tasks (Section 6)", [
-        ("Screened", 30),
-        ("Tests need a name or text the statement never gives", 25),
-        ("Pass both questions", 5),
+    ("AI-assisted screen of the published tasks (Section 6)", [
+        ("Screened", 93),
+        ("Tests need a name or text the statement never gives", 76),
+        ("Pass both questions (the core split)", 17),
     ]),
 ]
 TITLE = "Figure 1. Task counts at each step, on one scale."

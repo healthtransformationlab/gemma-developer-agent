@@ -31,26 +31,40 @@ One row per run. Time and tokens are averages for one task, from each run's own 
 | Local harness, cheapest tasks first | 2 × T4 on Kaggle; 2,048 output tokens a turn | **5 of 48** (10.4%, 95% CI 4.5–22.2) | 11.3 min | 112k in, 4.4k out |
 | The same, larger budget | 1 × L4 on Colab; 16,384 output tokens a turn, thinking on | 2 of the 23 cheapest (2 before) | 5.4 min | not logged |
 | The competition's own evaluator, end to end | 4 × L4 on Kaggle; the competition's 5-minute budget | 0 of a random 20 (95% CI 0–16.1) | 1.7 min, plus 5.9 min to load the model | 124k in, 6.7k out |
-| The competition's development set, same evaluator | 4 × L4 on Kaggle | not run yet (129 tasks) | | |
+| The competition's development set, same evaluator | 4 × L4 on Kaggle; the same 5-minute budget; a seeded 40 of its 129 tasks | 3 of the 23 a Kaggle notebook can verify (95% CI 4.5–32.1) | 1.8 min | 121k in, 6.9k out |
+| Pre-registered experiment: as published (the baseline arm) | 4 × L4 on Kaggle; the same 5-minute budget; all 93 tasks | 0 of the 21 tasks run before its model server failed; 72 not run | 1.7 min | 125k in, 6.2k out |
+| The same, with graph retrieval done for the agent | the same | **4 of 93** (95% CI 1.7–10.5) | 1.2 min | 103k in, 4.7k out |
+| The same, with the failing test's report (from the hidden test: not a benchmark condition) | the same | **5 of 93** (95% CI 2.3–12) | 1.5 min | 101k in, 4.9k out |
 
 - **Controls.** On the published files the competition's evaluator resolves 93 of 93 reference patches and 0 of
   93 empty patches, and gives the same verdict as the local harness on all 48 agent patches.
 - **Cost of a fix.** 1.80 hours of agent time a fix across the 48. The 13 attempted tasks whose statements say
   what their tests check (an AI screen of all 93; a person checked 30) gave 4 of the 5 fixes for 17% of that
   time: 0.38 hours a fix.
+- **With more context.** A pre-registered experiment gave the agent graph retrieval, or a failing test's report,
+  on all 93 tasks. Its baseline arm lost its model server after 21 tasks, none of which any arm resolved, and
+  Kaggle's weekly GPU allowance ran out before the rerun the plan allows, so neither context has been tested
+  against the baseline
+  ([the rerun](https://github.com/healthtransformationlab/health-transformation-lab-nlp/issues/681) is owed).
+  7 of the 8 tasks those two arms resolved are in the 17-task core split (statements that an AI
+  screen finds say what their tests check), and 6 of the 8 had been resolved from the statement alone in an earlier run.
+- **Where the time went.** The kernels kept OpenTelemetry spans (names, counts and seconds). In the experiment's
+  three arms, 66–83% of a task's time was model calls and 14–15% context compaction;
+  45 of 207 runs ended when a prompt passed the model's context window. A fix cost 1.9 L4 GPU-hours
+  with graph retrieval and 1.8 with the report.
 - **Tests.** The source repository had 2,269 tests in 126 files on November 8, when its 960 commits end, and 2,355
   in 133 at the commit the paper's analyses use; CI runs them on every pull request.
 - **What the graph could tell it.** By name, call edge or embedding search (first ten results), the code graph
   leads from statement to fix in 42 of the 51 tasks that edit existing code. The model asked a graph tool in 20 of
   its 473 tool calls, and a paired rerun of 23 tasks resolved 2 with the graph tools and 2 without.
 
-Sources, at the commit the paper used: the [local harness](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/agent_runs/gemma-4-e4b-it_kaggle.csv)
+Sources, at the commits the paper used: the [local harness](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/agent_runs/gemma-4-e4b-it_kaggle.csv)
 table (its 48 rows of published tasks; tokens over the 46 that logged them), the
 [larger budget](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/agent_reruns/gemma-4-e4b-it_larger_budget.csv),
-[official evaluator](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma.csv) (the 20 in
-its sample) and [routing](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/screening/screen_routing.csv) tables. The Kaggle kernels run with
-internet off, so they send no telemetry: the harness writes each task's timing, tokens and tool calls into these
-tables instead. The source repo's pipelines send theirs to Azure Application Insights
+[first official-evaluator sample](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma.csv) (the 20 in
+its sample), [development-set](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/1310530112d0635953fb100fc970e7181bf1d1a2/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma_devset.csv), [pre-registered experiment](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/1310530112d0635953fb100fc970e7181bf1d1a2/data/tasks/official_agent_runs/README.md) and [routing](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/screening/screen_routing.csv) tables. The Kaggle kernels run with
+internet off, so they send no telemetry: each task's timing, tokens and tool calls are written into these
+tables, and the evaluator's kernels keep their spans in a file that is rolled up beside them. The source repo's pipelines send theirs to Azure Application Insights
 ([`docs/telemetry.md`](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/docs/telemetry.md)). Every number in the paper is traced in
 [`paper/sources.md`](paper/sources.md).
 
@@ -73,6 +87,7 @@ tables instead. The source repo's pipelines send theirs to Azure Application Ins
 The plan is the same agent on two task sets, with and without the pipeline-doctor skill: the competition's
 development set (129 tasks) and this task set (93). This task set has been run under two harnesses (above): a
 local re-implementation of the competition's documented harness, and the competition's own evaluator, end to end.
+The development set has been run on a seeded 40 of its tasks under that evaluator.
 The comparison with and without the skill has not been run: in the evaluator's run the skill was available and the
 model never called it, so this repo does not yet say whether the skill, or a well-run repo, helps. Ten more
 attempts were on tasks since left out of the published set. Details and limits:
@@ -103,8 +118,11 @@ issue; 67 of those issues are backfilled records that quote the original text ve
   is in `paper/sources.md` with the file it came from.
 - **Run under the competition's own evaluator:** this `agent.yaml`, end to end, on a seeded sample of 20 published tasks
   (0 resolved). The analyzer sub-agent and the skill were available there; the model called the sub-agent 3 times and
-  the skill never.
-- **Not run:** the competition's development set; a comparison with and without the pipeline-doctor skill.
+  the skill never. Then a seeded 40 of the competition's development tasks (3 resolved of the 23 a Kaggle notebook can
+  verify), and a pre-registered experiment on all 93 with two kinds of added context (above), whose baseline arm ran
+  21 tasks.
+- **Not run:** the experiment's baseline for the other 72 tasks ([issue 681](https://github.com/healthtransformationlab/health-transformation-lab-nlp/issues/681));
+  the other 89 development tasks; a comparison with and without the pipeline-doctor skill.
 - **Dates:** paper deadline November 12, 2026; entry deadline November 25; final submission December 2.
 
 </details>
