@@ -21,10 +21,10 @@ GROUPS = [
         ("Wrote a patch", 40),
         ("Resolved", 5),
     ]),
-    ("Pre-registered experiment under the competition's evaluator (Section 6)", [
-        ("Resolved as published (of 21 run)", 0),
-        ("Resolved with graph retrieval (of 93)", 4),
-        ("Resolved with the failing test's report (of 93)", 5),
+    ("Pre-registered experiment, tasks resolved (Section 6). No arm resolved any of the 21 the baseline ran.", [
+        ("As published (21 of 93 run)", 0),
+        ("With graph retrieval (93 run)", 4),
+        ("With the failing test's report, from the hidden test (93 run)", 5),
     ]),
     ("AI-assisted screen of the published tasks (Section 6)", [
         ("Screened", 93),

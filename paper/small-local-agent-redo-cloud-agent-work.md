@@ -10,7 +10,7 @@ Gemma 4 Developer Agent Competition, Paper Track [14]. Topic: Tasks & Benchmarks
 
 ## Abstract
 
-In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960 commits and 2,269 tests, without typing code. Scripts turn its CI-enforced record into 93 health-data modelling tasks by the competition's own mining rule, format and evaluator; the 17 whose statements say what their tests check form a core split. What can a small local model take out of that loop? **What it did unattended:** on free T4 GPUs, Gemma 4 E4B resolved 5 of the 48 tasks it ran, cheapest first; under the competition's evaluator, 3 of 23 verifiable tasks of the competition's own. **What more context did,** in a pre-registered experiment under that evaluator: with graph retrieval done for it, 4 of 93; with a failing test's report (from the hidden test: not a benchmark condition), 5 of 93. The baseline arm's server failed after 21 tasks (none resolved), so neither context could be tested. **Where the fixes were:** 7 of those arms' 8 resolved tasks are in the core split. **What the graph could tell it:** it holds the edited code in 51 of the 93 tasks (114 of 129 in the competition's) and leads from statement to fix in 42 of the 51. **Where its time went:** 66–83% of a task was model calls, by its OpenTelemetry spans.
+In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960 commits and 2,269 tests, without typing code. Scripts turn its CI-enforced record into 93 health-data modelling tasks by the competition's mining rule, format and evaluator; an AI screen finds 17 whose statements say what their tests check, the core split. What can a small local model take out of that loop? **What it did unattended:** on free T4 GPUs, Gemma 4 E4B resolved 5 of the 48 tasks it ran, cheapest first; under the competition's evaluator, 3 of 23 verifiable tasks of its own. **With more context,** in a pre-registered experiment under that evaluator: with graph retrieval done for it, 4 of 93; with a failing test's report (from the hidden test: not a benchmark condition), 5 of 93. The baseline arm's server failed after 21 tasks, which no arm resolved, so neither context could be tested. **Where the fixes were:** 7 of those arms' 8 resolved tasks are in the core split. **What the graph could tell it:** it holds the edited code in 51 of the 93 tasks (114 of 129 in the competition's) and leads from statement to fix in 42 of the 51. **Where its time went:** 66–83% of a task was model calls, by its OpenTelemetry spans.
 
 **Data and code.** Tasks (CC BY 4.0): [kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks). Quickstart notebook: [kaggle.com/code/jcblearning/coding-agent-tasks-quickstart](https://www.kaggle.com/code/jcblearning/coding-agent-tasks-quickstart). Harness, builders and run tables (Apache 2.0): [github.com/healthtransformationlab/health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp). Agent configuration and each number's source (Apache 2.0): [github.com/healthtransformationlab/gemma-developer-agent](https://github.com/healthtransformationlab/gemma-developer-agent).
 
@@ -18,7 +18,7 @@ In fifteen days, one person in the loop with a cloud coding agent took a health-
 
 ## 1. Introduction
 
-This competition [14] asks whether a model that fits on one accelerator can do the work of the large cloud models behind today's best coding agents. Available tasks come from a narrow place: SWE-bench draws on twelve popular Python libraries [1], and the competition's development set on four.
+This competition [14] asks whether a model that fits on one accelerator can do the work of the large cloud models behind today's best coding agents. SWE-bench draws on twelve popular Python libraries [1], and the competition's development set on four.
 
 Two kinds of repository are scarce. In a **data repository** the costly defect is silent: a pipeline finishes and a number in its table is wrong. An **agent-built repository** can leave an unusually complete record: an issue, a pull request and a review for each change.
 
@@ -35,7 +35,7 @@ Contributions:
 
 **Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale collection for training and fresh evaluation.
 
-**Agents and graphs.** SWE-agent showed that the interface matters as much as the model [8]. RepoGraph [3] and LocAgent [4] lead an agent to the code to edit by finding an issue's terms in a code graph and walking its edges; Section 4.3 counts how often such a walk exists, and Section 6 runs the agent with the walk done for it. In this track, one entry counts such signals on the competition's 129 tasks [15], close to the counts here.
+**Agents and graphs.** SWE-agent showed that the interface matters as much as the model [8]. RepoGraph [3] and LocAgent [4] lead an agent to the code to edit by finding an issue's terms in a code graph and walking its edges; Section 4.3 counts how often such a walk exists, and Section 6 runs the agent with the walk done for it. In this track, one entry counts such signals on the competition's 129 tasks [15].
 
 **Data work.** DS-1000 tests data-science code generation [9]; Spider 2.0 [10], ELT-Bench [11] and data-eng-bench [13] score a produced artefact. MLOps-Bench [12] is closest: 212 fail-to-pass tasks from 31 public ML repositories.
 
@@ -51,7 +51,7 @@ The repository holds a Python package and tests, an R twin, SQL and Databricks p
 
 ### 4.1 Mining
 
-The mining script reads every merged pull request and every first-parent commit on `main` as of October 29, 2026: 197 changes. A change is a **candidate** when its diff touches both non-test code and test files, which is the competition's own mining rule.
+The mining script reads every merged pull request and every first-parent commit on `main` as of October 29, 2026: 197 changes. A change is a **candidate** when its diff touches both non-test code and test files: the competition's own mining rule.
 
 Of those, 116 are candidates. One was withdrawn, one failed a gate (Section 4.4) and one was withheld for unlicensed third-party files, leaving 113; the competition's evaluator verifies 93 of them (Section 5), the published set.
 
@@ -67,11 +67,11 @@ Each task records where its `problem_statement` came from.
 
 ### 4.3 Snapshots, graphs, embeddings
 
-A snapshot is the tree at `base_commit` as a single commit. The code graph is an AST walk over the package into NetworkX node-link JSON with the competition's keys: a node for each function, class and method with its source text, and a `calls` edge where one calls another (medians: 488 nodes, 397 edges). Embeddings come from EmbeddingGemma, cut to 256 dimensions; a format check against the competition's own files matched.
+A snapshot is the tree at `base_commit` as a single commit. The code graph is an AST walk over the package into NetworkX node-link JSON with the competition's keys: a node for each function, class and method with its source text, and a `calls` edge where one calls another. Embeddings come from EmbeddingGemma, cut to 256 dimensions; a format check against the competition's own files matched.
 
 The graph misses the fix in 42 of the 93 tasks: 31 touch no module it covers and 11 change no existing function or class. In the other 51, the statement names an edited function or class in 20, call edges lead there from one it names in 2 more, and in 29 neither does. Embedding search does more: ranking a graph's nodes (median 398) by similarity to the statement puts an edited one first in 15 of the 51 (0.6 expected by chance) and in the first ten in 30 (5.4 by chance), 20 of them among those 29. So by name, call edge or embedding search the graph leads to the fix in 42 of the 51.
 
-An oracle-assisted analysis adds a failing test's report, which a test-first repository has before the fix. Run at the base commit, the tests of 23 of the 51 tasks call an edited function, but only 1 in a task those three miss. In 15 the tests fail at import, and 13 of those errors name a module the fix changes, 5 in tasks those three miss: with the report, 48 of the 51. This analysis uses the hidden test and the reference fix, so it is not a result an agent achieved; Section 6 gives an agent the report.
+An oracle-assisted analysis adds a failing test's report. Run at the base commit, the tests of 23 of the 51 tasks call an edited function, but only 1 in a task those three miss. In 15 the tests fail at import, and 13 of those errors name a module the fix changes, 5 in tasks those three miss: with the report, 48 of the 51. This analysis uses the hidden test and the reference fix, so it is not a result an agent achieved; Section 6 gives an agent the report.
 
 ### 4.4 Gates
 
@@ -92,7 +92,7 @@ As first published, no task could be scored: the evaluator imports from the repo
 
 Of the 20 left out, twelve read withheld third-party files, six run a script that the evaluator's `PYTHONSAFEPATH=1` forbids, and two need Postgres or R.
 
-**Keeping answers from the model.** Later snapshots hold earlier tasks' fixes, so each task runs alone: locally in Linux namespaces with no network, on Kaggle in a private offline notebook beside that task only.
+**Keeping answers from the model.** Later snapshots hold earlier tasks' fixes, so each task runs alone: locally in Linux namespaces with no network, on Kaggle in a private offline notebook with the others absent or sealed.
 
 **Known differences.** Namespaces, not a container; no context compaction, prefix caching, sub-agents or skills; `PYTHONSAFEPATH` unset. No number here is a competition score.
 
@@ -104,7 +104,7 @@ Of the 20 left out, twelve read withheld third-party files, six run a script tha
 
 **A larger budget.** Rerun on one Colab L4 with eight times the output tokens, thinking on and 100 tool calls, the 23 cheapest of the 48 resolved 2, against 2 under the tight limits.
 
-**Task fairness.** Two AI screens rated tasks on SWE-bench Verified's two questions [2]. The first took a random 30; the author checked its findings in summary and agreed with all 30. An independent second pass, blind to the first, rated all 93: the same verdict on all 30, and 17 of 93 pass. Those 17 are the set's **core split**; the other 76 stay as a collection of real statements that leave out what their tests need.
+**Task fairness.** Two AI screens rated tasks on SWE-bench Verified's two questions [2]. The first took a random 30; the author checked its findings in summary and agreed with all 30. An independent second pass, blind to the first, rated all 93: the same verdict on all 30, and 17 of 93 pass. Those 17 are the set's **core split**; the other 76 stay, as real statements that leave out what their tests need.
 
 **A pre-registered experiment under the competition's evaluator.** The agent was then run with the official harness: `swegemma`'s agent loop, vLLM from the competition's wheelhouse, four L4 GPUs and its competition settings (16,384 output tokens, a 4,096-token thinking budget, 40 tool calls, 5 minutes), each task alone, without patch or tests. A first seeded sample of 20 resolved none. Then all 93 were to run three times, under a plan hashed before any result (source repository, issue 674): as published; with **graph retrieval** done for the agent (named nodes, their call neighbours and the ten nearest by embedding search, from statement and graph alone); and with the **failing test's report** (its errors and the public functions it called), which uses the hidden test: a test-first workflow's context, not a benchmark condition.
 
@@ -114,9 +114,9 @@ Of the 20 left out, twelve read withheld third-party files, six run a script tha
 | With graph retrieval | 93 | 4 (1.7–10.5%) | 4 |
 | With the failing test's report | 93 | 5 (2.3–12%) | 4 |
 
-The baseline arm's model server stopped answering after 21 tasks. The other 72 count as not run under the plan, and Kaggle refused the one rerun it allows (the weekly GPU allowance was spent). On the 21 tasks every arm ran, no arm resolved any (exact McNemar p = 1.00 for each context), so no difference is claimed and none is ruled out; counting the 72 as baseline failures would give p = 0.125 and 0.0625. Described, not tested: 7 of the 8 tasks the two full arms resolved are in the core split, and 6 of the 8 had been resolved from the statement alone in an earlier run.
+The baseline arm's model server stopped answering after 21 tasks. The other 72 count as not run under the plan, and Kaggle refused the one rerun it allows (the weekly GPU allowance was spent). On the 21 tasks every arm ran, no arm resolved any (exact McNemar p = 1.00 for each context), so no difference is claimed and none is ruled out; even counting the 72 as baseline failures would give p = 0.125 and 0.0625. Described, not tested: 7 of the 8 tasks the two full arms resolved are in the core split, and 6 of the 8 had been resolved from the statement alone in an earlier run.
 
-**Beside the competition's own tasks.** The graph counts were repeated on its 129 development tasks; the screen and the agent took a seeded 40, stratified by repository. In a Kaggle notebook the evaluator's sandbox has no pip to install test dependencies, so the reference patch fails 16 of the 40 and one passes with an empty patch, leaving 23.
+**Beside the competition's own tasks.** The graph counts were repeated on its 129 development tasks; the screen and the agent took a seeded 40, stratified by repository. In a Kaggle notebook the evaluator's sandbox has no pip to install test dependencies: there the reference patch fails 16 of the 40 and one passes with an empty patch, leaving 23 (rich 15, fastapi 8). The agent's notebook mounts the competition's reference patches; no tool call named a path outside its workspace.
 
 | | This set | Development set |
 |---|---|---|
@@ -125,9 +125,9 @@ The baseline arm's model server stopped answering after 21 tasks. The other 72 c
 | Statement vague or worse (AI screen) | 19 of 93 | 11 of 40 |
 | Tests need a name or text the statement never gives | 76 of 93 | 14 of 40 |
 | Resolved as published | 0 of 21 | 3 of 23 |
-| Tool calls to a graph tool, as published | 17 of 207 | 83 of 439 |
+| Tool calls to a graph tool, as published (all runs) | 17 of 207 | 83 of 439 |
 
-**Time, GPUs and cost.** The kernels' OpenTelemetry spans put 66–83% of a task's time in model calls, 14–15% in context compaction and under 0.1% in the graph tools; 45 of 207 runs ended at the model's context window. A task took 297–419 GPU-seconds on the four L4s and 4.8–6.7 Wh, and a fix 1.9 GPU-hours with graph retrieval and 1.8 with the report. On the T4 baseline, the 13 core-split tasks it ran took 17% of its 9.0 hours and gave 4 of its 5 fixes: 0.38 hours a fix against 1.80 overall, about $0.53 against $2.49 at a median rental of $0.69 a T4-hour (Kaggle's were free).
+**Time, GPUs and cost.** The three arms' OpenTelemetry spans put 66–83% of a task's time in model calls, 14–15% in context compaction and under 0.1% in the graph tools; 45 of 207 runs ended at the model's context window. A task took 297–419 GPU-seconds on the four L4s and 4.8–6.7 Wh, and a fix 1.9 GPU-hours with graph retrieval and 1.8 with the report. On the T4 baseline, the 13 core-split tasks it ran took 17% of its 9.0 agent-hours and gave 4 of its 5 fixes: 0.38 a fix against 1.80 overall, about $0.53 against $2.49 for its two T4s at a median rental of $0.69 a T4-hour (Kaggle's were free).
 
 ## 7. Limitations
 
@@ -160,4 +160,4 @@ A model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, and 3 of 2
 12. Tran et al. MLOps-Bench: Benchmarking AI Agents on Production ML Engineering in Real Repositories. arXiv:2610.23506, 2026.
 13. Snowflake Inc. data-eng-bench: a data-engineering benchmark for coding agents. github.com/Snowflake-Labs/data-eng-bench, 2026.
 14. Markowitz et al. Google - The Gemma 4 Developer Agent Competition. Kaggle, 2026. https://www.kaggle.com/competitions/gemma-4-developer-agent
-15. Hassan. Code-graph bug localization benchmark on the 129 public tasks. Kaggle notebook, 2026.
+15. Hassan. Model-free localization benchmark on the 129 public tasks. Kaggle discussion, 2026.
