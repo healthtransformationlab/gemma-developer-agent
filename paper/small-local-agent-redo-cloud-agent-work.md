@@ -45,7 +45,7 @@ The repository holds a Python package and tests, an R twin, SQL and Databricks p
 
 **Who wrote it.** Of 960 commits on `main`, 775 are marked as agent-authored; the rest are merge commits (175), a bot's (5), the author's (4) and the initial one.
 
-**Rules the agents work under.** A checked-in `AGENTS.md` requires an issue per user story, a pull request tied to it and a test before the code; CI rejects a pull request without an issue link. Each pull request has a committed review (240 of them). On November 8 it held 2,269 tests in 126 files, run by CI on every pull request.
+**Rules the agents work under.** A checked-in `AGENTS.md` requires an issue per user story, a pull request tied to it and a test before the code; CI rejects a pull request without an issue link. Each pull request has a committed review (240). On November 8 it held 2,269 tests in 126 files, run by CI on every pull request.
 
 ## 4. Building the task set
 
@@ -53,7 +53,7 @@ The repository holds a Python package and tests, an R twin, SQL and Databricks p
 
 The mining script reads every merged pull request and every first-parent commit on `main` as of October 29, 2026: 197 changes. A change is a **candidate** when its diff touches both non-test code and test files: the competition's own mining rule.
 
-Of those, 116 are candidates. One was withdrawn, one failed a gate (Section 4.4) and one was withheld for unlicensed third-party files, leaving 113; the competition's evaluator verifies 93 of them (Section 5), the published set.
+Of those, 116 are candidates. One was withdrawn, one failed a gate and one was withheld for unlicensed third-party files, leaving 113; the competition's evaluator verifies 93 of them (Section 5), the published set.
 
 ### 4.2 Fidelity tiers
 
@@ -100,7 +100,7 @@ Of the 20 left out, twelve read withheld third-party files, six run a script tha
 
 **Setup.** `gemma-4-e4b-it` in fp16 with transformers on two T4 GPUs, internet off, thinking off, at most 2,048 new tokens per turn, a 24,576-token context, 40 tool calls, 60 turns and 30 minutes per task. Tasks ran cheapest first under a GPU-hour cap, so no rate here estimates the 93.
 
-**Results.** Ten of the 58 tasks attempted were excluded from the set (Section 5). On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% Wilson CI 4.5–22.2), all small: a CI rule, a warning message, a label parser and two settings.
+**Results.** Ten of the 58 tasks attempted were excluded from the set. On the other 48 the model wrote a patch for 40 and resolved 5 (10.4%, 95% Wilson CI 4.5–22.2), all small: a CI rule, a warning message, a label parser and two settings.
 
 **A larger budget.** Rerun on one Colab L4 with eight times the output tokens, thinking on and 100 tool calls, the 23 cheapest of the 48 resolved 2, against 2 under the tight limits.
 
@@ -127,11 +127,11 @@ The baseline arm's model server stopped answering after 21 tasks. The other 72 c
 | Resolved as published | 0 of 21 | 3 of 23 |
 | Tool calls to a graph tool, as published (all runs) | 17 of 207 | 83 of 439 |
 
-**Time, GPUs and cost.** The three arms' OpenTelemetry spans put 66–83% of a task's time in model calls, 14–15% in context compaction and under 0.1% in the graph tools; 45 of 207 runs ended at the model's context window. A task took 297–419 GPU-seconds on the four L4s and 4.8–6.7 Wh, and a fix 1.9 GPU-hours with graph retrieval and 1.8 with the report. On the T4 baseline, the 13 core-split tasks it ran took 17% of its 9.0 agent-hours and gave 4 of its 5 fixes: 0.38 a fix against 1.80 overall, about $0.53 against $2.49 for its two T4s at a median rental of $0.69 a T4-hour (Kaggle's were free).
+**Time, GPUs and cost.** The three arms' OpenTelemetry spans put 66–83% of a task's time in model calls, 14–15% in context compaction and under 0.1% in the graph tools; 45 of 207 runs ended at the model's context window. A task took 297–419 GPU-seconds on the four L4s and 4.8–6.7 Wh, and a fix 1.9 GPU-hours with graph retrieval and 1.8 with the report, about 1.59 and 1.50 US dollars at a median rental of 0.83 an L4-hour. On the T4 baseline, the 13 core-split tasks it ran took 17% of its 9.0 agent-hours and gave 4 of its 5 fixes: 0.38 a fix against 1.80 overall, about 0.53 dollars against 2.49 for its two T4s at 0.69 a T4-hour (Kaggle's were free).
 
 ## 7. Limitations
 
-- **One new repository**, compared with the competition's development set (Section 6).
+- **One new repository**, compared with the competition's development set.
 - **No cloud baseline.** The cloud agent that made these changes, with a person in the loop, was not rerun on the statements alone.
 - **No baseline for 72 tasks.** The experiment's baseline arm ran 21 of 93, so neither context is tested against it; the rerun is owed (source repository, issue 681).
 - **No leaderboard score.** Every run under the competition's evaluator used 5 minutes and 40 tool calls, not 60 and 100, once per arm at temperature 0.2. The report arm's context comes from the hidden test, so it is not a benchmark condition.
