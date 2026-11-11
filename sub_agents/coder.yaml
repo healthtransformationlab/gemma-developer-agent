@@ -15,4 +15,4 @@ tools:
   - search_similar_code
   - get_code_subgraph
 skills:
-  - ../skills/pipeline-doctor
+  - skills/pipeline-doctor   # from the submission's root, not from this file: the compiler refuses `..`

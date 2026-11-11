@@ -94,3 +94,19 @@ def test_submission_files_have_allowed_extensions_and_no_symlinks():
         for file in files:
             assert file.suffix in ALLOWED_SUFFIXES, file
             assert not file.is_symlink(), file
+
+
+def agent_configs() -> list[Path]:
+    """The root agent's file and every sub-agent file it names."""
+    root = load(ROOT / "agent.yaml")
+    return [ROOT / "agent.yaml"] + [ROOT / ref["config_path"] for ref in root.get("sub_agents", [])]
+
+
+def test_every_skill_path_starts_at_the_submission_root():
+    # The competition's compiler reads a skill's path from the submission's root, whichever file names it, and
+    # refuses one that climbs out of a folder: `../skills/pipeline-doctor` in a sub-agent file ends every task
+    # before it starts ("Path traversal attempted in skill"; adk-submission 0.2.13, `compile_submission`).
+    for config in agent_configs():
+        for skill in load(config).get("skills", []):
+            assert ".." not in Path(skill).parts, f"{config.name}: {skill} climbs out of the submission"
+            assert (ROOT / skill / "SKILL.md").is_file(), f"{config.name}: no SKILL.md under {skill} from the root"

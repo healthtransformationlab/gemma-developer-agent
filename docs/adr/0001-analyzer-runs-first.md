@@ -30,10 +30,16 @@ Not done: no new tool, no trace of a failing test (the agent has no failing test
 - The analyzer's tool results stay in the session the coder reads. It has no `read_file`, so those are names and
   edges, not file contents. Whether the coder's context still grows too much is for the dry run to show.
 - A prompt limit of five calls is a request, not a cap. A looping analyzer is stopped only by the task's budget.
-- Unverified until the owner runs them: that `adk_submission.validate_directory` accepts `agent_class:
-  SequentialAgent` and `sub_agents: [{config_path}]` at the root, that `skills:` in `sub_agents/coder.yaml`
-  resolves `../skills/pipeline-doctor`, and that the evaluator's turn and nudge counts treat the analyzer's
-  final answer as the end of its part and not as an idle turn of the session.
+- Checked on November 11 with the competition's own packages (adk-submission 0.2.13, swegemma 0.2.11), with no
+  GPU and no model call: `validate_directory` accepts the files, and `compile_submission`, given the evaluator's
+  limits and its nine tool names, builds a `SequentialAgent` of `code_analyzer` (the three graph tools,
+  `output_key: code_map`, its own sampling settings) then `coder` (`{code_map?}` in its instruction, the skill's
+  tools). As first written it did not build: `skills: ../skills/pipeline-doctor` in `sub_agents/coder.yaml` was
+  refused as path traversal, which would have ended every task before it started. A skill's path is written from
+  the submission's root in whichever file names it (`skills/pipeline-doctor`); a test pins that.
+- Still unverified until a run on a GPU: that `code_map` reaches the coder's prompt, what share of the 40 calls and
+  five minutes the analyzer uses, and that the evaluator's turn and nudge counts treat the analyzer's final answer
+  as the end of its part and not as an idle turn of the session.
 
 ## Revisit when
 
