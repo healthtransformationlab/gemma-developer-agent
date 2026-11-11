@@ -69,10 +69,11 @@ tables instead. The source repo's pipelines send theirs to Azure Application Ins
 <summary><b>The plan, and what is still to run</b></summary>
 
 The plan is the same agent on two task sets, with and without the pipeline-doctor skill: the competition's
-development set (129 tasks) and this task set (93). Only this task set without the skill has been run (above), so
-this repo does not yet say whether the skill, or a well-run repo, helps. The local harness re-implements the
-competition's documented harness; the competition's own evaluator then checked the task set and the agent's
-patches. Ten more attempts were on tasks since left out of the published set. Details and limits:
+development set (129 tasks) and this task set (93). This task set has been run under two harnesses (above): a
+local re-implementation of the competition's documented harness, and the competition's own evaluator, end to end.
+The comparison with and without the skill has not been run: in the evaluator's run the skill was available and the
+model never called it, so this repo does not yet say whether the skill, or a well-run repo, helps. Ten more
+attempts were on tasks since left out of the published set. Details and limits:
 [`paper/small-local-agent-redo-cloud-agent-work.md`](paper/small-local-agent-redo-cloud-agent-work.md).
 
 The offline switch-off test in pipeline-doctor is not evidence for the ingredients above: its rules were written

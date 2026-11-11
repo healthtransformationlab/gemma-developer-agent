@@ -14,7 +14,7 @@
 | Every linked table is at `health-transformation-lab-nlp` commit 254c44c, the one the paper used; all six links open | ok |
 | Says why the agent runs have no Application Insights telemetry: Kaggle kernels run with internet off, so the harness logs timing and tokens to the run tables | ok |
 | The "View submission" line moves above the sentence whose colon it interrupted; the title gets its apostrophe ("cloud agent's work") | ok |
-| The plan section keeps the skill comparison and the switch-off caveat; the outdated "22 of the 93" graph sentence is replaced by the paper's 42 of 51 | ok |
+| The plan section says the task set ran under both harnesses, the local one and the competition's own evaluator end to end (the owner found the old "not the competition's evaluator" outdated), and that the skill comparison is what has not run: the skill was available in the evaluator's run and never called. It keeps the switch-off caveat; the outdated "22 of the 93" graph sentence is replaced by the paper's 42 of 51 | ok |
 | No dollar figures: the runs cost GPU time, and a price would need a cited source | ok |
 | No new run; no secrets; no organisation names; not affiliated | ok |
 
