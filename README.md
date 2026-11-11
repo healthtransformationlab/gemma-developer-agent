@@ -2,6 +2,8 @@
 
 A coding agent for the Gemma 4 Developer Agent Competition, and the question behind it:
 
+View submission: [Kaggle Submission: Can a small local agent redo a cloud agents work](https://kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/can-a-small-local-agent-redo-a-cloud-agents-work)
+
 **Does a well-run data repo make a small AI coding agent better at fixing bugs?**
 
 The idea is that five things a well-run repo has do part of the agent's thinking for it. That has not been measured
