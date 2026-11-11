@@ -51,7 +51,8 @@ One row per run. Time and tokens are averages for one task, from each run's own 
 - **Where the time went.** The kernels kept OpenTelemetry spans (names, counts and seconds). In the experiment's
   three arms, 66–83% of a task's time was model calls and 14–15% context compaction;
   45 of 207 runs ended when a prompt passed the model's context window. A fix cost 1.9 L4 GPU-hours
-  with graph retrieval and 1.8 with the report.
+  with graph retrieval and 1.8 with the report: about 1.59 and 1.50 US dollars at a median rental of 0.83 an L4
+  GPU-hour (an estimate; Kaggle's GPUs were free).
 - **Tests.** The source repository had 2,269 tests in 126 files on November 8, when its 960 commits end, and 2,355
   in 133 at the commit the paper's analyses use; CI runs them on every pull request.
 - **What the graph could tell it.** By name, call edge or embedding search (first ten results), the code graph
@@ -62,7 +63,7 @@ Sources, at the commits the paper used: the [local harness](https://github.com/h
 table (its 48 rows of published tasks; tokens over the 46 that logged them), the
 [larger budget](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/agent_reruns/gemma-4-e4b-it_larger_budget.csv),
 [first official-evaluator sample](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma.csv) (the 20 in
-its sample), [development-set](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/1310530112d0635953fb100fc970e7181bf1d1a2/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma_devset.csv), [pre-registered experiment](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/1310530112d0635953fb100fc970e7181bf1d1a2/data/tasks/official_agent_runs/README.md) and [routing](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/screening/screen_routing.csv) tables. The Kaggle kernels run with
+its sample), [development-set](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/4ce2170983add8aabe15ad1cf7cc303ad300bf04/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma_devset.csv), [pre-registered experiment](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/4ce2170983add8aabe15ad1cf7cc303ad300bf04/data/tasks/official_agent_runs/README.md) and [routing](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/screening/screen_routing.csv) tables. The Kaggle kernels run with
 internet off, so they send no telemetry: each task's timing, tokens and tool calls are written into these
 tables, and the evaluator's kernels keep their spans in a file that is rolled up beside them. The source repo's pipelines send theirs to Azure Application Insights
 ([`docs/telemetry.md`](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/docs/telemetry.md)). Every number in the paper is traced in
