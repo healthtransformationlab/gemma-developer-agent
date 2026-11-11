@@ -15,6 +15,7 @@
 | Says why the agent runs have no Application Insights telemetry: Kaggle kernels run with internet off, so the harness logs timing and tokens to the run tables | ok |
 | The "View submission" line moves above the sentence whose colon it interrupted; the title gets its apostrophe ("cloud agent's work") | ok |
 | The plan section says the task set ran under both harnesses, the local one and the competition's own evaluator end to end (the owner found the old "not the competition's evaluator" outdated), and that the skill comparison is what has not run: the skill was available in the evaluator's run and never called. It keeps the switch-off caveat; the outdated "22 of the 93" graph sentence is replaced by the paper's 42 of 51 | ok |
+| Tests: 2,269 in 126 files at `b12e2e0` (the 960-commit cut-off) and 2,355 in 133 at `254c44c`, from `pytest --collect-only -q tests` at each commit; CI runs on every pull request (the owner's request; the paper's count is #57) | ok |
 | No dollar figures: the runs cost GPU time, and a price would need a cited source | ok |
 | No new run; no secrets; no organisation names; not affiliated | ok |
 

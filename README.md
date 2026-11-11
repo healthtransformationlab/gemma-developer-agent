@@ -38,6 +38,8 @@ One row per run. Time and tokens are averages for one task, from each run's own 
 - **Cost of a fix.** 1.80 hours of agent time a fix across the 48. The 13 attempted tasks whose statements say
   what their tests check (an AI screen of all 93; a person checked 30) gave 4 of the 5 fixes for 17% of that
   time: 0.38 hours a fix.
+- **Tests.** The source repository had 2,269 tests in 126 files on November 8, when its 960 commits end, and 2,355
+  in 133 at the commit the paper's analyses use; CI runs them on every pull request.
 - **What the graph could tell it.** By name, call edge or embedding search (first ten results), the code graph
   leads from statement to fix in 42 of the 51 tasks that edit existing code. The model asked a graph tool in 20 of
   its 473 tool calls, and a paired rerun of 23 tasks resolved 2 with the graph tools and 2 without.
