@@ -6,8 +6,7 @@ View submission: [Kaggle Submission: Can a small local agent redo a cloud agents
 
 **Does a well-run data repo make a small AI coding agent better at fixing bugs?**
 
-The idea is that five things a well-run repo has do part of the agent's thinking for it. That has not been measured
-here yet: what has been run is a baseline (below).
+The idea is that five things a well-run repo has do part of the agent's thinking for it. What has been measured and run is a baseline (below).
 
 | Ingredient | In one line |
 |---|---|
