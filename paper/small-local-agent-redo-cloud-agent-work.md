@@ -10,7 +10,7 @@ Gemma 4 Developer Agent Competition, Paper Track [14]. Topic: Tasks & Benchmarks
 
 ## Abstract
 
-In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960 commits, 775 marked as agent-authored, without typing code. Scripts turn its CI-enforced record into 93 health-data modelling tasks made the way the competition's own are: its mining rule, its format, its evaluator on every task. What can a small local model take out of that loop? **What it did unattended:** on free T4 GPUs, Gemma 4 E4B resolved 5 of the 48 tasks it ran, cheapest first (95% CI 4.5–22.2%), all small. With eight times the output budget it resolved 2 of the 23 cheapest, against 2 before. Under the competition's evaluator it resolved none of a random 20. **What the graph could tell it:** by name, call edge or embedding search (first ten results), the graph leads from statement to fix in 42 of the 51 tasks that edit existing code, and embedding search ranks an edited function first in 15 (0.6 by chance). The model asked a graph tool in only 20 of 473 calls. **Where its time paid:** only 17 of 93 statements say what their tests check (an AI screen, matching all 30 a person checked); the 13 it ran gave 4 of its 5 fixes for 17% of its time, and the tasks a name or call edge reaches gave 3 for 20%.
+In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960 commits (775 marked as agent-authored) and 2,269 tests, without typing code. Scripts turn its CI-enforced record into 93 health-data modelling tasks made the way the competition's own are: its mining rule, its format, its evaluator on every task. What can a small local model take out of that loop? **What it did unattended:** on free T4 GPUs, Gemma 4 E4B resolved 5 of the 48 tasks it ran, cheapest first (95% CI 4.5–22.2%), all small. With eight times the output budget it resolved 2 of the 23 cheapest, against 2 before. Under the competition's evaluator it resolved none of a random 20. **What the graph could tell it:** by name, call edge or embedding search (first ten results), the graph leads from statement to fix in 42 of the 51 tasks that edit existing code, and embedding search ranks an edited function first in 15 (0.6 by chance). The model asked a graph tool in only 20 of 473 calls. **Where its time paid:** only 17 of 93 statements say what their tests check (an AI screen, matching all 30 a person checked); the 13 it ran gave 4 of its 5 fixes for 17% of its time, and the tasks a name or call edge reaches gave 3 for 20%.
 
 **Data and code.** Tasks (CC BY 4.0): [kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks). Quickstart notebook: [kaggle.com/code/jcblearning/coding-agent-tasks-quickstart](https://www.kaggle.com/code/jcblearning/coding-agent-tasks-quickstart). Harness, builders and run tables (Apache 2.0): [github.com/healthtransformationlab/health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp). Agent configuration and each number's source (Apache 2.0): [github.com/healthtransformationlab/gemma-developer-agent](https://github.com/healthtransformationlab/gemma-developer-agent).
 
@@ -26,14 +26,14 @@ This paper adds one repository that is both, set beside the competition's four b
 
 Contributions:
 
-1. **A task set**: 93 tasks from health-data modelling work in the competition's format, so its harness, evaluator and graph tools run on both sets; each verified with the competition's own evaluator and labelled with its statement's source, public under CC BY 4.0 (Section 4).
+1. **A task set**: 93 tasks from health-data modelling work in the competition's format, so its harness, evaluator and graph tools run on both sets; each verified with the competition's own evaluator and labelled with its statement's source (Section 4).
 2. **An open harness** that agrees with the competition's evaluator on every saved agent patch and keeps answers from the model (Section 5).
 3. **A baseline under three settings** for Gemma 4 E4B, with a failure breakdown, a paired test of the code-graph tools, and its time split by graph reach (Section 6).
 4. **Three checks on the recipe**: whether statements say what their tests check (Section 6), whether names, call edges or embedding search lead from statement to fix (Section 4.3), and a second repository (Section 4.5).
 
 ## 2. Related work
 
-**Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale task collection for training and for contamination-free evaluation. These draw on public open-source projects; this set comes from an agent-built data repository and adds statement-source labels and counts of how often the graph and its embeddings lead to the fix.
+**Task sets from repository history.** SWE-bench pairs GitHub issues with the pull requests that closed them and scores a patch by the repository's tests [1]; SWE-bench Verified adds human screening of task quality [2]. SWE-Gym [5], SWE-smith [6] and SWE-rebench [7] scale task collection for training and for contamination-free evaluation. These draw on public open-source projects; this set comes from an agent-built data repository and adds statement-source labels and counts of how often the graph leads to the fix.
 
 **Agents and graphs.** SWE-agent showed that the interface matters as much as the model [8]. RepoGraph [3] and LocAgent [4] lead an agent to the code to edit by finding an issue's terms in a code graph and walking its edges; Section 4.3 counts how often such a walk exists here.
 
@@ -45,7 +45,7 @@ The repository holds a Python package and tests, an R twin, SQL and Databricks p
 
 **Who wrote it.** Of 960 commits on `main`, 775 are marked as agent-authored; the rest are GitHub's merge commits for pull requests (175), a bot's (5), the author's alone (4) and the initial commit.
 
-**Rules the agents work under.** A checked-in `AGENTS.md` requires an issue per user story, a pull request tied to it and a test before the code; CI rejects a pull request without an issue link. Each pull request has a committed review (240 of them).
+**Rules the agents work under.** A checked-in `AGENTS.md` requires an issue per user story, a pull request tied to it and a test before the code; CI rejects a pull request without an issue link. Each pull request has a committed review (240 of them). On November 8 it held 2,269 tests in 126 files, run by CI on every pull request.
 
 ## 4. Building the task set
 
@@ -117,7 +117,7 @@ Of the 20 left out, twelve have tests that read third-party files the published 
 
 **How it fails.** Of the 43 unresolved tasks, 35 submitted a patch that fails the target tests and 8 submitted nothing. The five resolved tasks are small: a CI rule, a warning message, a label parser and two settings.
 
-**A larger budget.** To test the tight limits, the 23 cheapest of the 48 were rerun on the same harness on one Colab L4 GPU: 16,384 output tokens per turn, thinking on, 100 tool calls, 20 minutes and a 20,000-token context. The model resolved 2 of 23, against 2 under the tight limits, and wrote a patch for 20 against 19. Of its 139 tool calls, 5 were to a graph tool. Colab has network access, which Kaggle's notebooks did not; no command used it.
+**A larger budget.** To test the tight limits, the 23 cheapest of the 48 were rerun on the same harness on one Colab L4 GPU: 16,384 output tokens per turn, thinking on, 100 tool calls, 20 minutes and a 20,000-token context. The model resolved 2 of 23, against 2 under the tight limits, and wrote a patch for 20 against 19. Of its 139 tool calls, 5 were to a graph tool. Colab had network access; no command used it.
 
 **Task fairness.** Two AI screens rated tasks on SWE-bench Verified's two questions [2]. The first took a random 30; the author checked its findings in summary and agreed with all 30: five pass, and in 25 the tests need a name or text the statement never gives. An independent second pass, blind to the first, rated all 93: the same verdict on all 30, and 17 of 93 pass. Each verdict and its reason are in the repository (`data/tasks/screening/`). SWE-bench's own human screen filtered out 68.3% of 1,699 samples [2]. Of the 48 tasks the model attempted, it resolved 4 of the 13 that pass and 1 of the 35 that fail, so the baseline may measure the tasks more than the model.
 

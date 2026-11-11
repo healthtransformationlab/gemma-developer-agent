@@ -33,7 +33,7 @@ The framing by a person's loop, and the wish to show what the graph is worth, ar
 
 | Figure | Source |
 |---|---|
-| "In fifteen days, one person in the loop with a cloud coding agent ... from nothing to 960 commits, 775 marked as agent-authored" | Section 3 (rows below): 960 commits on `main` from GitHub's initial commit on October 25 to November 8, 2026, fifteen days counting both ends; 775 = 710 with the agent's co-author trailer + 65 authored as the agent. The other 185 are 175 merge commits GitHub made for pull requests, 5 by an automation bot, 4 by the owner alone and the initial commit. The owner asked on November 10, 2026 for the abstract to lead with this |
+| "In fifteen days, one person in the loop with a cloud coding agent ... from nothing to 960 commits (775 marked as agent-authored) and 2,269 tests" (the tests: Section 3's row below) | Section 3 (rows below): 960 commits on `main` from GitHub's initial commit on October 25 to November 8, 2026, fifteen days counting both ends; 775 = 710 with the agent's co-author trailer + 65 authored as the agent. The other 185 are 175 merge commits GitHub made for pull requests, 5 by an automation bot, 4 by the owner alone and the initial commit. The owner asked on November 10, 2026 for the abstract to lead with this |
 | "without typing code" | the four commits by the owner alone are three documentation edits and one merge of `main` into a branch (Section 3, the row on the 250 commits without a trailer); every other change came through a coding-agent session's pull request |
 | "one person in the loop"; "that loop" | Section 1 and Section 3: every change was made by a coding-agent session the owner directed in chat; `NLP/AGENTS.md` ("Branches and issues", rule 6) keeps limited-compute runs, publishing, deletions and rule changes for the owner's word |
 | "Scripts turn its CI-enforced record into 93 ... tasks" (the record: issues, pull requests and reviews) | Section 1's row on the scripts, and Section 3: `NLP/AGENTS.md` requires an issue per user story and a pull request tied to it, CI rejects a pull request without an issue link, and 240 reviews are committed as files. The issue rule was adopted partway through (Section 4.2), so this says what the record holds, not that every change has all three |
@@ -73,6 +73,7 @@ The framing by a person's loop, and the wish to show what the graph is worth, ar
 | Figure | Source |
 |---|---|
 | 960 commits, October 25 to November 8, 2026 | `git rev-list --count origin/main`; first and last commit dates |
+| "On November 8 it held 2,269 tests in 126 files, run by CI on every pull request" | `python -m pytest --collect-only -q tests` in `NLP/python` at `b12e2e0` (November 8, 09:52 Central), the commit where `git rev-list --count` reaches 960: 2,269 tests collected (1,547 test functions; each parametrized case counts once) in 126 `test_*.py` files. At `254c44c` (November 10), the commit the analyses use, 2,355 in 133. `NLP/.github/workflows/ci.yml` runs on every pull request and every push to `main`; its R parity job runs when a changed file can reach it, and in full every Monday |
 | 710 with a co-author trailer | `git log origin/main -i --grep='Co-authored-by: Claude'` |
 | 65 authored as the agent, 175 merge commits, 5 bot, 4 owner only, 1 initial commit | the 250 commits without a trailer, grouped by author, committer and subject: 175 "Merge pull request #n" commits made by GitHub, 4 by the owner alone (three documentation edits and one merge of `main` into a branch), and GitHub's "Initial commit". 710 + 65 + 175 + 5 + 4 + 1 = 960. Squash merges carry the trailer and are among the 710 |
 | 240 review files, pull requests up to 634 | `NLP/pull_requests/pr-*-review.md` |
@@ -408,6 +409,11 @@ None of its three cases is in the paper now. The rows below are for what was cut
   the conclusion's list of what the person in the loop can see; and the GPU-hour totals (30.2 T4 GPU-hours for the
   baseline and its reruns, 12.8 L4 for the evaluator's runs, 2.1 for the larger budget; their rows are under
   Section 6 above).
+- At the owner's request (November 11), the abstract's first sentence and Section 3 give the number of tests, at
+  the same cut-off as the 960 commits.
+  Cut to keep the count flat: "and its embeddings" in Related work, "public under CC BY 4.0" in the first
+  contribution (the licence is in the Data and code line), and "which Kaggle's notebooks did not" (Section 6 says
+  Kaggle ran with internet off).
 - The abstract's longest sentence, three results joined by semicolons, is now three sentences (a review gave
   Clarity 2.5 and named it the sentence most likely to cost points). "cheapest first", "all small", "against 2
   before" and "random" stay. Four words left the abstract to keep it at 229: "of them" after 775, "expected"
