@@ -19,10 +19,9 @@
 Nothing blocking.
 
 ## Notes
-- The slip was in the paper since the sentence was shortened on November 11 ("of them" was cut after 240), and its
-  source row always said "240 review files". The row was right and the sentence was not: a check that every number
-  has a row does not check the words around the number. A second reader, given the paper as the source of truth
-  for the deck, went to the repository and counted.
+- The sentence's source row read "240 review files". The row was right and the sentence was not: a check that every
+  number has a row does not check the words around the number. A second reader, given the paper as the source of
+  truth for the deck, went to the repository and counted.
 - The text pasted into the Writeup loads Figure 1 from this repository at one commit. The figure did not change;
   the paste file is made again with this merge's commit all the same.
 - The Word copy made for peer review on November 12 has the old two sentences. It is made again from this version.
