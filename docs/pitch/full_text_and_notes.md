@@ -2,7 +2,7 @@
 
 A personal learning project, not affiliated with or endorsed by any employer, institution or vendor. Every patient record in the source repository is synthetic.
 
-12 slides. Each number is from [the paper](../../paper/small-local-agent-redo-cloud-agent-work.md); [`paper/sources.md`](../../paper/sources.md) says where it comes from. To page through them: [`deck.pdf`](deck.pdf), or download [`deck.html`](deck.html) and open it in a browser.
+12 slides. Each number is one that [the paper](../../paper/small-local-agent-redo-cloud-agent-work.md) or the [README](../../README.md) gives; [`paper/sources.md`](../../paper/sources.md) says where the paper's come from. To page through them: [`deck.pdf`](deck.pdf), or download [`deck.html`](deck.html) and open it in a browser.
 
 Built from [`slides/`](slides/) by `python docs/build_decks.py`; edit a slide, then rebuild and run `node docs/render_slides.js`.
 
@@ -29,7 +29,7 @@ John Bowyer · personal project, not affiliated with any organization
 
 ![Slide 2: Built for people who build and test AI coding agents](img/02-audience.png)
 
-**Speaker notes:** Three kinds of reader. People who build benchmarks from a repository's history: we ask them to check each task's description, which the paper calls its statement, against its tests before reporting a score, because here the fixes were almost all in the tasks that passed that check. People who build agents on small local models: the 93 tasks are public and in the competition's layout, so its evaluator runs on them as published. And teams whose repositories are built with agents: an issue, a pull request and a review for every change is what made this history usable. So far this is one repository and one model. A person checked 42 of the screen's 93 verdicts, in summary, and no partner has been contacted.
+**Speaker notes:** Three kinds of reader. People who build benchmarks from a repository's history: we ask them to check each task's description, which the paper calls its statement, against its tests before reporting a score, because here the fixes were almost all in the tasks that passed that check. People who build agents on small local models: the 93 tasks are public and in the competition's layout, so its evaluator runs on them as published. And teams whose repositories are built with agents: this repository's issues, pull requests and commit messages are where its task descriptions come from. So far this is one repository and one model. A person checked 42 of the screen's 93 verdicts, in summary, and no partner has been contacted.
 
 <details><summary>The slide's text</summary>
 
@@ -79,7 +79,7 @@ of those 960 are marked as written by the AI agent
 2,269  
 automatic tests, run on every pull request  
 240  
-pull requests, each with a written review kept in the project  
+written reviews of pull requests, kept in the project  
 One person working with a cloud AI coding agent built this project in fifteen days, without typing code.  
 What can a small model on one machine take out of that loop?  
 Source: the paper, Sections 1 and 3
@@ -90,13 +90,13 @@ Source: the paper, Sections 1 and 3
 
 ![Slide 4: 197 real code changes became 93 test tasks, each checked by the competition's own scoring program](img/04-solution.png)
 
-**Speaker notes:** The tasks are made the way the competition makes its own: every merged change whose diff touches both code and tests is a candidate. Of 197 merged changes, 116 are candidates. One was withdrawn, one failed a gate and one was withheld for unlicensed third-party files, leaving 113, and the competition's own evaluator verifies 93 of those: the published set. On them it resolves every reference patch and no empty patch. A local harness, which anyone can run, gives the same verdict as the evaluator on all 48 of the model's patches that were compared. Each task comes with a snapshot of the repository, a code graph, embeddings, and a label saying whether its statement came from an issue, a pull request or a commit message.
+**Speaker notes:** The tasks are made the way the competition makes its own: every merged change whose diff touches both code and tests is a candidate. Of the 197 changes merged by October 29, 2026, 116 are candidates. One was withdrawn, one failed a gate and one was withheld for unlicensed third-party files, leaving 113, and the competition's own evaluator verifies 93 of those: the published set. On them it resolves every reference patch and no empty patch. A local harness, which anyone can run, gives the same verdict as the evaluator on all 48 of the model's patches that were compared. Each task comes with a snapshot of the repository, a code graph, embeddings, and a label saying whether its statement came from an issue, a pull request or a commit message.
 
 <details><summary>The slide's text</summary>
 
 What was built  
 197 real code changes became 93 test tasks, each checked by the competition's own scoring program  
-real code changes looked at  
+real code changes merged by October 29, 2026  
 197  
 changed both code and tests, so could be a task  
 116  
@@ -115,21 +115,21 @@ Source: the paper, Sections 4 and 5
 
 </details>
 
-## Slide 5: On its own, the small model fixed 5 of 48 tasks. Extra help did not clearly raise that.
+## Slide 5: Alone, the model fixed 5 of 48 tasks. In a planned experiment, extra help showed no reliable improvement.
 
-![Slide 5: On its own, the small model fixed 5 of 48 tasks. Extra help did not clearly raise that.](img/05-results.png)
+![Slide 5: Alone, the model fixed 5 of 48 tasks. In a planned experiment, extra help showed no reliable improvement.](img/05-results.png)
 
-**Speaker notes:** Left on its own on two free T4 GPUs, taking the cheapest tasks first, Gemma 4 E4B resolved 5 of the 48 tasks it ran, all of them small. Under the competition's evaluator it resolved 3 of 23 of the competition's own development tasks. Then came an experiment whose plan was fixed before any result, which is what pre-registered means: all 93 tasks on one A100, three ways. As published, the model resolved 4. With graph retrieval done for it, which hands it a list of code to look at, 6. With a failing test's report, 4. Neither added context differs detectably from the baseline, and a difference is not ruled out either: at 4 of 93 only a large effect could show. Retrieval's two extra fixes do not establish a reliable improvement. The report uses the hidden test, so it is not a benchmark condition.
+**Speaker notes:** Left on its own on two free T4 GPUs, taking the cheapest tasks first, Gemma 4 E4B resolved 5 of the 48 tasks it ran, all of them small. Under the competition's evaluator, on four L4 GPUs, it resolved 3 of the 23 development tasks of the competition's own that a Kaggle notebook can verify. Then came an experiment registered in advance. Its plan was fixed before any result; Kaggle could not finish it, so all three arms ran again on one A100, under additions to the plan that were fixed before each run started: all 93 tasks, three ways. As published, the model resolved 4. With graph retrieval done for it, which hands it a list of code to look at, 6. With a failing test's report, 4. Neither added context differs detectably from the baseline, and a difference is not ruled out either: at 4 of 93 only a large effect could show. Retrieval's two extra fixes do not establish a reliable improvement. The report uses the hidden test, so it is not a benchmark condition.
 
 <details><summary>The slide's text</summary>
 
 What the small model did  
-On its own, the small model fixed 5 of 48 tasks. Extra help did not clearly raise that.  
+Alone, the model fixed 5 of 48 tasks. In a planned experiment, extra help showed no reliable improvement.  
 Tasks fixed working alone, on free T4 GPUs  
 5 of 48  
 Gemma 4 E4B, taking the cheapest tasks first (10.4%, 95% CI 4.5–22.2). All five were small: a CI rule, a warning message, a label parser and two settings.  
-3 of 23  
-of the competition's own development tasks fixed, under its scoring program.  
+3 of the 23  
+verifiable tasks of the competition's own were fixed, under its scoring program on four L4 GPUs.  
 Tasks fixed, of all 93, in an experiment planned in advance (one A100 GPU)  
 With the task as published  
 4  
@@ -268,7 +268,7 @@ Source: the paper, Section 7
 
 ![Slide 11: In 76 of our 93 tasks the tests need something the description never gives. In the competition's: 14 of 40.](img/11-competition.png)
 
-**Speaker notes:** The same counts were made on the competition's own development tasks. Its graph holds more of the fixes: 114 of 129, against 51 of 93 here. Its statements are vague a little more often: 11 of 40, against 19 of 93. The difference is in the tests: in this set the tests of 76 of 93 tasks need a name or a text the statement never gives, against 14 of 40 there. The screen and the agent took a seeded 40 of the 129, stratified by repository. In a Kaggle notebook the evaluator's sandbox cannot install test dependencies, so 23 of the 40 can be verified there, and the model resolved 3 of them. On this set the Kaggle baseline ran 21 tasks before its model server stopped answering, and resolved none.
+**Speaker notes:** The same counts were made on the competition's own development tasks. Its graph holds more of the fixes: 114 of 129, against 51 of 93 here. Its statements are vague a little more often: 11 of 40, against 19 of 93. The difference is in the tests: in this set the tests of 76 of 93 tasks need a name or a text the statement never gives, against 14 of 40 there. The screen and the agent took a seeded 40 of the 129, stratified by repository. In a Kaggle notebook the evaluator's sandbox has no pip to install test dependencies: there the reference patch fails 16 of the 40 and one passes with an empty patch, leaving 23, and the model resolved 3 of them. On this set the Kaggle baseline ran 21 tasks before its model server stopped answering, and resolved none.
 
 <details><summary>The slide's text</summary>
 
@@ -301,7 +301,7 @@ Source: the paper, Section 6, "Beside the competition's own tasks"
 
 ![Slide 12: How you can check every number](img/12-evidence.png)
 
-**Speaker notes:** Four habits keep the numbers honest. Every figure in the paper has a row in paper/sources.md naming the file it came from, and rows stay when text is cut. The experiment's plan was hashed before any result, and each addendum before its run. A script checks the paper against the competition's rules on every change, and another checks that every number in this deck is one the paper or the README has. And what went wrong is in the paper: on Colab the network was open to the agent's commands, 3 of 687 commands ran an installer, in tasks no run resolved, and none left its workspace. The unplanned second session on an L4 is described beside the registered experiment and never added to it.
+**Speaker notes:** Four habits keep the numbers honest. Every figure in the paper has a row in paper/sources.md naming the file it came from, and rows stay when text is cut. The experiment's plan was hashed before any result, and each addendum before its run. A script checks the paper against the competition's rules on every change, and another checks that every number in this deck appears in the paper or the README. And what went wrong is in the paper: on Colab the network was open to the agent's commands, 3 of 687 commands ran an installer, in tasks no run resolved, and none left its workspace. The unplanned second session on an L4 is described beside the registered experiment and kept out of its tests; where a count covers both sessions, as on the main finding's slide, it says five runs.
 
 <details><summary>The slide's text</summary>
 
@@ -313,11 +313,11 @@ has a row for each figure in the paper, naming the file it came from, and keeps 
 A plan before the results.  
 The experiment's plan was fixed and fingerprinted (hashed) before any result, and each addition to it before its run started (source repository, issues 674 and 687).  
 Checked on every change.  
-One script checks the paper against the competition's rules, and another checks that every number in this deck is one the paper has.  
+One script checks the paper against the competition's rules, and another checks that every number in this deck appears in the paper or the README.  
 What went wrong is in the paper.  
 On Colab the network was open to the agent: 3 of the five runs' 687 commands ran an installer, in tasks no run fixed, and none left its workspace.  
 Not a result:  
-anything from a dry run or a sample is labelled as one, and the unplanned second session is described beside the planned experiment, never added to it.  
+anything from a dry run or a sample is labelled as one, and the unplanned second session is described beside the planned experiment and kept out of its tests. A count that covers both says five runs.  
 Sources: paper/sources.md, paper/rules_check.md and the paper, Section 6
 
 </details>

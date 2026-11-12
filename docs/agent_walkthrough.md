@@ -1,8 +1,8 @@
 # The agent, file by file
 
 What the competition entry is made of and why each part is set the way it is. The entry is declarative: YAML and
-prompts, compiled by the competition's harness, with no code of its own
-([the rules as read here](rulebook-notes.md)). What the agent did when it ran is in
+prompts, compiled by the competition's harness ([the rules as read here](rulebook-notes.md)). Its one piece of
+code is the script inside the skill. What the agent did when it ran is in
 [the paper](../paper/small-local-agent-redo-cloud-agent-work.md) and the
 [README's run table](../README.md#what-has-been-run-and-what-it-cost).
 
@@ -86,9 +86,12 @@ paper gives no leaderboard score.
 ## The skill: `skills/pipeline-doctor/`
 
 For a repository that keeps its pipeline metadata as tables (a pipeline configuration, a run log, lineage, a
-runbook), the skill classifies an issue from those tables before any code is read: a credential that expired, a
-deprecation, a setting that drifted, a schema that changed. Only an issue it cannot classify needs reasoning from
-the code. It reads names, counts, durations, error types and check results, never note text or rows of data.
+runbook), the skill has the agent classify an issue before any code is read: a credential that expired, a
+deprecation, a setting that drifted, a schema that changed. Its script,
+[`scripts/classify.py`](../skills/pipeline-doctor/scripts/classify.py), does that by matching words in the issue's
+text to a failure class, and reads the repository's runbook for the actions allowed for that class. Only an issue
+it cannot classify needs reasoning from the code. The skill tells the agent to reason over names, counts, durations,
+error types and check results, never note text or rows of data.
 
 ## What the runs showed about these parts
 
@@ -124,7 +127,7 @@ competition's layout ([format](dataset-format.md)).
 
 ```bash
 pip install pypdf && python paper/check_rules.py --check   # the paper against the competition's rules
-python docs/build_decks.py --check                         # the deck is up to date, and its numbers are the paper's
+python docs/build_decks.py --check                         # the deck is up to date; each number on a slide appears in the paper or the README
 ```
 
 CI runs both, and checks each pull request's branch name and issue link.

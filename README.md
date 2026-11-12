@@ -130,10 +130,10 @@ tables, and the evaluator's kernels keep their spans in a file that is rolled up
 
 ```bash
 pip install pypdf && python paper/check_rules.py --check   # the paper against the competition's rules
-node paper/build_pdf.js                 # rebuild the paper's PDF and Figure 1 (needs Playwright)
+node paper/build_pdf.js                 # rebuild the paper's PDF and Figure 1 (needs Playwright and pandoc)
 python docs/build_decks.py              # rebuild the deck from docs/pitch/slides/
 node docs/render_slides.js              # redraw the slide images, the cover and deck.pdf (needs Playwright)
-python docs/build_decks.py --check      # the deck is up to date, and each number on a slide is the paper's
+python docs/build_decks.py --check      # the deck is up to date, and each number on a slide appears in the paper or the README
 ```
 
 The agent itself runs under the competition's evaluator, in a Kaggle notebook; the runner and the harness are in

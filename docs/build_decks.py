@@ -29,8 +29,8 @@ PAPER_MD = ROOT / "paper" / "small-local-agent-redo-cloud-agent-work.md"
 # deck folder under docs/ -> (title, the line above the slides)
 DECKS = {
     "pitch": ("Can a small local agent redo a cloud agent's work? The pitch",
-              f"{PERSONAL} Every patient record in the source repository is synthetic. Each number is from the paper; "
-              "paper/sources.md says where it comes from."),
+              f"{PERSONAL} Every patient record in the source repository is synthetic. Each number is the paper's or the "
+              "README's; paper/sources.md says where the paper's come from."),
 }
 FONTS = ("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Public+Sans:wght@400;500;600;700"
          "&display=swap")
@@ -147,8 +147,9 @@ def render(deck: str) -> tuple[str, str]:
     out = [HEAD.format(title=html.escape(title), note=html.escape(note), repo=REPO, paper=PAPER, fonts=FONTS, options=options)]
     md = [f"# {title}: every slide, with its notes\n\n",
           f"{PERSONAL} Every patient record in the source repository is synthetic.\n\n",
-          f"{len(all_slides)} slides. Each number is from [the paper](../../paper/small-local-agent-redo-cloud-agent-work.md); "
-          "[`paper/sources.md`](../../paper/sources.md) says where it comes from. To page through them: "
+          f"{len(all_slides)} slides. Each number is one that [the paper](../../paper/small-local-agent-redo-cloud-agent-work.md) or the "
+          "[README](../../README.md) gives; [`paper/sources.md`](../../paper/sources.md) says where the paper's come from. To page through "
+          "them: "
           "[`deck.pdf`](deck.pdf), or download [`deck.html`](deck.html) and open it in a browser.\n\n",
           "Built from [`slides/`](slides/) by `python docs/build_decks.py`; edit a slide, then rebuild and run "
           "`node docs/render_slides.js`.\n"]
