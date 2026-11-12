@@ -2,7 +2,7 @@
 
 A personal learning project, not affiliated with or endorsed by any employer, institution or vendor. Every patient record in the source repository is synthetic.
 
-12 slides. Each number is one that [the paper](../../paper/small-local-agent-redo-cloud-agent-work.md) or the [README](../../README.md) gives; [`paper/sources.md`](../../paper/sources.md) says where the paper's come from. To page through them: [`deck.pdf`](deck.pdf), or download [`deck.html`](deck.html) and open it in a browser.
+12 slides. Each number is one that [the paper](../../paper/small-local-agent-redo-cloud-agent-work.md) or the [README](../../README.md) gives; [`paper/sources.md`](../../paper/sources.md) says where the paper's come from. To page through them: [play the deck](https://healthtransformationlab.org/gemma-developer-agent/pitch/deck.html), or open [`deck.pdf`](deck.pdf).
 
 Built from [`slides/`](slides/) by `python docs/build_decks.py`; edit a slide, then rebuild and run `node docs/render_slides.js`.
 
