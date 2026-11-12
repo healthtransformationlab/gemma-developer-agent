@@ -25,5 +25,5 @@ Nothing blocking.
 - "Rent one GPU, not four" is the plainest reading of one session on each machine. It could be wrong for another
   serving setup: the four L4s ran one model across all four cards, and nobody tried four copies of it side by side.
   The list of work to come says so in its own way.
-- The cost of a fix divides by 4 to 8 fixed tasks. One fix more or fewer moves it by a fifth or more, which is why
-  the section gives ranges and says they move.
+- The cost of a fix divides by 4 to 8 fixed tasks, so one fix more or fewer moves it a good deal, which is why the
+  section gives ranges and says they move.
