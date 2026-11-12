@@ -65,7 +65,7 @@ A personal project: no partner has been contacted
 
 The problem  
 Tests for AI coding agents use a few popular libraries. Health-data code fails in a different way.  
-The best-known test, SWE-bench, draws on twelve popular Python libraries. The competition's development set draws on four.  
+The SWE-bench test draws on twelve popular Python libraries. The competition's development set draws on four.  
 In a  
 data project  
 the costly mistake is silent: the pipeline finishes and a number in its table is wrong.  
@@ -168,16 +168,16 @@ Counts of what happened, with no statistical test; the second comparison was mad
 
 </details>
 
-## Slide 7: A fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.
+## Slide 7: On four L4 GPUs a fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.
 
-![Slide 7: A fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.](img/07-cost.png)
+![Slide 7: On four L4 GPUs a fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.](img/07-cost.png)
 
 **Speaker notes:** The runs kept OpenTelemetry spans: names, counts and seconds, never prompts or replies. In the three Kaggle arms, 66 to 83 percent of a task's time was model calls and 14 to 15 percent was context compaction, which is the harness summarising older turns. The graph tools took under 0.1 percent. Forty-five of 207 runs ended when a prompt passed the model's context window. A fix took 1.9 GPU-hours with graph retrieval and 1.8 with the report, on four L4s: about 1.59 and 1.50 US dollars at a median rental price, though Kaggle's GPUs were free. On the T4 baseline, the 13 core-split tasks it ran took 17 percent of its 9.0 agent-hours and gave 4 of its 5 fixes: 0.38 hours a fix against 1.80 overall.
 
 <details><summary>The slide's text</summary>
 
 What it cost  
-A fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.  
+On four L4 GPUs a fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.  
 Share of a task's time spent in the model's own calls  
 66–83%  
 Another 14–15% went to summarising older turns (context compaction). From the Kaggle runs' timing records (OpenTelemetry spans). 45 of 207 runs ended at the model's context window.  

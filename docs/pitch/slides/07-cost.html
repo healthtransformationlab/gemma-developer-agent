@@ -1,7 +1,7 @@
 <section id="cost" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
 <div style="display:flex;flex-direction:column;gap:14px">
 <p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">What it cost</p>
-<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">A fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.</h2>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">On four L4 GPUs a fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.</h2>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;align-items:stretch">
 <div style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;display:flex;flex-direction:column;gap:12px"><p style="font-size:23px;font-weight:700;letter-spacing:.5px;color:#B4501F;line-height:1.3">Share of a task's time spent in the model's own calls</p><p style="font-family:'Libre Baskerville', Georgia, serif;font-weight:700;color:#B4501F;line-height:1.05;font-size:74px">66–83%</p><p style="font-size:25px;line-height:1.38">Another 14–15% went to summarising older turns (context compaction). From the Kaggle runs' timing records (OpenTelemetry spans). 45 of 207 runs ended at the model's context window.</p></div>
