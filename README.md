@@ -10,27 +10,50 @@
 · [the 93 tasks on Kaggle](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks)
 
 In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960
-commits and 2,269 tests, without typing code. This repository asks what a small local model can take out of that
-loop. It holds a coding agent for the Gemma 4 Developer Agent Competition, the paper on what that agent did, and
-where each number in the paper comes from.
+commits and 2,269 tests, without typing code. This repository asks how much of that work a small model, one that
+runs on a single GPU, can redo by itself. It holds a coding agent for the Gemma 4 Developer Agent Competition, the
+paper on what that agent did, and where each number in the paper comes from.
 
 <a href="docs/pitch/full_text_and_notes.md"><img src="docs/img/pitch_deck_cover.png" alt="Can a small local agent redo a cloud agent's work? The pitch, slide by slide." width="480"></a>
 
-What the runs show, on 93 tasks built from that repository's history and checked by the competition's own scoring
-program (its evaluator). "Fixed" is the paper's "resolved": the task's hidden tests pass with the model's change.
+## Results at a glance
 
-- **5 of 48 tasks fixed** by Gemma 4 E4B working alone on free T4 GPUs, cheapest tasks first (10.4%, 95% CI
-  4.5–22.2). All five were small.
-- **4, 6 and 4 of 93 tasks fixed** in an experiment planned in advance (pre-registered), on one A100: with the task
-  as published, with a list of code to look at (graph retrieval), and with a failing test's report (from the hidden
-  test: not a benchmark condition). No difference detected (exact McNemar p = 0.5 and 1.0).
-- **8 of the 17 clearly described tasks fixed, against 1 of the other 76.** "Clearly described" means the task's
-  description says what its tests check (the paper's core split, from an AI screen of all 93); the counts are tasks
-  fixed at least once in the five Colab runs. Described, not tested.
+The model is Gemma 4 E4B, small enough to run on one GPU. The 93 tasks are real changes from that repository, each
+checked by the competition's own scoring program (its evaluator). A task counts as **fixed** when its hidden tests
+pass with the model's change; the paper says "resolved".
+
+**1. Working alone, the model fixed 5 of 48 tasks.**
+That is 10.4% (95% CI 4.5–22.2), on free T4 GPUs, and all five were small fixes. It ran the cheapest tasks first
+under a cap on GPU hours, so this is not a rate for all 93.
+
+**2. Extra help showed no reliable improvement.**
+In an experiment planned in advance (pre-registered), the model tried all 93 tasks three ways on one A100 GPU:
+
+| What the model was given | Tasks fixed, of 93 |
+|---|---|
+| Only the task, as published | 4 |
+| The task and a list of code to look at (graph retrieval) | 6 |
+| The task and the report of a failing test | 4 |
+
+Differences this small could be chance: no difference detected (exact McNemar p = 0.5 and 1.0). The failing test's
+report comes from the hidden test, so a benchmark would not give it.
+
+**3. It fixed the clearly described tasks, and almost none of the others.**
+A task is "clearly described" when its description says what its tests check. An AI screen of all 93 found 17 of
+them (the paper's core split). Counting the three runs above and two more from an unplanned second session:
+
+| Kind of task | Fixed in at least one of the five runs |
+|---|---|
+| Clearly described | 8 of 17 |
+| All the others | 1 of 76 |
+
+These are counts of what happened, not a planned test.
 
 One model, one repository, and an AI screen that a person checked in part:
 [what this does not show](paper/small-local-agent-redo-cloud-agent-work.md#7-limitations). Each run, with its
 hardware, interval and cost, is in [the table below](#what-has-been-run-and-what-it-cost).
+
+## Where to go next
 
 | For | Go to |
 |---|---|
