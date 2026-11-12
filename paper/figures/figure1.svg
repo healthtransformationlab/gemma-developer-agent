@@ -1,51 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 418" width="720" height="418" role="img" aria-label="Figure 1. Task counts at each step, on one scale. Merged changes mined: 197; Touch code and tests (candidates): 116; Built, pass both gates, licensed: 113; Verified by the competition&#x27;s evaluator (published): 93; Attempted and scored: 48; Wrote a patch: 40; Resolved: 5; As published: 4; With graph retrieval: 6; With the failing test&#x27;s report, from the hidden test: 4; Screened: 93; Tests need a name or text the statement never gives: 76; Pass both questions (the core split): 17" font-family="Inter, 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif">
-<rect width="720" height="418" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 424" width="720" height="424" role="img" aria-label="Figure 1. Task counts at each step, on one scale. Merged changes mined: 197; Touch code and tests (candidates): 116; Built, pass both gates, licensed: 113; Verified by the competition&#x27;s evaluator (published): 93; Attempted and scored: 48; Wrote a patch: 40; Resolved: 5; As published: 4; With graph retrieval: 6; With the failing test&#x27;s report, from the hidden test: 4; Tests need a name or text the statement never gives: 76; of those 76, resolved in some Colab run: 1; Pass both questions (the core split): 17; of those 17, resolved in some Colab run: 8" font-family="Inter, 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif">
+<rect width="720" height="424" fill="#ffffff"/>
 <text x="12" y="20" font-size="13" font-weight="600" fill="#0b0b0b">Figure 1. Task counts at each step, on one scale.</text>
 <text x="12" y="52" font-size="11.5" font-weight="600" fill="#0b0b0b">Building the task set (Sections 4 and 5)</text>
 <text x="346" y="72.0" font-size="11.5" text-anchor="end" fill="#52514e">Merged changes mined</text>
 <path d="M356,62 h296.0 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-296.0 z" fill="#2a78d6"><title>Merged changes mined: 197</title></path>
 <text x="663.0" y="72.0" font-size="11.5" font-weight="600" fill="#0b0b0b">197</text>
-<text x="346" y="92.0" font-size="11.5" text-anchor="end" fill="#52514e">Touch code and tests (candidates)</text>
-<path d="M356,82 h172.6 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-172.6 z" fill="#2a78d6"><title>Touch code and tests (candidates): 116</title></path>
-<text x="539.6" y="92.0" font-size="11.5" font-weight="600" fill="#0b0b0b">116</text>
-<text x="346" y="112.0" font-size="11.5" text-anchor="end" fill="#52514e">Built, pass both gates, licensed</text>
-<path d="M356,102 h168.1 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-168.1 z" fill="#2a78d6"><title>Built, pass both gates, licensed: 113</title></path>
-<text x="535.1" y="112.0" font-size="11.5" font-weight="600" fill="#0b0b0b">113</text>
-<text x="346" y="132.0" font-size="11.5" text-anchor="end" fill="#52514e">Verified by the competition&#x27;s evaluator (published)</text>
-<path d="M356,122 h137.6 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-137.6 z" fill="#2a78d6"><title>Verified by the competition&#x27;s evaluator (published): 93</title></path>
-<text x="504.6" y="132.0" font-size="11.5" font-weight="600" fill="#0b0b0b">93</text>
-<line x1="356" y1="58" x2="356" y2="138" stroke="#c9c8c2" stroke-width="1"/>
-<text x="12" y="162" font-size="11.5" font-weight="600" fill="#0b0b0b">Baseline: Gemma 4 E4B on published tasks (Section 6)</text>
-<text x="346" y="182.0" font-size="11.5" text-anchor="end" fill="#52514e">Attempted and scored</text>
-<path d="M356,172 h69.1 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-69.1 z" fill="#2a78d6"><title>Attempted and scored: 48</title></path>
-<text x="436.1" y="182.0" font-size="11.5" font-weight="600" fill="#0b0b0b">48</text>
-<text x="346" y="202.0" font-size="11.5" text-anchor="end" fill="#52514e">Wrote a patch</text>
-<path d="M356,192 h56.9 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-56.9 z" fill="#2a78d6"><title>Wrote a patch: 40</title></path>
-<text x="423.9" y="202.0" font-size="11.5" font-weight="600" fill="#0b0b0b">40</text>
-<text x="346" y="222.0" font-size="11.5" text-anchor="end" fill="#52514e">Resolved</text>
-<path d="M356,212 h3.8 a3.8071065989847717,3.8071065989847717 0 0 1 3.8071065989847717,3.8071065989847717 v4.4 a3.8071065989847717,3.8071065989847717 0 0 1 -3.8071065989847717,3.8071065989847717 h-3.8 z" fill="#2a78d6"><title>Resolved: 5</title></path>
-<text x="370.6" y="222.0" font-size="11.5" font-weight="600" fill="#0b0b0b">5</text>
-<line x1="356" y1="168" x2="356" y2="228" stroke="#c9c8c2" stroke-width="1"/>
-<text x="12" y="252" font-size="11.5" font-weight="600" fill="#0b0b0b">Pre-registered experiment on one A100: resolved, of 93 (Section 6). No difference detected.</text>
-<text x="346" y="272.0" font-size="11.5" text-anchor="end" fill="#52514e">As published</text>
-<path d="M356,262 h3.0 a3.045685279187817,3.045685279187817 0 0 1 3.045685279187817,3.045685279187817 v5.9 a3.045685279187817,3.045685279187817 0 0 1 -3.045685279187817,3.045685279187817 h-3.0 z" fill="#2a78d6"><title>As published: 4</title></path>
-<text x="369.1" y="272.0" font-size="11.5" font-weight="600" fill="#0b0b0b">4</text>
-<text x="346" y="292.0" font-size="11.5" text-anchor="end" fill="#52514e">With graph retrieval</text>
-<path d="M356,282 h5.1 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-5.1 z" fill="#2a78d6"><title>With graph retrieval: 6</title></path>
-<text x="372.1" y="292.0" font-size="11.5" font-weight="600" fill="#0b0b0b">6</text>
-<text x="346" y="312.0" font-size="11.5" text-anchor="end" fill="#52514e">With the failing test&#x27;s report, from the hidden test</text>
-<path d="M356,302 h3.0 a3.045685279187817,3.045685279187817 0 0 1 3.045685279187817,3.045685279187817 v5.9 a3.045685279187817,3.045685279187817 0 0 1 -3.045685279187817,3.045685279187817 h-3.0 z" fill="#2a78d6"><title>With the failing test&#x27;s report, from the hidden test: 4</title></path>
-<text x="369.1" y="312.0" font-size="11.5" font-weight="600" fill="#0b0b0b">4</text>
-<line x1="356" y1="258" x2="356" y2="318" stroke="#c9c8c2" stroke-width="1"/>
-<text x="12" y="342" font-size="11.5" font-weight="600" fill="#0b0b0b">AI-assisted screen of the published tasks (Section 6)</text>
-<text x="346" y="362.0" font-size="11.5" text-anchor="end" fill="#52514e">Screened</text>
-<path d="M356,352 h137.6 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-137.6 z" fill="#2a78d6"><title>Screened: 93</title></path>
-<text x="504.6" y="362.0" font-size="11.5" font-weight="600" fill="#0b0b0b">93</text>
-<text x="346" y="382.0" font-size="11.5" text-anchor="end" fill="#52514e">Tests need a name or text the statement never gives</text>
-<path d="M356,372 h111.7 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-111.7 z" fill="#2a78d6"><title>Tests need a name or text the statement never gives: 76</title></path>
-<text x="478.7" y="382.0" font-size="11.5" font-weight="600" fill="#0b0b0b">76</text>
-<text x="346" y="402.0" font-size="11.5" text-anchor="end" fill="#52514e">Pass both questions (the core split)</text>
-<path d="M356,392 h21.9 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-21.9 z" fill="#2a78d6"><title>Pass both questions (the core split): 17</title></path>
-<text x="388.9" y="402.0" font-size="11.5" font-weight="600" fill="#0b0b0b">17</text>
-<line x1="356" y1="348" x2="356" y2="408" stroke="#c9c8c2" stroke-width="1"/>
+<text x="346" y="91.0" font-size="11.5" text-anchor="end" fill="#52514e">Touch code and tests (candidates)</text>
+<path d="M356,81 h172.6 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-172.6 z" fill="#2a78d6"><title>Touch code and tests (candidates): 116</title></path>
+<text x="539.6" y="91.0" font-size="11.5" font-weight="600" fill="#0b0b0b">116</text>
+<text x="346" y="110.0" font-size="11.5" text-anchor="end" fill="#52514e">Built, pass both gates, licensed</text>
+<path d="M356,100 h168.1 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-168.1 z" fill="#2a78d6"><title>Built, pass both gates, licensed: 113</title></path>
+<text x="535.1" y="110.0" font-size="11.5" font-weight="600" fill="#0b0b0b">113</text>
+<text x="346" y="129.0" font-size="11.5" text-anchor="end" fill="#52514e">Verified by the competition&#x27;s evaluator (published)</text>
+<path d="M356,119 h137.6 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-137.6 z" fill="#2a78d6"><title>Verified by the competition&#x27;s evaluator (published): 93</title></path>
+<text x="504.6" y="129.0" font-size="11.5" font-weight="600" fill="#0b0b0b">93</text>
+<line x1="356" y1="58" x2="356" y2="135" stroke="#c9c8c2" stroke-width="1"/>
+<text x="12" y="158" font-size="11.5" font-weight="600" fill="#0b0b0b">Baseline: Gemma 4 E4B on published tasks (Section 6)</text>
+<text x="346" y="178.0" font-size="11.5" text-anchor="end" fill="#52514e">Attempted and scored</text>
+<path d="M356,168 h69.1 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-69.1 z" fill="#2a78d6"><title>Attempted and scored: 48</title></path>
+<text x="436.1" y="178.0" font-size="11.5" font-weight="600" fill="#0b0b0b">48</text>
+<text x="346" y="197.0" font-size="11.5" text-anchor="end" fill="#52514e">Wrote a patch</text>
+<path d="M356,187 h56.9 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-56.9 z" fill="#2a78d6"><title>Wrote a patch: 40</title></path>
+<text x="423.9" y="197.0" font-size="11.5" font-weight="600" fill="#0b0b0b">40</text>
+<text x="346" y="216.0" font-size="11.5" text-anchor="end" fill="#52514e">Resolved</text>
+<path d="M356,206 h3.8 a3.8071065989847717,3.8071065989847717 0 0 1 3.8071065989847717,3.8071065989847717 v4.4 a3.8071065989847717,3.8071065989847717 0 0 1 -3.8071065989847717,3.8071065989847717 h-3.8 z" fill="#2a78d6"><title>Resolved: 5</title></path>
+<text x="370.6" y="216.0" font-size="11.5" font-weight="600" fill="#0b0b0b">5</text>
+<line x1="356" y1="164" x2="356" y2="222" stroke="#c9c8c2" stroke-width="1"/>
+<text x="12" y="245" font-size="11.5" font-weight="600" fill="#0b0b0b">Pre-registered experiment on one A100: resolved, of 93 (Section 6). No difference detected.</text>
+<text x="346" y="265.0" font-size="11.5" text-anchor="end" fill="#52514e">As published</text>
+<path d="M356,255 h3.0 a3.045685279187817,3.045685279187817 0 0 1 3.045685279187817,3.045685279187817 v5.9 a3.045685279187817,3.045685279187817 0 0 1 -3.045685279187817,3.045685279187817 h-3.0 z" fill="#2a78d6"><title>As published: 4</title></path>
+<text x="369.1" y="265.0" font-size="11.5" font-weight="600" fill="#0b0b0b">4</text>
+<text x="346" y="284.0" font-size="11.5" text-anchor="end" fill="#52514e">With graph retrieval</text>
+<path d="M356,274 h5.1 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-5.1 z" fill="#2a78d6"><title>With graph retrieval: 6</title></path>
+<text x="372.1" y="284.0" font-size="11.5" font-weight="600" fill="#0b0b0b">6</text>
+<text x="346" y="303.0" font-size="11.5" text-anchor="end" fill="#52514e">With the failing test&#x27;s report, from the hidden test</text>
+<path d="M356,293 h3.0 a3.045685279187817,3.045685279187817 0 0 1 3.045685279187817,3.045685279187817 v5.9 a3.045685279187817,3.045685279187817 0 0 1 -3.045685279187817,3.045685279187817 h-3.0 z" fill="#2a78d6"><title>With the failing test&#x27;s report, from the hidden test: 4</title></path>
+<text x="369.1" y="303.0" font-size="11.5" font-weight="600" fill="#0b0b0b">4</text>
+<line x1="356" y1="251" x2="356" y2="309" stroke="#c9c8c2" stroke-width="1"/>
+<text x="12" y="332" font-size="11.5" font-weight="600" fill="#0b0b0b">AI-assisted screen of the published tasks, and what five Colab runs resolved (Section 6): a description, not a test.</text>
+<text x="346" y="352.0" font-size="11.5" text-anchor="end" fill="#52514e">Tests need a name or text the statement never gives</text>
+<path d="M356,342 h111.7 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-111.7 z" fill="#2a78d6"><title>Tests need a name or text the statement never gives: 76</title></path>
+<text x="478.7" y="352.0" font-size="11.5" font-weight="600" fill="#0b0b0b">76</text>
+<text x="346" y="371.0" font-size="11.5" text-anchor="end" fill="#52514e">of those 76, resolved in some Colab run</text>
+<path d="M356,361 h0.8 a0.7614213197969543,0.7614213197969543 0 0 1 0.7614213197969543,0.7614213197969543 v10.5 a0.7614213197969543,0.7614213197969543 0 0 1 -0.7614213197969543,0.7614213197969543 h-0.8 z" fill="#2a78d6"><title>of those 76, resolved in some Colab run: 1</title></path>
+<text x="364.5" y="371.0" font-size="11.5" font-weight="600" fill="#0b0b0b">1</text>
+<text x="346" y="390.0" font-size="11.5" text-anchor="end" fill="#52514e">Pass both questions (the core split)</text>
+<path d="M356,380 h21.9 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-21.9 z" fill="#2a78d6"><title>Pass both questions (the core split): 17</title></path>
+<text x="388.9" y="390.0" font-size="11.5" font-weight="600" fill="#0b0b0b">17</text>
+<text x="346" y="409.0" font-size="11.5" text-anchor="end" fill="#52514e">of those 17, resolved in some Colab run</text>
+<path d="M356,399 h8.2 a4,4 0 0 1 4,4 v4.0 a4,4 0 0 1 -4,4 h-8.2 z" fill="#2a78d6"><title>of those 17, resolved in some Colab run: 8</title></path>
+<text x="375.2" y="409.0" font-size="11.5" font-weight="600" fill="#0b0b0b">8</text>
+<line x1="356" y1="338" x2="356" y2="415" stroke="#c9c8c2" stroke-width="1"/>
 </svg>

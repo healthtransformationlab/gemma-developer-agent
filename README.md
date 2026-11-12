@@ -58,14 +58,18 @@ One row per run. Time and tokens are averages for one task, from each run's own 
   p = 0.5), and the report 3 of them and 1 more (p = 1.0): no difference is claimed, and none is ruled out.
   A second, unplanned session ran the first two arms on an L4 at the same time and resolved 5 and 8
   (p = 0.375, described only):
-  two runs of the baseline differed on 3 tasks. The 17-task core split
-  (statements that an AI screen finds say what their tests check) was resolved in 26 of 85 Colab
-  task-runs, and the other 76 tasks in 1 of 380.
+  two runs of the baseline differed on 3 tasks. Of the 17-task core split
+  (statements that an AI screen finds say what their tests check), 8 tasks were resolved in at least one of
+  the five Colab runs, and 1 of the other 76 tasks; counting each task once in each run (task-runs),
+  26 of 85 and 1 of 380. Where the retrieval listed a function the fix edits (41 tasks), 5 of the
+  core split's 7 were resolved in some run and none of the other 34 (12 of 35 task-runs and 0 of 170): a split made
+  after the runs, described and not tested.
   Colab's network was open to the agent's commands, where Kaggle's kernels have none:
   3 of the five runs' 687 commands ran an installer, in tasks no run resolved.
 - **Where the time went.** The kernels kept OpenTelemetry spans (names, counts and seconds). In the experiment's
-  three Kaggle arms, 66–83% of a task's time was model calls and 14–15% context compaction;
-  45 of 207 runs ended when a prompt passed the model's context window. A fix cost 1.9 L4 GPU-hours
+  three Kaggle arms, 66–83% of a task's time was model calls, 14–15% context compaction and under 0.1% the
+  graph tools; 45 of 207 runs ended when a prompt passed the model's context window. A task took 297–419
+  GPU-seconds on the four L4s and 4.8–6.7 Wh. A fix cost 1.9 L4 GPU-hours
   with graph retrieval and 1.8 with the report: about 1.59 and 1.50 US dollars at a median rental of 0.83 an L4
   GPU-hour (an estimate; Kaggle's GPUs were free).
   On the one Colab A100 a task took 72–78 GPU-seconds, and a fix

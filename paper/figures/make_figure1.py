@@ -26,16 +26,17 @@ GROUPS = [
         ("With graph retrieval", 6),
         ("With the failing test's report, from the hidden test", 4),
     ]),
-    ("AI-assisted screen of the published tasks (Section 6)", [
-        ("Screened", 93),
+    ("AI-assisted screen of the published tasks, and what five Colab runs resolved (Section 6): a description, not a test.", [
         ("Tests need a name or text the statement never gives", 76),
+        ("of those 76, resolved in some Colab run", 1),
         ("Pass both questions (the core split)", 17),
+        ("of those 17, resolved in some Colab run", 8),
     ]),
 ]
 TITLE = "Figure 1. Task counts at each step, on one scale."
 
 WIDTH, LEFT, BAR_X, BAR_MAX = 720, 12, 356, 300      # px; BAR_MAX is the length of the longest bar
-BAR_H, ROW, HEAD, GAP, TOP = 12, 20, 22, 8, 32        # bar thickness, row pitch, group heading, gap between groups
+BAR_H, ROW, HEAD, GAP, TOP = 12, 19, 22, 8, 32        # bar thickness, row pitch, group heading, gap between groups
 INK, INK_2, RULE, BAR = "#0b0b0b", "#52514e", "#c9c8c2", "#2a78d6"
 FONT = "Inter, 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif"
 
