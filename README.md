@@ -16,6 +16,37 @@ paper on what that agent did, and where each number in the paper comes from.
 
 <a href="docs/pitch/full_text_and_notes.md"><img src="docs/img/pitch_deck_cover.png" alt="Can a small local agent redo a cloud agent's work? The pitch, slide by slide." width="480"></a>
 
+<details>
+<summary><b>See the 12 slides here</b> (tap to open)</summary>
+
+![Slide 1: Can a small local agent redo a cloud agent's work?](docs/pitch/img/01-cover.png)
+
+![Slide 2: Built for people who build and test AI coding agents](docs/pitch/img/02-audience.png)
+
+![Slide 3: Tests for AI coding agents use a few popular libraries. Health-data code fails in a different way.](docs/pitch/img/03-problem.png)
+
+![Slide 4: 197 real code changes became 93 test tasks, each checked by the competition's own scoring program](docs/pitch/img/04-solution.png)
+
+![Slide 5: Alone, the model fixed 5 of 48 tasks. In a planned experiment, extra help showed no reliable improvement.](docs/pitch/img/05-results.png)
+
+![Slide 6: The model fixed 8 of the 17 clearly described tasks, and only 1 of the other 76](docs/pitch/img/06-finding.png)
+
+![Slide 7: A full run of the 93 tasks took about 2 GPU-hours on one A100. One GPU was enough.](docs/pitch/img/07-cost.png)
+
+![Slide 8: Use the 93 tasks. Report scores on the 17 clearly described ones.](docs/pitch/img/08-ask.png)
+
+![Slide 9: Drill-down](docs/pitch/img/09-drill.png)
+
+![Slide 10: What this does not show](docs/pitch/img/10-limits.png)
+
+![Slide 11: In 76 of our 93 tasks the tests need something the description never gives. In the competition's: 14 of 40.](docs/pitch/img/11-competition.png)
+
+![Slide 12: How you can check every number](docs/pitch/img/12-evidence.png)
+
+Each slide with its speaker notes: [the pitch, slide by slide](docs/pitch/full_text_and_notes.md).
+
+</details>
+
 ## Results at a glance
 
 The model is Gemma 4 E4B, small enough to run on one GPU. The 93 tasks are real changes from that repository, each
