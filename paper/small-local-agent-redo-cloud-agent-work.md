@@ -10,7 +10,7 @@ Gemma 4 Developer Agent Competition, Paper Track [14]. Topic: Tasks & Benchmarks
 
 ## Abstract
 
-In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960 commits and 2,269 tests, without typing code. Scripts turn its CI-enforced record into 93 health-data modelling tasks by the competition's mining rule, format and evaluator; an AI screen finds 17 whose statements say what their tests check, the core split. What can a small local model take out of that loop? **What it did unattended:** on free T4 GPUs, Gemma 4 E4B resolved 5 of the 48 tasks it ran, cheapest first; under the competition's evaluator, 3 of 23 verifiable tasks of its own. **With more context,** in a pre-registered experiment under that evaluator: with graph retrieval done for it, 4 of 93; with a failing test's report (from the hidden test: not a benchmark condition), 5 of 93. The baseline arm's server failed after 21 tasks, which no arm resolved, so neither context could be tested. **Where the fixes were:** 7 of those arms' 8 resolved tasks are in the core split. **What the graph could tell it:** it holds the edited code in 51 of the 93 tasks (114 of 129 in the competition's) and leads from statement to fix in 42 of the 51. **Where its time went:** 66–83% of a task was model calls, by its OpenTelemetry spans.
+In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960 commits and 2,269 tests, without typing code. Scripts turn its CI-enforced record into 93 health-data modelling tasks by the competition's mining rule, format and evaluator; an AI screen finds 17 whose statements say what their tests check, the core split. What can a small local model take out of that loop? **What it did unattended:** on free T4 GPUs, Gemma 4 E4B resolved 5 of the 48 tasks it ran, cheapest first; under the competition's evaluator, 3 of 23 verifiable tasks of its own. **With more context,** pre-registered, under that evaluator on one A100: as published, 4 of 93; with graph retrieval done for it, 6; with a failing test's report (from the hidden test: not a benchmark condition), 4. Neither differs detectably from the baseline (exact McNemar p = 0.5, 1.0); an unplanned second session on an L4 resolved 5 and 8. **Where those fixes were:** 26 of 27 in the core split. **What the graph could tell it:** it holds the edited code in 51 of the 93 tasks (114 of 129 in the competition's) and leads from statement to fix in 42 of the 51. **Where its time went:** 66–83% of a task was model calls (OpenTelemetry spans).
 
 **Data and code.** Tasks (CC BY 4.0): [kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks). Quickstart notebook: [kaggle.com/code/jcblearning/coding-agent-tasks-quickstart](https://www.kaggle.com/code/jcblearning/coding-agent-tasks-quickstart). Harness, builders and run tables (Apache 2.0): [github.com/healthtransformationlab/health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp). Agent configuration and each number's source (Apache 2.0): [github.com/healthtransformationlab/gemma-developer-agent](https://github.com/healthtransformationlab/gemma-developer-agent).
 
@@ -28,7 +28,7 @@ Contributions:
 
 1. **A task set**: 93 health-data modelling tasks in the competition's format, each verified by its evaluator and labelled with its statement's source, with a 17-task core split (Sections 4 and 6).
 2. **An open harness** that agrees with the competition's evaluator on every saved agent patch and keeps answers from the model (Section 5).
-3. **A baseline and a pre-registered experiment** for Gemma 4 E4B: a local harness, the competition's evaluator on this set and its own, and all 93 tasks with graph retrieval or a failing test's report added (Section 6).
+3. **A baseline and a pre-registered experiment** for Gemma 4 E4B: a local harness, the competition's evaluator on this set and its own, and all 93 tasks on one GPU as published, with graph retrieval and with a failing test's report (Section 6).
 4. **Checks on the recipe**: whether statements say what their tests check, and where the graph leads from statement to fix, both also on the competition's tasks (Sections 4.3 and 6).
 
 ## 2. Related work
@@ -104,19 +104,19 @@ Of the 20 left out, twelve read withheld third-party files, six run a script tha
 
 **A larger budget.** Rerun on one Colab L4 with eight times the output tokens, thinking on and 100 tool calls, the 23 cheapest of the 48 resolved 2, against 2 under the tight limits.
 
-**Task fairness.** Two AI screens rated tasks on SWE-bench Verified's two questions [2]. The first took a random 30; the author checked its findings in summary and agreed with all 30. An independent second pass, blind to the first, rated all 93: the same verdict on all 30, and 17 of 93 pass. Those 17 are the set's **core split**; the other 76 stay, as real statements that leave out what their tests need.
+**Task fairness.** Two AI screens rated tasks on SWE-bench Verified's two questions [2]. The first took a random 30; the author checked its findings in summary and agreed with all 30. An independent second pass, blind to the first, rated all 93: the same verdict on all 30, and 17 of 93 pass. Those 17 are the set's **core split**; the author later checked its 12 verdicts outside the 30, in summary, and agreed with all. The other 76 stay, as real statements that leave out what their tests need.
 
 **A pre-registered experiment under the competition's evaluator.** The agent was then run with the official harness: `swegemma`'s agent loop, vLLM from the competition's wheelhouse, four L4 GPUs and its competition settings (16,384 output tokens, a 4,096-token thinking budget, 40 tool calls, 5 minutes), each task alone, without patch or tests. A first seeded sample of 20 resolved none. Then all 93 were to run three times, under a plan hashed before any result (source repository, issue 674): as published; with **graph retrieval** done for the agent (named nodes, their call neighbours and the ten nearest by embedding search, from statement and graph alone); and with the **failing test's report** (its errors and the public functions it called), which uses the hidden test: a test-first workflow's context, not a benchmark condition.
 
-| Arm | Tasks run | Resolved (95% CI) | Of the core 17 |
-|---|---|---|---|
-| As published | 21 | 0 (0–15.5%) | 0 (of 1 run) |
-| With graph retrieval | 93 | 4 (1.7–10.5%) | 4 |
-| With the failing test's report | 93 | 5 (2.3–12%) | 4 |
+| Tasks resolved | Kaggle, four L4s | Colab, one A100: of 93 (95% CI) |
+|---|---|---|
+| As published | 0 of 21 run | 4 (1.7–10.5%) |
+| With graph retrieval | 4 of 93 | 6 (3–13.4%) |
+| With the failing test's report | 5 of 93 | 4 (1.7–10.5%) |
 
-The baseline arm's model server stopped answering after 21 tasks. The other 72 count as not run under the plan, and Kaggle refused the one rerun it allows (the weekly GPU allowance was spent). On the 21 tasks every arm ran, no arm resolved any (exact McNemar p = 1.00 for each context), so no difference is claimed and none is ruled out; even counting the 72 as baseline failures would give p = 0.125 and 0.0625. Described, not tested: 7 of the 8 tasks the two full arms resolved are in the core split, and 6 of the 8 had been resolved from the statement alone in an earlier run. Finding is not fixing: the graph arm resolved 2 of the 41 tasks where its retrieval listed an edited function (of Section 4.3's 51).
+On Kaggle the baseline's model server stopped answering after 21 tasks, none of which any arm resolved, and Kaggle refused the plan's one rerun (GPU allowance spent). So all three arms ran again on one Colab A100, under addenda hashed before each started (issue 687), with Python 3.13 and nine packages at other versions. Graph retrieval resolved the baseline's 4 tasks and 2 more (exact McNemar p = 0.5), the report 3 of them and 1 more (p = 1.0): no difference is claimed or ruled out. An unplanned second session ran the first two arms on an L4: 5 and 8 (p = 0.375, described only); the two baselines differed on 3 tasks. Described, not tested: the core split's 17 tasks were resolved in 26 of 85 Colab task-runs, the other 76 in 1 of 380. Finding is not fixing: where retrieval listed an edited function (41 tasks, of Section 4.3's 51), the graph arm resolved 3 and the baseline 2. Colab's network was open to the agent: 3 of the five runs' 687 commands ran an installer, in tasks no run resolved, and none left its workspace.
 
-**Beside the competition's own tasks.** The graph counts were repeated on its 129 development tasks; the screen and the agent took a seeded 40, stratified by repository. In a Kaggle notebook the evaluator's sandbox has no pip to install test dependencies: there the reference patch fails 16 of the 40 and one passes with an empty patch, leaving 23 (rich 15, fastapi 8). The agent's notebook mounts the competition's reference patches; no tool call named a path outside its workspace.
+**Beside the competition's own tasks.** The graph counts were repeated on its 129 development tasks; the screen and the agent took a seeded 40, stratified by repository. In a Kaggle notebook the evaluator's sandbox has no pip to install test dependencies: there the reference patch fails 16 of the 40 and one passes with an empty patch, leaving 23. The agent's notebook mounts the competition's reference patches; no tool call named a path outside its workspace.
 
 | | This set | Development set |
 |---|---|---|
@@ -124,23 +124,23 @@ The baseline arm's model server stopped answering after 21 tasks. The other 72 c
 | Of those: a name or call edge reaches it; with embedding search too | 22; 42 | 52; 66 |
 | Statement vague or worse (AI screen) | 19 of 93 | 11 of 40 |
 | Tests need a name or text the statement never gives | 76 of 93 | 14 of 40 |
-| Resolved as published | 0 of 21 | 3 of 23 |
+| Resolved as published, on Kaggle | 0 of 21 | 3 of 23 |
 | Tool calls to a graph tool, as published (all runs) | 17 of 207 | 83 of 439 |
 
-**Time, GPUs and cost.** The three arms' OpenTelemetry spans put 66–83% of a task's time in model calls, 14–15% in context compaction and under 0.1% in the graph tools; 45 of 207 runs ended at the model's context window. A task took 297–419 GPU-seconds on the four L4s and 4.8–6.7 Wh, and a fix 1.9 GPU-hours with graph retrieval and 1.8 with the report, about 1.59 and 1.50 US dollars at a median rental of 0.83 an L4-hour. On the T4 baseline, the 13 core-split tasks it ran took 17% of its 9.0 agent-hours and gave 4 of its 5 fixes: 0.38 a fix against 1.80 overall, about 0.53 dollars against 2.49 for its two T4s at 0.69 a T4-hour (Kaggle's were free).
+**Time, GPUs and cost.** The Kaggle arms' OpenTelemetry spans put 66–83% of a task's time in model calls, 14–15% in context compaction and under 0.1% in the graph tools; 45 of 207 runs ended at the model's context window. A task took 297–419 GPU-seconds on the four L4s and 4.8–6.7 Wh, and a fix 1.9 GPU-hours with graph retrieval and 1.8 with the report, about 1.59 and 1.50 US dollars at a median rental of 0.83 an L4-hour (Kaggle's were free). On the T4 baseline, the 13 core-split tasks it ran took 17% of its 9.0 agent-hours and gave 4 of its 5 fixes: 0.38 a fix against 1.80 overall.
 
 ## 7. Limitations
 
 - **One new repository**, compared with the competition's development set.
 - **No cloud baseline.** The cloud agent that made these changes, with a person in the loop, was not rerun on the statements alone.
-- **No baseline for 72 tasks.** The experiment's baseline arm ran 21 of 93, so neither context is tested against it; the rerun is owed (source repository, issue 681).
-- **No leaderboard score.** Every run under the competition's evaluator used 5 minutes and 40 tool calls, not 60 and 100, once per arm at temperature 0.2. The report arm's context comes from the hidden test, so it is not a benchmark condition.
-- **AI screens.** A person checked 30 verdicts, in summary, after seeing the AI's; 63 of ours, 12 of the core split's 17 and all 40 development tasks have AI ratings only.
+- **A small experiment.** At a baseline of 4 of 93 only a large effect could show. The Kaggle rerun is owed (source repository, issue 681).
+- **No leaderboard score.** Every run under the competition's evaluator used 5 minutes and 40 tool calls, not 60 and 100, once per arm and machine at temperature 0.2.
+- **AI screens.** A person checked 42 verdicts, the core split's 17 among them, in summary and after seeing the AI's; 51 of ours and all 40 development tasks have AI ratings only.
 - **Prompted repair.** Each task comes with a failing test: noticing a silent defect unprompted is not measured.
 
 ## 8. Conclusion and release
 
-A model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, and 3 of 23 of the competition's own under its evaluator. With graph retrieval done for it, it resolved 4 of all 93, and with a failing test's report (from the hidden test) 5, in an experiment registered before it ran; its baseline arm failed after 21 tasks, so whether either context helps is still open. Over every run, 8 of the 9 tasks this model has resolved are in the core split of 17, which is where a result on this set should be quoted. On the competition's tasks the graph holds more fixes and the screen passes half: the two sets differ in their tests more than their statements.
+A model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, and 3 of 23 of the competition's own under its evaluator. On one A100, in an experiment registered before it ran, it resolved 4 of all 93 as published, 6 with graph retrieval done for it and 4 with a failing test's report (from the hidden test): no difference detected, there or in an unplanned second session on an L4 (5 and 8). Over every run, 9 of the 10 tasks this model has resolved are in the core split of 17, which is where a result on this set should be quoted. On the competition's tasks the graph holds more fixes and the screen passes half: the two sets differ in their tests more than their statements.
 
 **Using the set.** The dataset has the competition's layout, so its evaluator runs on it as published. In the repository, `kaggle/official_verify.py` replays the two controls; the quickstart notebook loads a task.
 
