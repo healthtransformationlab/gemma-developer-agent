@@ -7,6 +7,7 @@
 
 **Paper Track submission:** [Can a small local agent redo a cloud agent's work?](https://kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/can-a-small-local-agent-redo-a-cloud-agents-work)
 · [the paper as a PDF](paper/small-local-agent-redo-cloud-agent-work.pdf)
+· [as a Word file, for review](paper/small-local-agent-redo-cloud-agent-work.docx)
 · [the paper as submitted (release)](https://github.com/healthtransformationlab/gemma-developer-agent/releases/latest)
 · [the 93 tasks on Kaggle](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks)
 
@@ -108,7 +109,7 @@ hardware, interval and cost, is in [the table below](#what-has-been-run-and-what
 | For | Go to |
 |---|---|
 | **Executives** (8 slides, 5 minutes, plus backup) | [play the slides](https://healthtransformationlab.org/gemma-developer-agent/pitch/deck.html) · [read the pitch with speaker notes](docs/pitch/full_text_and_notes.md) · [slides as a PDF](docs/pitch/deck.pdf) |
-| **Scientists** | [the paper](paper/small-local-agent-redo-cloud-agent-work.pdf) ([as text](paper/small-local-agent-redo-cloud-agent-work.md)), [where each number comes from](paper/sources.md), [the paper against the competition's rules](paper/rules_check.md), [every run and what it cost](#what-has-been-run-and-what-it-cost), [the experiment's plan, addenda and tables](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/526ea08c75e063ba8d288883ccf47144ea367386/data/tasks/official_agent_runs/README.md) |
+| **Scientists** | [the paper](paper/small-local-agent-redo-cloud-agent-work.pdf) ([as text](paper/small-local-agent-redo-cloud-agent-work.md), [as a Word file with line numbers](paper/small-local-agent-redo-cloud-agent-work.docx)), [where each number comes from](paper/sources.md), [the paper against the competition's rules](paper/rules_check.md), [every run and what it cost](#what-has-been-run-and-what-it-cost), [the experiment's plan, addenda and tables](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/526ea08c75e063ba8d288883ccf47144ea367386/data/tasks/official_agent_runs/README.md) |
 | **Engineers** | [the agent, file by file](docs/agent_walkthrough.md), [the competition's rules as read here](docs/rulebook-notes.md), [the dataset's format](docs/dataset-format.md), [the starter notebook](docs/starter-notebook-notes.md), [how we work](AGENTS.md) |
 
 ## The question behind the agent
