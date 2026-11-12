@@ -168,28 +168,36 @@ Counts of what happened, with no statistical test; the second comparison was mad
 
 </details>
 
-## Slide 7: On four L4 GPUs a fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.
+## Slide 7: A full run of the 93 tasks took about 2 GPU-hours on one A100. One GPU was enough.
 
-![Slide 7: On four L4 GPUs a fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.](img/07-cost.png)
+![Slide 7: A full run of the 93 tasks took about 2 GPU-hours on one A100. One GPU was enough.](img/07-cost.png)
 
-**Speaker notes:** The runs kept OpenTelemetry spans: names, counts and seconds, never prompts or replies. In the three Kaggle arms, 66 to 83 percent of a task's time was model calls and 14 to 15 percent was context compaction, which is the harness summarising older turns. The graph tools took under 0.1 percent. Forty-five of 207 runs ended when a prompt passed the model's context window. A fix took 1.9 GPU-hours with graph retrieval and 1.8 with the report, on four L4s: about 1.59 and 1.50 US dollars at a median rental price, though Kaggle's GPUs were free. On the T4 baseline, the 13 core-split tasks it ran took 17 percent of its 9.0 agent-hours and gave 4 of its 5 fixes: 0.38 hours a fix against 1.80 overall.
+**Speaker notes:** Each run recorded its own GPU time. One full run of the 93 tasks took about 2 GPU-hours on one A100, 3.3 to 3.6 on one L4, and 7.7 to 9.0 on four L4s, which is the competition's own setup. At median rental prices that is an estimated 3.50 to 3.76 US dollars, 2.74 to 3.01, and 6.37 to 7.50. Nothing was paid by the hour: Kaggle's GPUs were free within a weekly allowance, and Colab is a subscription. Four L4s finished a task about as fast as one A100, so for a run of your own one GPU is enough. Each machine ran in its own session, once for each arm, so read these as what happened and not as a benchmark of the machines. From the timing records, 66 to 83 percent of a task's time was the model's own calls, 14 to 15 percent was summarising older turns, and the graph tools took under 0.1 percent. On the first baseline, the 13 clearly described tasks cost 0.38 hours of agent time a fix, against 1.80 over all 48. So three decisions follow: rent one GPU, check task descriptions before paying to run them, and speed up the model's own calls first. That performance work comes next; none of it has been done or measured.
 
 <details><summary>The slide's text</summary>
 
 What it cost  
-On four L4 GPUs a fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.  
+A full run of the 93 tasks took about 2 GPU-hours on one A100. One GPU was enough.  
+One full run of all 93 tasks: GPU-hours, and what renting them would cost  
+One A100  
+1.9 to 2.0 GPU-hours  
+about 3.50 to 3.76 US dollars  
+One L4  
+3.3 to 3.6 GPU-hours  
+about 2.74 to 3.01 US dollars  
+Four L4s  
+7.7 to 9.0 GPU-hours  
+about 6.37 to 7.50 US dollars  
+Four L4s finished a task about as fast as one A100, and used about four times the GPU time.  
 Share of a task's time spent in the model's own calls  
 66–83%  
-Another 14–15% went to summarising older turns (context compaction). From the Kaggle runs' timing records (OpenTelemetry spans). 45 of 207 runs ended at the model's context window.  
-GPU-hours for each fix, on four L4 GPUs  
-1.9 and 1.8  
-1.9 with graph retrieval and 1.8 with the test report: about 1.59 and 1.50 US dollars at a median rental of 0.83 an L4-hour. Kaggle's GPUs were free.  
-Hours of agent time for each fix, on the T4 baseline  
+In the three Kaggle arms. Summarising older turns took another 14–15%, and the graph tools under 0.1%. 45 of 207 runs ended at the model's context window.  
+Hours of agent time for each task fixed, on the first baseline  
 0.38 vs 1.80  
-0.38 on the 13 clearly described tasks it ran, against 1.80 over all 48. Those 13 took 17% of its 9.0 agent-hours and gave 4 of its 5 fixes.  
-What it means:  
-the time goes to the model's own calls, not to the graph tools, and an hour spent on clearly described tasks bought the most fixes.  
-Source: the paper, Section 6, "Time, GPUs and cost". The prices are rental estimates, not money spent
+0.38 on the 13 clearly described tasks it ran, against 1.80 over all 48.  
+What it means for decisions:  
+rent one GPU, not four. Check task descriptions before paying to run them. Speed up the model's own calls first: that performance work comes next, and none of it is done yet.  
+Sources: the README, "Cost, and what it means for decisions", and the paper, Section 6. Rental figures are estimates, not money spent
 
 </details>
 

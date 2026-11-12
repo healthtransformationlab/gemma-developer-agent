@@ -49,6 +49,10 @@ them (the paper's core split). Counting the three runs above and two more from a
 
 These are counts of what happened, not a planned test.
 
+**4. One GPU ran all 93 tasks in about 2 GPU-hours.**
+That was one A100; rented, an estimated 3.50 to 3.76 US dollars for the run.
+[What it cost, and what that means for decisions](#cost-and-what-it-means-for-decisions).
+
 One model, one repository, and an AI screen that a person checked in part:
 [what this does not show](paper/small-local-agent-redo-cloud-agent-work.md#7-limitations). Each run, with its
 hardware, interval and cost, is in [the table below](#what-has-been-run-and-what-it-cost).
@@ -73,10 +77,55 @@ run is a baseline (below); the comparison with and without them has not been run
 | Metadata-driven | The pipelines, runs, lineage and runbook are tables, not logs |
 | Conventions | Typed names; every change traced to an issue |
 | Configuration management | One place per setting; credentials and dependencies with expiry dates |
-| Telemetry | Every call records timing and cost |
+| Telemetry | Every call records timing and cost: [what the runs cost](#cost-and-what-it-means-for-decisions) |
 | Forecasting | Because of the four above, failures are predicted with a date |
 
 Licence: [Apache 2.0](LICENSE), the licence type the competition names for winning submissions.
+
+## Cost, and what it means for decisions
+
+Every run recorded its own GPU time. This is one full run of all 93 tasks, under the competition's evaluator, on
+each machine it ran on. Rental is an estimate, in US dollars.
+
+| Machine | GPU-hours | Rental, whole run | Rental, each task fixed |
+|---|---|---|---|
+| One A100 | 1.9–2.0 | 3.50–3.76 | 0.58–0.94 |
+| One L4 | 3.3–3.6 | 2.74–3.01 | 0.34–0.60 |
+| Four L4s | 7.7–9.0 | 6.37–7.50 | 1.50–1.59 |
+
+Four L4s are the competition's own setup, run on Kaggle. The A100 and the single L4 were Colab sessions, and the
+single L4 was the unplanned second session.
+
+The rental figures are estimates, not money spent: the GPU time at a median on-demand price (0.83 US dollars an
+L4-hour, 1.87 an A100-hour). Kaggle's GPUs were free within a weekly allowance of about 30 hours, and Colab is a
+subscription. Each machine ran in its own session, with its own software versions, once for each arm, and a run
+fixed between 4 and 8 tasks, so the cost of a fix moves a lot from run to run. Where the figures come from:
+[the `_gpu.csv` table beside each run](https://github.com/healthtransformationlab/health-transformation-lab-nlp/tree/526ea08c75e063ba8d288883ccf47144ea367386/data/tasks/official_agent_runs)
+and [the prices](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/526ea08c75e063ba8d288883ccf47144ea367386/ops/cost_settings.yaml).
+
+**What this means when choosing how to run it**
+
+- **Rent one GPU, not four.** On these runs four L4s finished a task about as fast as one A100 (1.2 to 1.5 minutes
+  against 1.2 to 1.3) and used about four times the GPU time. For a run of your own, one L4 was the cheapest here and one A100
+  the quickest. The competition scores entries on four L4s; the last row is what that setup cost here.
+- **Check the task descriptions before paying to run them.** On the first baseline the 13 clearly described tasks
+  took 17% of the agent's time and gave 4 of its 5 fixes: 0.38 hours of agent time a fix, against 1.80 over all 48.
+- **Handing the model a list of code to look at cost nothing extra.** Time and tokens for a task were the same or a
+  little lower with it (the list is made beforehand). That choice can rest on results alone, and the results showed
+  no reliable improvement.
+- **Speed up the model's own calls first.** In the three Kaggle arms they took 66–83% of a task's time. Summarising
+  older turns took another 14–15%, the graph tools under 0.1%, and 45 of 207 runs ended when the conversation
+  outgrew the model's context window. For one task the model reads about 100 to 125 thousand tokens and writes about 5 to 7 thousand.
+
+**Next: performance work.** None of this has been done or measured yet.
+
+- Send the model less to read on each turn (shorter tool output, a tighter history): it reads roughly twenty times
+  what it writes.
+- Tune or replace the summarising of older turns, which takes 14–15% of a task's time and still leaves runs ending
+  at the context window.
+- Run the same tasks on one GPU and on four under the same software, to confirm that one is enough.
+- Try more than one task at a time on a GPU, where tasks can be kept apart.
+- Record tokens a second and how long each model call waits, so that the next change is judged by the same tables.
 
 ## What has been run, and what it cost
 
