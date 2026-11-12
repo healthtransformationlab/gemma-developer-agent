@@ -37,7 +37,9 @@ One row per run. Time and tokens are averages for one task, from each run's own 
 | The same, with the failing test's report (from the hidden test: not a benchmark condition) | the same | **5 of 93** (95% CI 2.3–12) | 1.5 min | 101k in, 4.9k out |
 
 - **Controls.** On the published files the competition's evaluator resolves 93 of 93 reference patches and 0 of
-  93 empty patches, and gives the same verdict as the local harness on all 48 agent patches.
+  93 empty patches, and gives the same verdict as the local harness on all 48 agent patches compared: 25 saved
+  from the baseline run, on the first release, and 23 from a rerun, on the corrected release (the two rows of the
+  table in the paper's Section 5).
 - **Cost of a fix.** 1.80 hours of agent time a fix across the 48. The 13 attempted tasks whose statements say
   what their tests check (an AI screen of all 93; a person checked 30) gave 4 of the 5 fixes for 17% of that
   time: 0.38 hours a fix.

@@ -22,7 +22,7 @@ This competition [14] asks whether a model that fits on one accelerator can do t
 
 Two kinds of repository are scarce. In a **data repository** the costly defect is silent: a pipeline finishes and a number in its table is wrong. An **agent-built repository** can leave an unusually complete record: an issue, a pull request and a review for each change.
 
-This paper adds one repository that is both, set beside the competition's four by its mining rule, format and evaluator, and compared with its own tasks. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are real changes to application code: de-identification, record checks, model scoring, pipelines.
+This paper adds one repository that is both, set beside the competition's four by its mining rule, format and evaluator. `health-transformation-lab-nlp` exists to surface silent defects, here in how well gum disease can be found in synthetic dental records, so its tasks are real changes to application code: de-identification, record checks, model scoring, pipelines.
 
 Contributions:
 
@@ -79,7 +79,7 @@ A task is kept only if its tests fail at `base_commit` with the test patch alone
 
 ## 5. Harness and verification
 
-**The local harness.** This work first re-implemented the harness the competition's guide documents. Replaying each reference patch from the repository's history resolves 111 of 113 tasks; submitting nothing, none.
+**The local harness.** It re-implements the one the competition's guide documents. Replaying each reference patch from the repository's history resolves 111 of 113 tasks; submitting nothing, none.
 
 **The competition's evaluator.** Its own verification (`swegemma` 0.2.11, subprocess sandbox, unmodified) then ran on the 113 tasks first published and on the corrected release.
 
@@ -114,7 +114,7 @@ Of the 20 left out, twelve read withheld third-party files, six run a script tha
 | With graph retrieval | 93 | 4 (1.7–10.5%) | 4 |
 | With the failing test's report | 93 | 5 (2.3–12%) | 4 |
 
-The baseline arm's model server stopped answering after 21 tasks. The other 72 count as not run under the plan, and Kaggle refused the one rerun it allows (the weekly GPU allowance was spent). On the 21 tasks every arm ran, no arm resolved any (exact McNemar p = 1.00 for each context), so no difference is claimed and none is ruled out; even counting the 72 as baseline failures would give p = 0.125 and 0.0625. Described, not tested: 7 of the 8 tasks the two full arms resolved are in the core split, and 6 of the 8 had been resolved from the statement alone in an earlier run.
+The baseline arm's model server stopped answering after 21 tasks. The other 72 count as not run under the plan, and Kaggle refused the one rerun it allows (the weekly GPU allowance was spent). On the 21 tasks every arm ran, no arm resolved any (exact McNemar p = 1.00 for each context), so no difference is claimed and none is ruled out; even counting the 72 as baseline failures would give p = 0.125 and 0.0625. Described, not tested: 7 of the 8 tasks the two full arms resolved are in the core split, and 6 of the 8 had been resolved from the statement alone in an earlier run. Finding is not fixing: the graph arm resolved 2 of the 41 tasks where its retrieval listed an edited function (of Section 4.3's 51).
 
 **Beside the competition's own tasks.** The graph counts were repeated on its 129 development tasks; the screen and the agent took a seeded 40, stratified by repository. In a Kaggle notebook the evaluator's sandbox has no pip to install test dependencies: there the reference patch fails 16 of the 40 and one passes with an empty patch, leaving 23 (rich 15, fastapi 8). The agent's notebook mounts the competition's reference patches; no tool call named a path outside its workspace.
 
