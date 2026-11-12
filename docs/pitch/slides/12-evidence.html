@@ -1,0 +1,15 @@
+<section id="evidence" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:104px 128px 150px;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">Drill-down · evidence you can check</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:54px;font-weight:700;line-height:1.14">How each number is kept honest</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;font-size:27px;line-height:1.38"><b>A source for every number.</b> <code style="font-size:25px">paper/sources.md</code> has a row for each figure in the paper, naming the file it came from, and keeps the rows of text that was cut.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;font-size:27px;line-height:1.38"><b>A plan before the results.</b> The experiment's plan was hashed before any result, and each addendum before its run started (source repository, issues 674 and 687).</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;font-size:27px;line-height:1.38"><b>Checked on every change.</b> In CI, <code style="font-size:25px">paper/check_rules.py</code> checks the paper against the competition's rules, and <code style="font-size:25px">docs/build_decks.py</code> checks this deck's numbers against the paper.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;font-size:27px;line-height:1.38"><b>What went wrong is in the paper.</b> Colab's network was open to the agent: 3 of the five runs' 687 commands ran an installer, in tasks no run resolved, and none left its workspace.</p>
+</div>
+<p style="font-size:28px;line-height:1.4;background:#15303A;color:#F7F5EF;border-radius:16px;padding:24px 40px"><b>Not a result:</b> anything from a dry run or a sample is labelled as one, and the unplanned second session is described beside the registered one, never added to it.</p>
+<p style="position:absolute;left:128px;bottom:60px;width:1664px;font-size:24px;color:#5C6F75">Sources: paper/sources.md, paper/rules_check.md and the paper, Section 6</p>
+<aside>Four habits keep the numbers honest. Every figure in the paper has a row in paper/sources.md naming the file it came from, and rows stay when text is cut. The experiment's plan was hashed before any result, and each addendum before its run. A script checks the paper against the competition's rules on every change, and another checks that every number in this deck is one the paper or the README has. And what went wrong is in the paper: on Colab the network was open to the agent's commands, 3 of 687 commands ran an installer, in tasks no run resolved, and none left its workspace. The unplanned second session on an L4 is described beside the registered experiment and never added to it.</aside>
+</section>
