@@ -35,26 +35,42 @@ One row per run. Time and tokens are averages for one task, from each run's own 
 | Pre-registered experiment: as published (the baseline arm) | 4 × L4 on Kaggle; the same 5-minute budget; all 93 tasks | 0 of the 21 tasks run before its model server failed; 72 not run | 1.7 min | 125k in, 6.2k out |
 | The same, with graph retrieval done for the agent | the same | **4 of 93** (95% CI 1.7–10.5) | 1.2 min | 103k in, 4.7k out |
 | The same, with the failing test's report (from the hidden test: not a benchmark condition) | the same | **5 of 93** (95% CI 2.3–12) | 1.5 min | 101k in, 4.9k out |
+| The experiment again on Colab: as published | 1 × A100 on Colab; the same 5-minute budget; all 93 tasks | **4 of 93** (95% CI 1.7–10.5) | 1.3 min | 108k in, 5.4k out |
+| The same, with graph retrieval | the same notebook session | **6 of 93** (95% CI 3–13.4) | 1.2 min | 103k in, 4.9k out |
+| The same, with the failing test's report (from the hidden test) | the same notebook session | **4 of 93** (95% CI 1.7–10.5) | 1.3 min | 108k in, 5.2k out |
+| As published again, by a second session at the same time (unplanned) | 1 × L4 on Colab; the same budget; all 93 tasks | 5 of 93 (95% CI 2.3–12) | 2.3 min | 110k in, 5.0k out |
+| That session's graph-retrieval arm | the same L4 session | 8 of 93 (95% CI 4.4–16.1) | 2.1 min | 103k in, 4.7k out |
 
 - **Controls.** On the published files the competition's evaluator resolves 93 of 93 reference patches and 0 of
   93 empty patches, and gives the same verdict as the local harness on all 48 agent patches compared: 25 saved
   from the baseline run, on the first release, and 23 from a rerun, on the corrected release (the two rows of the
   table in the paper's Section 5).
 - **Cost of a fix.** 1.80 hours of agent time a fix across the 48. The 13 attempted tasks whose statements say
-  what their tests check (an AI screen of all 93; a person checked 30) gave 4 of the 5 fixes for 17% of that
+  what their tests check (an AI screen of all 93; a person checked 42 of its verdicts in summary, the core split's 17 among them) gave 4 of the 5 fixes for 17% of that
   time: 0.38 hours a fix.
 - **With more context.** A pre-registered experiment gave the agent graph retrieval, or a failing test's report,
-  on all 93 tasks. Its baseline arm lost its model server after 21 tasks, none of which any arm resolved, and
-  Kaggle's weekly GPU allowance ran out before the rerun the plan allows, so neither context has been tested
-  against the baseline
+  on all 93 tasks. On Kaggle its baseline arm lost its model server after 21 tasks, none of which any arm resolved,
+  and the weekly GPU allowance ran out before the rerun the plan allows
   ([the rerun](https://github.com/healthtransformationlab/health-transformation-lab-nlp/issues/681) is owed).
-  7 of the 8 tasks those two arms resolved are in the 17-task core split (statements that an AI
-  screen finds say what their tests check), and 6 of the 8 had been resolved from the statement alone in an earlier run.
+  So all three arms ran again on one Colab A100, under addenda hashed before each started
+  ([issue 687](https://github.com/healthtransformationlab/health-transformation-lab-nlp/issues/687)).
+  There the baseline resolved 4 tasks, graph retrieval those 4 and 2 more (exact McNemar
+  p = 0.5), and the report 3 of them and 1 more (p = 1.0): no difference is claimed, and none is ruled out.
+  A second, unplanned session ran the first two arms on an L4 at the same time and resolved 5 and 8
+  (p = 0.375, described only):
+  two runs of the baseline differed on 3 tasks. The 17-task core split
+  (statements that an AI screen finds say what their tests check) was resolved in 26 of 85 Colab
+  task-runs, and the other 76 tasks in 1 of 380.
+  Colab's network was open to the agent's commands, where Kaggle's kernels have none:
+  3 of the five runs' 687 commands ran an installer, in tasks no run resolved.
 - **Where the time went.** The kernels kept OpenTelemetry spans (names, counts and seconds). In the experiment's
-  three arms, 66–83% of a task's time was model calls and 14–15% context compaction;
+  three Kaggle arms, 66–83% of a task's time was model calls and 14–15% context compaction;
   45 of 207 runs ended when a prompt passed the model's context window. A fix cost 1.9 L4 GPU-hours
   with graph retrieval and 1.8 with the report: about 1.59 and 1.50 US dollars at a median rental of 0.83 an L4
   GPU-hour (an estimate; Kaggle's GPUs were free).
+  On the one Colab A100 a task took 72–78 GPU-seconds, and a fix
+  0.31–0.50 GPU-hours: about 0.58–0.94 US dollars at a median rental of 1.87 an A100
+  GPU-hour (an estimate; Colab is a paid subscription, charged in compute units).
 - **Tests.** The source repository had 2,269 tests in 126 files on November 8, when its 960 commits end, and 2,355
   in 133 at the commit the paper's analyses use; CI runs them on every pull request.
 - **What the graph could tell it.** By name, call edge or embedding search (first ten results), the code graph
@@ -65,7 +81,7 @@ Sources, at the commits the paper used: the [local harness](https://github.com/h
 table (its 48 rows of published tasks; tokens over the 46 that logged them), the
 [larger budget](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/agent_reruns/gemma-4-e4b-it_larger_budget.csv),
 [first official-evaluator sample](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma.csv) (the 20 in
-its sample), [development-set](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/4ce2170983add8aabe15ad1cf7cc303ad300bf04/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma_devset.csv), [pre-registered experiment](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/4ce2170983add8aabe15ad1cf7cc303ad300bf04/data/tasks/official_agent_runs/README.md) and [routing](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/screening/screen_routing.csv) tables. The Kaggle kernels run with
+its sample), [development-set](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/4ce2170983add8aabe15ad1cf7cc303ad300bf04/data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma_devset.csv), [pre-registered experiment](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/526ea08c75e063ba8d288883ccf47144ea367386/data/tasks/official_agent_runs/README.md) and [routing](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/data/tasks/screening/screen_routing.csv) tables. The Kaggle kernels run with
 internet off, so they send no telemetry: each task's timing, tokens and tool calls are written into these
 tables, and the evaluator's kernels keep their spans in a file that is rolled up beside them. The source repo's pipelines send theirs to Azure Application Insights
 ([`docs/telemetry.md`](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/docs/telemetry.md)). Every number in the paper is traced in
