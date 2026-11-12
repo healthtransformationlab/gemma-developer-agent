@@ -62,8 +62,8 @@ One row per run. Time and tokens are averages for one task, from each run's own 
   (statements that an AI screen finds say what their tests check), 8 tasks were resolved in at least one of
   the five Colab runs, and 1 of the other 76 tasks; counting each task once in each run (task-runs),
   26 of 85 and 1 of 380. Where the retrieval listed a function the fix edits (41 tasks), 5 of the
-  core split's 7 were resolved in some run and none of the other 34 (12 of 35 task-runs and 0 of 170): a split made
-  after the runs, described and not tested.
+  core split's 7 were resolved in some Colab run and none of the other 34 (12 of 35 task-runs and 0 of 170): a comparison
+  made after the runs, described and not tested.
   Colab's network was open to the agent's commands, where Kaggle's kernels have none:
   3 of the five runs' 687 commands ran an installer, in tasks no run resolved.
 - **Where the time went.** The kernels kept OpenTelemetry spans (names, counts and seconds). In the experiment's
