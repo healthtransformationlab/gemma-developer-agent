@@ -148,7 +148,7 @@ Source: the paper, Section 6. "Fixed" is the paper's "resolved": the task's hidd
 
 ![Slide 6: The model fixed 8 of the 17 clearly described tasks, and only 1 of the other 76](img/06-finding.png)
 
-**Speaker notes:** This is the result to take away. An AI screen asked of every task whether its statement, the task's description, says what its tests check. Seventeen of the 93 pass: the paper calls them the core split. The other 76 are real statements that leave out something their tests need, such as a name or a message. Over the five Colab runs, 8 of the 17 core-split tasks were resolved at least once, against 1 of the other 76. Counting every task in every run, that is 26 of 85 against 1 of 380. And finding is not fixing: in the 41 tasks where retrieval listed a function the fix edits, 5 of the core split's 7 were resolved in some run and none of the other 34. So valid tasks whose fix the graph found, but whose statements leave out what their tests need, measured little for this model. These are descriptions, not tests, and the second comparison was made after the runs. A person checked 42 of the screen's verdicts, in summary.
+**Speaker notes:** This is the result to take away. An AI screen asked of every task whether its statement, the task's description, says what its tests check. Seventeen of the 93 pass: the paper calls them the core split. The other 76 are real statements that leave out something their tests need, such as a name or a message. Over the five Colab runs, 8 of the 17 core-split tasks were resolved at least once, against 1 of the other 76. Counting every task in every run, that is 26 of 85 against 1 of 380. The three registered runs alone resolved 6 of the 17 and none of the 76. The core split's tasks are also the smaller ones: their reference fixes change a median of 2 files, against 10.5 for the others, and no task whose fix changes more than 5 files was resolved in any run. Among tasks whose fix changes 5 files or fewer the contrast holds: 8 of 12 against 1 of 28. And finding is not fixing: in the 41 tasks where retrieval listed a function the fix edits, 5 of the core split's 7 were resolved in some run and none of the other 34, though most of those 34 are large changes. So valid tasks whose fix the graph found, but whose statements leave out what their tests need, measured little for this model. These are descriptions, not tests, and the size check and the comparison within the 41 were made after the runs. A person checked 42 of the screen's verdicts, in summary.
 
 <details><summary>The slide's text</summary>
 
@@ -161,10 +161,10 @@ Counting every attempt in the five Colab runs: 26 of 85
 Other tasks fixed at least once  
 1 of 76  
 Counting every attempt: 1 of 380. Their descriptions leave out something the tests need.  
-Being pointed at the right code was not enough.  
-In 41 tasks the search listed a function the fix changes. Of the 7 clearly described ones, 5 were fixed in some run. Of the other 34, none.  
+These are also the smaller tasks, and the gap holds among small ones.  
+Their fixes change 2 files at the median; the others' change 10.5. Among tasks whose fix changes 5 files or fewer: 8 of 12 against 1 of 28.  
 Described, not tested  
-Counts of what happened, with no statistical test; the second comparison was made after the runs. The paper calls the 17 the core split (Section 6).
+Counts of what happened, with no statistical test; the size check was made after the runs. The paper calls the 17 the core split (Section 6).
 
 </details>
 
