@@ -1,0 +1,18 @@
+# The pitch deck against its slides and the paper (#75): docs/build_decks.py --check on every change to either.
+# It fails when a built file is behind its slides, when a slide carries a number that neither the paper nor the
+# README has, or when the slide images and the PDF were drawn from another build.
+name: Deck check
+on:
+  pull_request:
+    paths: ["docs/**", "README.md", "paper/small-local-agent-redo-cloud-agent-work.md", ".github/workflows/deck-check.yml"]
+  push:
+    branches: [main]
+    paths: ["docs/**", "README.md", "paper/small-local-agent-redo-cloud-agent-work.md"]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.12"}
+      - run: python docs/build_decks.py --check

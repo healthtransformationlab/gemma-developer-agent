@@ -1,0 +1,17 @@
+<section id="competition" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">Drill-down · the competition's own tasks</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">In 76 of our 93 tasks the tests need something the description never gives. In the competition's: 14 of 40.</h2>
+</div>
+<table style="font-size:27px;line-height:1.3;color:#15303A;background:#FDFCF9;border:1px solid #D9D3C4;width:100%">
+<tr style="background:#15303A"><th style="width:56%;text-align:left;color:#F7F5EF">How many tasks…</th><th style="width:20%;text-align:left;color:#F2A070">Our tasks</th><th style="width:24%;text-align:left;color:#F7F5EF">The competition's development tasks</th></tr>
+<tr><td>have a fix that changes code the code map (graph) holds</td><td>51 of 93</td><td>114 of 129</td></tr>
+<tr><td>of those: can be reached by a name or a call link; with similarity search too</td><td>22; 42</td><td>52; 66</td></tr>
+<tr><td>have a description that is vague or worse (AI check)</td><td>19 of 93</td><td>11 of 40</td></tr>
+<tr><td><b>have tests that need a name or text the description never gives</b></td><td><b>76 of 93</b></td><td><b>14 of 40</b></td></tr>
+<tr><td>were fixed with the task as published, on Kaggle (ours: 21 tasks ran)</td><td>0 of 21</td><td>3 of 23</td></tr>
+</table>
+<p style="font-size:27px;line-height:1.4;background:#15303A;color:#F7F5EF;border-radius:16px;padding:22px 40px">The two sets differ in their tests more than in their descriptions. The check and the agent took a seeded 40 of the competition's 129 development tasks; a Kaggle notebook can verify 23 of them.</p>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Section 6, "Beside the competition's own tasks"</p>
+<aside>The same counts were made on the competition's own development tasks. Its graph holds more of the fixes: 114 of 129, against 51 of 93 here. Its statements are vague a little more often: 11 of 40, against 19 of 93. The difference is in the tests: in this set the tests of 76 of 93 tasks need a name or a text the statement never gives, against 14 of 40 there. The screen and the agent took a seeded 40 of the 129, stratified by repository. In a Kaggle notebook the evaluator's sandbox has no pip to install test dependencies: there the reference patch fails 16 of the 40 and one passes with an empty patch, leaving 23, and the model resolved 3 of them. On this set the Kaggle baseline ran 21 tasks before its model server stopped answering, and resolved none.</aside>
+</section>

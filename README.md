@@ -1,12 +1,49 @@
 # gemma-developer-agent
+**Can a small local agent redo a cloud agent's work?**
+
+> **Personal learning project.** Built on my own time: not affiliated with or endorsed by any employer, institution or
+> vendor, and nothing here is any organization's plan, study or finding. Every patient record in the source repository
+> is synthetic.
 
 **Paper Track submission:** [Can a small local agent redo a cloud agent's work?](https://kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/can-a-small-local-agent-redo-a-cloud-agents-work)
+· [the paper as a PDF](paper/small-local-agent-redo-cloud-agent-work.pdf)
+· [the 93 tasks on Kaggle](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks)
 
-A coding agent for the Gemma 4 Developer Agent Competition, and the question behind it:
+In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960
+commits and 2,269 tests, without typing code. This repository asks what a small local model can take out of that
+loop. It holds a coding agent for the Gemma 4 Developer Agent Competition, the paper on what that agent did, and
+where each number in the paper comes from.
+
+<a href="docs/pitch/full_text_and_notes.md"><img src="docs/img/pitch_deck_cover.png" alt="Can a small local agent redo a cloud agent's work? The pitch, slide by slide." width="480"></a>
+
+What the runs show, on 93 tasks built from that repository's history and checked by the competition's own scoring
+program (its evaluator). "Fixed" is the paper's "resolved": the task's hidden tests pass with the model's change.
+
+- **5 of 48 tasks fixed** by Gemma 4 E4B working alone on free T4 GPUs, cheapest tasks first (10.4%, 95% CI
+  4.5–22.2). All five were small.
+- **4, 6 and 4 of 93 tasks fixed** in an experiment planned in advance (pre-registered), on one A100: with the task
+  as published, with a list of code to look at (graph retrieval), and with a failing test's report (from the hidden
+  test: not a benchmark condition). No difference detected (exact McNemar p = 0.5 and 1.0).
+- **8 of the 17 clearly described tasks fixed, against 1 of the other 76.** "Clearly described" means the task's
+  description says what its tests check (the paper's core split, from an AI screen of all 93); the counts are tasks
+  fixed at least once in the five Colab runs. Described, not tested.
+
+One model, one repository, and an AI screen that a person checked in part:
+[what this does not show](paper/small-local-agent-redo-cloud-agent-work.md#7-limitations). Each run, with its
+hardware, interval and cost, is in [the table below](#what-has-been-run-and-what-it-cost).
+
+| For | Go to |
+|---|---|
+| **Executives** (8 slides, 5 minutes, plus backup) | [read the pitch with speaker notes](docs/pitch/full_text_and_notes.md) · [slides as a PDF](docs/pitch/deck.pdf) · [slides](docs/pitch/deck.html) (download and open in a browser) |
+| **Scientists** | [the paper](paper/small-local-agent-redo-cloud-agent-work.pdf) ([as text](paper/small-local-agent-redo-cloud-agent-work.md)), [where each number comes from](paper/sources.md), [the paper against the competition's rules](paper/rules_check.md), [every run and what it cost](#what-has-been-run-and-what-it-cost), [the experiment's plan, addenda and tables](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/526ea08c75e063ba8d288883ccf47144ea367386/data/tasks/official_agent_runs/README.md) |
+| **Engineers** | [the agent, file by file](docs/agent_walkthrough.md), [the competition's rules as read here](docs/rulebook-notes.md), [the dataset's format](docs/dataset-format.md), [the starter notebook](docs/starter-notebook-notes.md), [how we work](AGENTS.md) |
+
+## The question behind the agent
 
 **Does a well-run data repo make a small AI coding agent better at fixing bugs?**
 
-The idea is that five things a well-run repo has do part of the agent's thinking for it. What has been measured and run is a baseline (below).
+The idea is that five things a well-run repo has do part of the agent's thinking for it. What has been measured and
+run is a baseline (below); the comparison with and without them has not been run.
 
 | Ingredient | In one line |
 |---|---|
@@ -15,8 +52,6 @@ The idea is that five things a well-run repo has do part of the agent's thinking
 | Configuration management | One place per setting; credentials and dependencies with expiry dates |
 | Telemetry | Every call records timing and cost |
 | Forecasting | Because of the four above, failures are predicted with a date |
-
-> Personal learning project. Not affiliated with or endorsed by any employer, institution or vendor.
 
 Licence: [Apache 2.0](LICENSE), the licence type the competition names for winning submissions.
 
@@ -91,6 +126,19 @@ tables, and the evaluator's kernels keep their spans in a file that is rolled up
 ([`docs/telemetry.md`](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/254c44c4a19fae5ffae1fb9661692aa2f390e034/docs/telemetry.md)). Every number in the paper is traced in
 [`paper/sources.md`](paper/sources.md).
 
+## Run it
+
+```bash
+pip install pypdf && python paper/check_rules.py --check   # the paper against the competition's rules
+node paper/build_pdf.js                 # rebuild the paper's PDF and Figure 1 (needs Playwright and pandoc)
+python docs/build_decks.py              # rebuild the deck from docs/pitch/slides/
+node docs/render_slides.js              # redraw the slide images, the cover and deck.pdf (needs Playwright)
+python docs/build_decks.py --check      # the deck is up to date, and each number on a slide appears in the paper or the README
+```
+
+The agent itself runs under the competition's evaluator, in a Kaggle notebook; the runner and the harness are in
+the source repository ([the agent, file by file](docs/agent_walkthrough.md#running-it)).
+
 <details>
 <summary><b>What's in this repo</b></summary>
 
@@ -100,7 +148,7 @@ tables, and the evaluator's kernels keep their spans in a file that is rolled up
 | `skills/pipeline-doctor/` | the [pipeline-doctor](https://github.com/healthtransformationlab/pipeline-doctor) method as a skill: classify the issue from the repo's tables before reading code |
 | `tasks/` | a note on the task set: 93 tasks in the competition's format, each verified with the competition's own evaluator, built from a real repo's history. The tasks themselves are [on Kaggle](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks); the builders and run tables are in [health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp) (`data/tasks/`) |
 | `paper/` | the paper-track writeup ([`small-local-agent-redo-cloud-agent-work.md`](paper/small-local-agent-redo-cloud-agent-work.md), under 3,000 words, due November 12, 2026), the same text laid out as a paper ([`small-local-agent-redo-cloud-agent-work.pdf`](paper/small-local-agent-redo-cloud-agent-work.pdf), rebuilt with `node paper/build_pdf.js`) where each of its numbers comes from ([`sources.md`](paper/sources.md)), and how it meets each competition rule ([`rules_check.md`](paper/rules_check.md), written by `python paper/check_rules.py`, checked in CI) |
-| `docs/` | what the rules, the dataset format and the starter notebook tell us |
+| `docs/` | what the rules, the dataset format and the starter notebook tell us; the agent, file by file ([`agent_walkthrough.md`](docs/agent_walkthrough.md)); and the pitch deck ([`pitch/`](docs/pitch/): its slides, the built deck, each slide as an image with its notes, and a PDF, made by `python docs/build_decks.py` and `node docs/render_slides.js`) |
 
 </details>
 
@@ -149,3 +197,6 @@ issue; 67 of those issues are backfilled records that quote the original text ve
 - **Dates:** paper deadline November 12, 2026; entry deadline November 25; final submission December 2.
 
 </details>
+
+Ground rules: no secrets and no real data; a number is a result only when a run produced it; anything simulated or
+sampled is labelled as such ([AGENTS.md](AGENTS.md)). Owner John Bowyer · Apache 2.0 licence.

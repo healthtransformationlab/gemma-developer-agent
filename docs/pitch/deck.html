@@ -1,0 +1,289 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Can a small local agent redo a cloud agent&#x27;s work? The pitch</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>html,body{height:100%}body{margin:0;background:#2b2b2b;font-family:'Public Sans',Arial,sans-serif;overflow:hidden}*{box-sizing:border-box;margin:0}
+td,th{padding:12px 16px;border-bottom:1px solid #D9D3C4;vertical-align:top}table{border-collapse:collapse}ul{padding-left:1.2em}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:50;height:56px;background:#0F2A33;border-bottom:1px solid rgba(213,227,225,.14)}
+.topnav .bar{height:100%;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.home{display:flex;align-items:center;gap:10px;font-family:'Libre Baskerville',Georgia,serif;font-weight:700;font-size:15px;color:#F7F5EF;text-decoration:none;white-space:nowrap}
+.home .mark{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#F2A070;color:#0F2A33;font-size:15px}
+.home:hover .name{text-decoration:underline}
+.topnav .links{display:flex;flex:1 1 auto;justify-content:flex-end;align-items:center;gap:4px;min-width:0}
+.topnav .links a,.topnav button{color:#D5E3E1;text-decoration:none;font:600 14px 'Public Sans',Arial,sans-serif;padding:7px 11px;border-radius:8px;background:none;border:0;cursor:pointer;white-space:nowrap}
+.topnav .links a:hover,.topnav button:hover{color:#F7F5EF;background:rgba(255,255,255,.07)}.topnav button[aria-pressed=true]{color:#F2A070}
+.topnav .links a.cta{background:#F2A070;color:#0F2A33;margin-left:6px}.topnav .links a.cta:hover{background:#F7F5EF}
+.topnav select{flex:1 1 auto;width:300px;max-width:300px;min-width:72px;font:600 14px 'Public Sans',Arial,sans-serif;color:#F7F5EF;background:#15303A;border:1px solid rgba(213,227,225,.3);border-radius:8px;padding:6px 8px}
+.topnav .pager{display:flex;flex:0 1 auto;align-items:center;gap:4px;min-width:0}
+.topnav .pager button{color:#0F2A33;background:#F2A070;padding:7px 12px}.topnav .pager button:hover{color:#0F2A33;background:#F7F5EF}
+.topnav .pager button:disabled{opacity:.35;cursor:default;background:#F2A070}
+.topnav button:focus-visible,.topnav select:focus-visible,.topnav a:focus-visible{outline:2px solid #F7F5EF;outline-offset:2px}
+.disclaimer{position:fixed;top:56px;left:0;right:0;z-index:40;padding:6px 16px;background:#15303A;color:#D5E3E1;font:13px/1.45 'Public Sans',Arial,sans-serif}
+.stage{position:fixed;top:84px;left:0;right:0;bottom:0;overflow:hidden}
+.slides{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;transform:translate(-50%,-50%)}
+.slides>section{width:1920px;height:1080px;overflow:hidden;text-align:left}.slides aside{display:none}
+.slides a{color:inherit}
+.count{position:fixed;right:14px;bottom:10px;z-index:30;font:600 13px 'Public Sans',Arial,sans-serif;background:rgba(15,42,51,.8);color:#F7F5EF;border-radius:6px;padding:3px 8px}
+.notes-panel{position:fixed;left:0;right:0;bottom:0;z-index:45;max-height:35vh;overflow:auto;background:#f4f1ea;color:#222;padding:16px 20px 28px;font-size:15px;line-height:1.5;box-shadow:0 -8px 24px rgba(0,0,0,.3)}
+.notes-panel[hidden]{display:none}
+@media screen{.slides>section{position:absolute;left:0;top:0}.slides>section:not(.on){display:none!important}}
+/* printed, the deck is one slide a page, with nothing around it */
+@media print{@page{size:1920px 1080px;margin:0}html,body{height:auto;overflow:visible;background:#fff}
+.topnav,.disclaimer,.notes-panel,.count{display:none!important}.stage{position:static;overflow:visible}
+.slides{position:static;transform:none!important;height:auto}.slides>section{position:relative;break-after:page}}
+/* the slide picker shrinks first; then the name goes, then the paper's link; on phones the pager's labels go too,
+   so Previous, the picker, Next and Notes always fit */
+@media (max-width:1100px){.home .name{display:none}}
+@media (max-width:820px){.topnav .links a.deck{display:none}}
+@media (max-width:560px){.topnav .pager .lbl,.topnav .links a.cta{display:none}.topnav .pager button{padding:7px 13px;font-size:16px}}</style></head><body>
+<nav class="topnav" aria-label="Deck"><div class="bar">
+<a class="home" href="https://github.com/healthtransformationlab/gemma-developer-agent#readme" title="Back to the repository's README"><span class="mark" aria-hidden="true">←</span><span class="name">gemma-developer-agent</span></a>
+<div class="links"><a class="deck" href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/paper/small-local-agent-redo-cloud-agent-work.pdf">The paper</a><span class="pager"><button id="deck-prev" aria-label="Previous slide" title="Previous slide (←)">‹<span class="lbl"> Previous</span></button>
+<select id="deck-jump" aria-label="Go to slide"><option value="cover">1. Can a small local agent redo a cloud agent&#x27;s work?</option><option value="audience">2. Built for people who build and test AI coding agents</option><option value="problem">3. Tests for AI coding agents use a few popular libraries. Health-data code fails in a different way.</option><option value="solution">4. 197 real code changes became 93 test tasks, each checked by the competition&#x27;s own scoring program</option><option value="results">5. Alone, the model fixed 5 of 48 tasks. In a planned experiment, extra help showed no reliable improvement.</option><option value="finding">6. The model fixed 8 of the 17 clearly described tasks, and only 1 of the other 76</option><option value="cost">7. On four L4 GPUs a fix took 1.8 to 1.9 GPU-hours. Most of a task&#x27;s time was the model&#x27;s own calls.</option><option value="ask">8. Use the 93 tasks. Report scores on the 17 clearly described ones.</option><option value="drill">9. Drill-down</option><option value="limits">10. What this does not show</option><option value="competition">11. In 76 of our 93 tasks the tests need something the description never gives. In the competition&#x27;s: 14 of 40.</option><option value="evidence">12. How you can check every number</option></select>
+<button id="deck-next" aria-label="Next slide" title="Next slide (→)"><span class="lbl">Next </span>›</button></span>
+<button id="deck-notes-btn" aria-pressed="false" title="Speaker notes (N)">Notes</button>
+<a class="cta" href="https://github.com/healthtransformationlab/gemma-developer-agent" target="_blank" rel="noopener">GitHub ↗</a></div></div></nav>
+<p class="disclaimer" id="deck-disclaimer">A personal learning project, not affiliated with or endorsed by any employer, institution or vendor. Every patient record in the source repository is synthetic. Each number is the paper&#x27;s or the README&#x27;s; paper/sources.md says where the paper&#x27;s come from.</p>
+<main class="stage" id="deck-stage"><div class="slides" id="deck-slides">
+<section id="cover" style="background:#0F2A33;color:#F7F5EF;font-family:'Public Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#F2A070">Gemma 4 Developer Agent Competition · Paper Track · November 2026</p>
+<div style="display:flex;flex-direction:column;gap:36px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:8px">
+<h1 style="font-family:'Libre Baskerville', Georgia, serif;font-size:92px;font-weight:700;line-height:1.12;white-space:nowrap">Can a small local agent</h1>
+<h1 style="font-family:'Libre Baskerville', Georgia, serif;font-size:92px;font-weight:700;line-height:1.12;white-space:nowrap;color:#F2A070">redo a cloud agent's work?</h1>
+</div>
+<p style="font-size:42px;line-height:1.3;color:#D5E3E1;width:1560px">A cloud AI agent built a health-data code project. We turned 93 of its real changes into test tasks and asked a small model, Gemma&nbsp;4&nbsp;E4B, to make them again.</p>
+<div style="display:flex;gap:24px;align-items:center">
+<p style="font-size:34px;font-weight:700;color:#F7F5EF">Health Transformation Lab · <span style="color:#F2A070">Evidence you can check</span></p>
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#0F2A33;background:#F2A070;border-radius:8px;padding:8px 20px">Synthetic patient records</p>
+</div>
+</div>
+<p style="font-size:24px;color:#A9C2BF">John Bowyer · personal project, not affiliated with any organization</p>
+<aside>In fifteen days, one person working with a cloud coding agent took a health-data repository from nothing to 960 commits and 2,269 tests, without typing code. This deck asks what a small model, one that runs on a single GPU, can take out of that loop. The answer comes with a task set anyone can use: 93 real changes from that repository, each verified by the competition's own evaluator, which is its scoring program. Every patient record in the repository is synthetic. This is a personal project, not any organization's plan.</aside>
+</section>
+
+<section id="audience" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px;gap:38px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">Who it's for, what we ask, what changes</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">Built for people who build and test AI coding agents</h2>
+</div>
+<table style="font-size:30px;line-height:1.32;color:#15303A;background:#FDFCF9;border:1px solid #D9D3C4;width:100%">
+<tr style="background:#15303A"><th style="width:30%;text-align:left;color:#F7F5EF">Who</th><th style="width:36%;text-align:left;color:#F2A070">What we ask them to do</th><th style="width:34%;text-align:left;color:#F7F5EF">What changes</th></tr>
+<tr><td><b>Test builders</b> who turn a code project's history into tasks</td><td>Check every task: does its description say what its tests look for?</td><td>Scores are reported on tasks that can tell one agent from another</td></tr>
+<tr><td><b>Agent builders</b> working with small models that run on one machine</td><td>Run their agent on the 93 tasks, with the competition's scoring program</td><td>A score they can compare, on health-data code as well as popular libraries</td></tr>
+<tr><td><b>Teams whose code is written with AI agents</b></td><td>Keep a written request, a proposed change and a review for every change</td><td>Their own history can become a set of test tasks</td></tr>
+</table>
+<p style="font-size:30px;line-height:1.4;background:#15303A;color:#F7F5EF;border-radius:16px;padding:22px 40px"><b>The impact:</b> a set of tasks that says which of its tasks can measure an agent. So far it is one code project and one model, and an AI did the check of the descriptions, with a person checking part of it.</p>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">A personal project: no partner has been contacted</p>
+<aside>Three kinds of reader. People who build benchmarks from a repository's history: we ask them to check each task's description, which the paper calls its statement, against its tests before reporting a score, because here the fixes were almost all in the tasks that passed that check. People who build agents on small local models: the 93 tasks are public and in the competition's layout, so its evaluator runs on them as published. And teams whose repositories are built with agents: this repository's issues, pull requests and commit messages are where its task descriptions come from. So far this is one repository and one model. A person checked 42 of the screen's 93 verdicts, in summary, and no partner has been contacted.</aside>
+</section>
+
+<section id="problem" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">The problem</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">Tests for AI coding agents use a few popular libraries. Health-data code fails in a different way.</h2>
+</div>
+<div style="display:flex;gap:44px;align-items:stretch">
+<ul style="flex:1 1 0;font-size:29px;line-height:1.38;display:flex;flex-direction:column;gap:18px;padding-left:1.1em">
+<li>The SWE-bench test draws on twelve popular Python libraries. The competition's development set draws on four.</li>
+<li>In a <b>data project</b> the costly mistake is silent: the pipeline finishes and a number in its table is wrong.</li>
+<li>A <b>project built by an AI agent</b> can leave an unusually complete record: an issue, a pull request and a review for each change.</li>
+</ul>
+<div style="flex:0 0 800px;display:grid;grid-template-columns:1fr 1fr;gap:18px">
+<div style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;padding:24px 30px"><p style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;color:#B4501F;line-height:1.1">960</p><p style="font-size:24px;line-height:1.3">saved changes (commits) in the project</p></div>
+<div style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;padding:24px 30px"><p style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;color:#B4501F;line-height:1.1">775</p><p style="font-size:24px;line-height:1.3">of those 960 are marked as written by the AI agent</p></div>
+<div style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;padding:24px 30px"><p style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;color:#B4501F;line-height:1.1">2,269</p><p style="font-size:24px;line-height:1.3">automatic tests, run on every pull request</p></div>
+<div style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;padding:24px 30px"><p style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;color:#B4501F;line-height:1.1">240</p><p style="font-size:24px;line-height:1.3">written reviews of pull requests, kept in the project</p></div>
+</div>
+</div>
+<p style="font-size:29px;line-height:1.4;background:#15303A;color:#F7F5EF;border-radius:16px;padding:22px 40px">One person working with a cloud AI coding agent built this project in fifteen days, without typing code. <b style="color:#F2A070">What can a small model on one machine take out of that loop?</b></p>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Sections 1 and 3</p>
+<aside>The competition asks whether a model that fits on one accelerator can do the work of the large cloud models behind today's best coding agents. Its tasks, like SWE-bench's, come from a handful of popular libraries. Two kinds of repository are scarce in such sets. In a data repository the costly defect is silent: nothing crashes, and a number in a table is wrong. And a repository built by an agent, under rules that require an issue, a pull request and a review for every change, leaves a record that can be mined. This repository is both. Of its 960 commits, 775 are marked as agent-authored, and it held 2,269 tests on November 8.</aside>
+</section>
+
+<section id="solution" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">What was built</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">197 real code changes became 93 test tasks, each checked by the competition's own scoring program</h2>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px">
+<div style="display:flex;align-items:center;gap:20px"><p style="width:640px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">real code changes merged by October 29, 2026</p><div style="width:820px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">197</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:640px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">changed both code and tests, so could be a task</p><div style="width:483px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">116</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:640px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">built, passed both of our checks, free to share</p><div style="width:470px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">113</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:640px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">accepted by the competition's scoring program: <b>the published tasks</b></p><div style="width:387px;height:44px;border-radius:0 10px 10px 0;background:#B4501F"></div><p style="font-size:34px;font-weight:700">93</p></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px">
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.35"><b>The scoring works.</b> Given the real fix, the scoring program (the evaluator) passes 93 of 93 tasks. Given no change, it passes 0 of 93.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.35"><b>Anyone can run it.</b> Our open test harness gave the scoring program's verdict on every answer compared: 25 of 25 and 23 of 23.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.35"><b>Each task comes with</b> a copy of the code, a map of the code (a graph), and where its description came from: an issue, a pull request or a commit message.</p>
+</div>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Sections 4 and 5</p>
+<aside>The tasks are made the way the competition makes its own: every merged change whose diff touches both code and tests is a candidate. Of the 197 changes merged by October 29, 2026, 116 are candidates. One was withdrawn, one failed a gate and one was withheld for unlicensed third-party files, leaving 113, and the competition's own evaluator verifies 93 of those: the published set. On them it resolves every reference patch and no empty patch. A local harness, which anyone can run, gives the same verdict as the evaluator on all 48 of the model's patches that were compared. Each task comes with a snapshot of the repository, a code graph, embeddings, and a label saying whether its statement came from an issue, a pull request or a commit message.</aside>
+</section>
+
+<section id="results" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">What the small model did</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">Alone, the model fixed 5 of 48 tasks. In a planned experiment, extra help showed no reliable improvement.</h2>
+</div>
+<div style="display:flex;gap:32px;align-items:stretch">
+<div style="flex:0 0 640px;background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;display:flex;flex-direction:column;gap:14px">
+<p style="font-size:23px;font-weight:700;letter-spacing:.5px;color:#B4501F;line-height:1.3">Tasks fixed working alone, on free T4 GPUs</p>
+<p style="font-family:'Libre Baskerville', Georgia, serif;font-weight:700;color:#B4501F;line-height:1.05;font-size:92px">5 of 48</p>
+<p style="font-size:27px;line-height:1.35">Gemma 4 E4B, taking the cheapest tasks first (10.4%, 95% CI 4.5–22.2). All five were small: a CI rule, a warning message, a label parser and two settings.</p>
+<p style="font-size:27px;line-height:1.35;border-top:1px solid #D9D3C4;padding-top:14px"><b>3 of the 23</b> verifiable tasks of the competition's own were fixed, under its scoring program on four L4 GPUs.</p>
+</div>
+<div style="flex:1 1 0;background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;display:flex;flex-direction:column;gap:14px">
+<p style="font-size:23px;font-weight:700;letter-spacing:.5px;color:#B4501F;line-height:1.3">Tasks fixed, of all 93, in an experiment planned in advance (one A100 GPU)</p>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:500px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">With the task as published</p><div style="width:147px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">4</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:500px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">Plus a list of code to look at (graph retrieval)</p><div style="width:220px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">6</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:500px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">Plus the report of a failing test</p><div style="width:147px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">4</p></div>
+<p style="font-size:26px;line-height:1.35;background:#15303A;color:#F7F5EF;border-radius:16px;padding:22px 40px;padding:16px 28px"><b>No difference detected.</b> Gaps this small could be chance (exact McNemar p = 0.5 and 1.0). A second, unplanned session on an L4 GPU fixed 5 and 8.</p>
+<p style="font-size:22px;line-height:1.35;color:#5C6F75">The failing test's report comes from the hidden test, so it is not something a benchmark would give.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Section 6. "Fixed" is the paper's "resolved": the task's hidden tests pass</p>
+<aside>Left on its own on two free T4 GPUs, taking the cheapest tasks first, Gemma 4 E4B resolved 5 of the 48 tasks it ran, all of them small. Under the competition's evaluator, on four L4 GPUs, it resolved 3 of the 23 development tasks of the competition's own that a Kaggle notebook can verify. Then came an experiment registered in advance. Its plan was fixed before any result; Kaggle could not finish it, so all three arms ran again on one A100, under additions to the plan that were fixed before each run started: all 93 tasks, three ways. As published, the model resolved 4. With graph retrieval done for it, which hands it a list of code to look at, 6. With a failing test's report, 4. Neither added context differs detectably from the baseline, and a difference is not ruled out either: at 4 of 93 only a large effect could show. Retrieval's two extra fixes do not establish a reliable improvement. The report uses the hidden test, so it is not a benchmark condition.</aside>
+</section>
+
+<section id="finding" style="background:#0F2A33;color:#F7F5EF;font-family:'Public Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between;padding:92px 128px 84px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#F2A070">The main finding</p>
+<div style="display:flex;flex-direction:column;gap:18px">
+<h1 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.16;width:1640px">The model fixed 8 of the 17 clearly described tasks, and only 1 of the other 76</h1>
+<p style="font-size:28px;line-height:1.4;color:#D5E3E1">"Clearly described" means the task's description says what its tests check. An AI made that check on all 93 tasks, and a person checked 42 of its verdicts.</p>
+</div>
+<div style="display:flex;gap:32px">
+<div style="flex:1 1 0;background:#15303A;border-radius:16px;padding:28px 40px;display:flex;flex-direction:column;gap:8px"><p style="font-size:25px;font-weight:700;color:#F2A070;line-height:1.3">Clearly described tasks fixed at least once</p><p style="font-family:'Libre Baskerville', Georgia, serif;font-size:104px;font-weight:700;color:#F2A070;line-height:1.05">8 of 17</p><p style="font-size:26px;line-height:1.35;color:#D5E3E1">Counting every attempt in the five Colab runs: 26 of 85</p></div>
+<div style="flex:1 1 0;background:#15303A;border-radius:16px;padding:28px 40px;display:flex;flex-direction:column;gap:8px"><p style="font-size:25px;font-weight:700;color:#F7F5EF;line-height:1.3">Other tasks fixed at least once</p><p style="font-family:'Libre Baskerville', Georgia, serif;font-size:104px;font-weight:700;color:#F7F5EF;line-height:1.05">1 of 76</p><p style="font-size:26px;line-height:1.35;color:#D5E3E1">Counting every attempt: 1 of 380. Their descriptions leave out something the tests need.</p></div>
+</div>
+<p style="font-size:28px;line-height:1.4;color:#D5E3E1"><b style="color:#F7F5EF">Being pointed at the right code was not enough.</b> In 41 tasks the search listed a function the fix changes. Of the 7 clearly described ones, 5 were fixed in some run. Of the other 34, none.</p>
+<div style="display:flex;gap:18px;align-items:center"><p style="flex:none;font-size:24px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#0F2A33;background:#F2A070;border-radius:8px;padding:6px 16px">Described, not tested</p><p style="font-size:23px;line-height:1.35;color:#A9C2BF">Counts of what happened, with no statistical test; the second comparison was made after the runs. The paper calls the 17 the core split (Section 6).</p></div>
+<aside>This is the result to take away. An AI screen asked of every task whether its statement, the task's description, says what its tests check. Seventeen of the 93 pass: the paper calls them the core split. The other 76 are real statements that leave out something their tests need, such as a name or a message. Over the five Colab runs, 8 of the 17 core-split tasks were resolved at least once, against 1 of the other 76. Counting every task in every run, that is 26 of 85 against 1 of 380. And finding is not fixing: in the 41 tasks where retrieval listed a function the fix edits, 5 of the core split's 7 were resolved in some run and none of the other 34. So valid tasks whose fix the graph found, but whose statements leave out what their tests need, measured little for this model. These are descriptions, not tests, and the second comparison was made after the runs. A person checked 42 of the screen's verdicts, in summary.</aside>
+</section>
+
+<section id="cost" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">What it cost</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">On four L4 GPUs a fix took 1.8 to 1.9 GPU-hours. Most of a task's time was the model's own calls.</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;align-items:stretch">
+<div style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;display:flex;flex-direction:column;gap:12px"><p style="font-size:23px;font-weight:700;letter-spacing:.5px;color:#B4501F;line-height:1.3">Share of a task's time spent in the model's own calls</p><p style="font-family:'Libre Baskerville', Georgia, serif;font-weight:700;color:#B4501F;line-height:1.05;font-size:74px">66–83%</p><p style="font-size:25px;line-height:1.38">Another 14–15% went to summarising older turns (context compaction). From the Kaggle runs' timing records (OpenTelemetry spans). 45 of 207 runs ended at the model's context window.</p></div>
+<div style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;display:flex;flex-direction:column;gap:12px"><p style="font-size:23px;font-weight:700;letter-spacing:.5px;color:#B4501F;line-height:1.3">GPU-hours for each fix, on four L4 GPUs</p><p style="font-family:'Libre Baskerville', Georgia, serif;font-weight:700;color:#B4501F;line-height:1.05;font-size:74px">1.9 and 1.8</p><p style="font-size:25px;line-height:1.38">1.9 with graph retrieval and 1.8 with the test report: about 1.59 and 1.50 US dollars at a median rental of 0.83 an L4-hour. Kaggle's GPUs were free.</p></div>
+<div style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;display:flex;flex-direction:column;gap:12px"><p style="font-size:23px;font-weight:700;letter-spacing:.5px;color:#B4501F;line-height:1.3">Hours of agent time for each fix, on the T4 baseline</p><p style="font-family:'Libre Baskerville', Georgia, serif;font-weight:700;color:#B4501F;line-height:1.05;font-size:74px">0.38 vs 1.80</p><p style="font-size:25px;line-height:1.38">0.38 on the 13 clearly described tasks it ran, against 1.80 over all 48. Those 13 took 17% of its 9.0 agent-hours and gave 4 of its 5 fixes.</p></div>
+</div>
+<p style="font-size:28px;line-height:1.4;background:#15303A;color:#F7F5EF;border-radius:16px;padding:22px 40px"><b>What it means:</b> the time goes to the model's own calls, not to the graph tools, and an hour spent on clearly described tasks bought the most fixes.</p>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Section 6, "Time, GPUs and cost". The prices are rental estimates, not money spent</p>
+<aside>The runs kept OpenTelemetry spans: names, counts and seconds, never prompts or replies. In the three Kaggle arms, 66 to 83 percent of a task's time was model calls and 14 to 15 percent was context compaction, which is the harness summarising older turns. The graph tools took under 0.1 percent. Forty-five of 207 runs ended when a prompt passed the model's context window. A fix took 1.9 GPU-hours with graph retrieval and 1.8 with the report, on four L4s: about 1.59 and 1.50 US dollars at a median rental price, though Kaggle's GPUs were free. On the T4 baseline, the 13 core-split tasks it ran took 17 percent of its 9.0 agent-hours and gave 4 of its 5 fixes: 0.38 hours a fix against 1.80 overall.</aside>
+</section>
+
+<section id="ask" style="background:#0F2A33;color:#F7F5EF;font-family:'Public Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between;padding:96px 128px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#F2A070">What to do with it</p>
+<h1 style="font-family:'Libre Baskerville', Georgia, serif;font-size:66px;font-weight:700;line-height:1.16">Use the 93 tasks. <span style="color:#F2A070">Report scores on the 17 clearly described ones.</span></h1>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:26px">
+<p style="background:#15303A;border-radius:16px;padding:26px 36px;font-size:28px;line-height:1.4;color:#D5E3E1"><b style="color:#F7F5EF">Run your agent on them.</b> 93 tasks, free to use (CC BY 4.0), in the competition's layout: its scoring program runs on them as published.</p>
+<p style="background:#15303A;border-radius:16px;padding:26px 36px;font-size:28px;line-height:1.4;color:#D5E3E1"><b style="color:#F7F5EF">Report scores on the 17.</b> Over every run, 9 of the 10 different tasks this model has fixed are among them (the paper's core split).</p>
+<p style="background:#15303A;border-radius:16px;padding:26px 36px;font-size:28px;line-height:1.4;color:#D5E3E1"><b style="color:#F7F5EF">Check your own tasks.</b> Ask of each one whether its description says what its tests check, before you report a score on it.</p>
+<p style="background:#15303A;border-radius:16px;padding:26px 36px;font-size:28px;line-height:1.4;color:#D5E3E1"><b style="color:#F7F5EF">Check any number.</b> Each one in the paper has a row in <code style="font-size:25px">paper/sources.md</code> naming the file it came from.</p>
+</div>
+<p style="font-size:26px;line-height:1.5;color:#A9C2BF">Tasks: kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks<br>Paper, sources and agent configuration: github.com/healthtransformationlab/gemma-developer-agent</p>
+<aside>Four things to do with this. Run your agent on the set: 93 tasks under CC BY 4.0, in the competition's layout, so its evaluator runs on them as published, and a quickstart notebook loads a task. Report results on the core split of 17: over every run, 9 of the 10 distinct tasks this model has resolved are in it. Screen your own task set the same way before reporting a score on it. And check any number here: each one in the paper has a row in paper/sources.md that names the file it came from.</aside>
+</section>
+
+<section id="drill" style="background:#0F2A33;color:#F7F5EF;font-family:'Public Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#F2A070">Can a small local agent redo a cloud agent's work?</p>
+<div style="display:flex;flex-direction:column;gap:40px">
+<h1 style="font-family:'Libre Baskerville', Georgia, serif;font-size:112px;font-weight:700;line-height:1.1">Drill-down</h1>
+<p style="font-size:44px;line-height:1.3;color:#D5E3E1;width:1300px">Backup slides for questions. The full detail is in the paper.</p>
+</div>
+<ul style="font-size:32px;line-height:1.4;color:#D5E3E1">
+<li>What this does not show</li>
+<li>How our tasks compare with the competition's own</li>
+<li>How you can check every number</li>
+</ul>
+<aside>Do not present these. Jump to one only when asked. Everything here is in the paper, and paper/sources.md says where each number comes from.</aside>
+</section>
+
+<section id="limits" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">Drill-down · limits</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">What this does not show</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px">
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>Only one new code project,</b> set beside the competition's development set.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>No comparison with the cloud agent.</b> The agent that made these changes, with a person in the loop, was not rerun on the task descriptions alone.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>A small experiment.</b> With 4 of 93 tasks fixed as the starting point, only a large effect could show.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>Not a leaderboard score.</b> Every run under the competition's scoring program had 5 minutes and 40 tool calls a task, not the 60 and 100 allowed.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>An AI checked the descriptions.</b> A person checked 42 of its verdicts, the 17 clearly described tasks among them, in summary and after seeing the AI's; 51 have AI ratings only.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>The model was told something was wrong.</b> Each task comes with a failing test: noticing a silent defect unprompted is not measured.</p>
+</div>
+<p style="font-size:28px;line-height:1.4;background:#15303A;color:#F7F5EF;border-radius:16px;padding:22px 40px"><b>Read the results as:</b> what one small model did on one project's tasks, with the AI's verdicts checked by one person in part.</p>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Section 7</p>
+<aside>Six limits, all in the paper. One repository, set beside the competition's development set. No cloud baseline: the cloud agent that made these changes with a person in the loop was not rerun on the statements alone, so the title's question is answered for the small model only. A small experiment: at 4 of 93 only a large effect could show. No leaderboard score: the runs used 5 minutes and 40 tool calls where the competition allows 60 and 100. The screens are an AI's: a person checked 42 verdicts in summary, after seeing the AI's, and 51 have AI ratings only. And every task comes with a failing test, so noticing a silent defect unprompted is not measured.</aside>
+</section>
+
+<section id="competition" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">Drill-down · the competition's own tasks</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">In 76 of our 93 tasks the tests need something the description never gives. In the competition's: 14 of 40.</h2>
+</div>
+<table style="font-size:27px;line-height:1.3;color:#15303A;background:#FDFCF9;border:1px solid #D9D3C4;width:100%">
+<tr style="background:#15303A"><th style="width:56%;text-align:left;color:#F7F5EF">How many tasks…</th><th style="width:20%;text-align:left;color:#F2A070">Our tasks</th><th style="width:24%;text-align:left;color:#F7F5EF">The competition's development tasks</th></tr>
+<tr><td>have a fix that changes code the code map (graph) holds</td><td>51 of 93</td><td>114 of 129</td></tr>
+<tr><td>of those: can be reached by a name or a call link; with similarity search too</td><td>22; 42</td><td>52; 66</td></tr>
+<tr><td>have a description that is vague or worse (AI check)</td><td>19 of 93</td><td>11 of 40</td></tr>
+<tr><td><b>have tests that need a name or text the description never gives</b></td><td><b>76 of 93</b></td><td><b>14 of 40</b></td></tr>
+<tr><td>were fixed with the task as published, on Kaggle (ours: 21 tasks ran)</td><td>0 of 21</td><td>3 of 23</td></tr>
+</table>
+<p style="font-size:27px;line-height:1.4;background:#15303A;color:#F7F5EF;border-radius:16px;padding:22px 40px">The two sets differ in their tests more than in their descriptions. The check and the agent took a seeded 40 of the competition's 129 development tasks; a Kaggle notebook can verify 23 of them.</p>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Section 6, "Beside the competition's own tasks"</p>
+<aside>The same counts were made on the competition's own development tasks. Its graph holds more of the fixes: 114 of 129, against 51 of 93 here. Its statements are vague a little more often: 11 of 40, against 19 of 93. The difference is in the tests: in this set the tests of 76 of 93 tasks need a name or a text the statement never gives, against 14 of 40 there. The screen and the agent took a seeded 40 of the 129, stratified by repository. In a Kaggle notebook the evaluator's sandbox has no pip to install test dependencies: there the reference patch fails 16 of the 40 and one passes with an empty patch, leaving 23, and the model resolved 3 of them. On this set the Kaggle baseline ran 21 tasks before its model server stopped answering, and resolved none.</aside>
+</section>
+
+<section id="evidence" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">Drill-down · evidence you can check</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">How you can check every number</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>A source for every number.</b> <code style="font-size:24px">paper/sources.md</code> has a row for each figure in the paper, naming the file it came from, and keeps the rows of text that was cut.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>A plan before the results.</b> The experiment's plan was fixed and fingerprinted (hashed) before any result, and each addition to it before its run started (source repository, issues 674 and 687).</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>Checked on every change.</b> One script checks the paper against the competition's rules, and another checks that every number in this deck appears in the paper or the README.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>What went wrong is in the paper.</b> On Colab the network was open to the agent: 3 of the five runs' 687 commands ran an installer, in tasks no run fixed, and none left its workspace.</p>
+</div>
+<p style="font-size:28px;line-height:1.4;background:#15303A;color:#F7F5EF;border-radius:16px;padding:22px 40px"><b>Not a result:</b> anything from a dry run or a sample is labelled as one, and the unplanned second session is described beside the planned experiment and kept out of its tests. A count that covers both says five runs.</p>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">Sources: paper/sources.md, paper/rules_check.md and the paper, Section 6</p>
+<aside>Four habits keep the numbers honest. Every figure in the paper has a row in paper/sources.md naming the file it came from, and rows stay when text is cut. The experiment's plan was hashed before any result, and each addendum before its run. A script checks the paper against the competition's rules on every change, and another checks that every number in this deck appears in the paper or the README. And what went wrong is in the paper: on Colab the network was open to the agent's commands, 3 of 687 commands ran an installer, in tasks no run resolved, and none left its workspace. The unplanned second session on an L4 is described beside the registered experiment and kept out of its tests; where a count covers both sessions, as on the main finding's slide, it says five runs.</aside>
+</section>
+
+</div></main>
+<p class="count" id="deck-count" aria-hidden="true"></p>
+<div class="notes-panel" id="deck-notes" hidden></div>
+<script>
+document.querySelectorAll('.slides a[href^="http"]').forEach(function(a){a.target='_blank';a.rel='noopener'})
+var slides=[].slice.call(document.querySelectorAll('#deck-slides>section')),at=0,box=document.getElementById('deck-slides'),
+  stage=document.getElementById('deck-stage'),jump=document.getElementById('deck-jump'),prev=document.getElementById('deck-prev'),
+  next=document.getElementById('deck-next'),panel=document.getElementById('deck-notes'),btn=document.getElementById('deck-notes-btn'),
+  bar=document.getElementById('deck-disclaimer'),count=document.getElementById('deck-count')
+// the slide area sits between the disclaimer (it wraps on narrow screens) and the notes panel, when open
+function fit(){stage.style.top=(56+bar.offsetHeight)+'px';stage.style.bottom=(panel.hidden?0:panel.offsetHeight)+'px'
+  box.style.transform='translate(-50%,-50%) scale('+Math.min(stage.clientWidth/1920,stage.clientHeight/1080)+')'}
+function show(n,quiet){at=Math.max(0,Math.min(slides.length-1,n));slides.forEach(function(s,k){s.classList.toggle('on',k===at)})
+  jump.selectedIndex=at;prev.disabled=at===0;next.disabled=at===slides.length-1;count.textContent=(at+1)+' / '+slides.length
+  var a=slides[at].querySelector('aside');panel.innerHTML='<b>Slide '+(at+1)+' notes:</b> '+(a?a.innerHTML:'')
+  if(!quiet&&history.replaceState)history.replaceState(null,'','#'+slides[at].id);fit()}
+function fromHash(){var id=location.hash.slice(1);for(var k=0;k<slides.length;k++)if(slides[k].id===id)return k;return 0}
+function toggleNotes(){var on=panel.hidden;panel.hidden=!on;btn.setAttribute('aria-pressed',on);fit()}
+jump.addEventListener('change',function(){show(jump.selectedIndex);jump.blur()})
+btn.addEventListener('click',toggleNotes)
+// after a mouse click, blur so the arrow keys page again; a keyboard press (detail 0) keeps focus on the button
+prev.addEventListener('click',function(e){show(at-1);if(e.detail)prev.blur()})
+next.addEventListener('click',function(e){show(at+1);if(e.detail)next.blur()})
+addEventListener('keydown',function(e){if(e.target.closest&&e.target.closest('.topnav')||e.altKey||e.ctrlKey||e.metaKey)return
+  var k=e.key;if(k==='ArrowRight'||k==='PageDown'||k===' ')show(at+1);else if(k==='ArrowLeft'||k==='PageUp')show(at-1)
+  else if(k==='Home')show(0);else if(k==='End')show(slides.length-1);else if(k==='n'||k==='N')toggleNotes();else return
+  e.preventDefault()})
+var x0=null,y0=null
+stage.addEventListener('touchstart',function(e){x0=e.changedTouches[0].clientX;y0=e.changedTouches[0].clientY},{passive:true})
+stage.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)show(at+(dx<0?1:-1));x0=null},{passive:true})
+addEventListener('hashchange',function(){show(fromHash(),true)})
+addEventListener('resize',fit)
+show(fromHash(),true)
+</script></body></html>
