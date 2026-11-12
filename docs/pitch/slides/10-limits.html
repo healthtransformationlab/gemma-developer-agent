@@ -1,17 +1,17 @@
-<section id="limits" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:104px 128px 150px;display:flex;flex-direction:column;gap:32px">
-<div style="display:flex;flex-direction:column;gap:16px">
+<section id="limits" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;flex-direction:column;gap:14px">
 <p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">Drill-down · limits</p>
-<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:54px;font-weight:700;line-height:1.14">What this does not show</h2>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">What this does not show</h2>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px">
-<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;font-size:27px;line-height:1.38"><b>One new repository,</b> compared with the competition's development set.</p>
-<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;font-size:27px;line-height:1.38"><b>No cloud baseline.</b> The cloud agent that made these changes, with a person in the loop, was not rerun on the statements alone.</p>
-<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;font-size:27px;line-height:1.38"><b>A small experiment.</b> At a baseline of 4 of 93 only a large effect could show.</p>
-<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;font-size:27px;line-height:1.38"><b>No leaderboard score.</b> Every run under the competition's evaluator used 5 minutes and 40 tool calls, not 60 and 100, once per arm and machine.</p>
-<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;font-size:27px;line-height:1.38"><b>AI screens.</b> A person checked 42 verdicts, the core split's 17 among them, in summary and after seeing the AI's; 51 have AI ratings only.</p>
-<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;font-size:27px;line-height:1.38"><b>Prompted repair.</b> Each task comes with a failing test: noticing a silent defect unprompted is not measured.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>Only one new code project,</b> set beside the competition's development set.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>No comparison with the cloud agent.</b> The agent that made these changes, with a person in the loop, was not rerun on the task descriptions alone.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>A small experiment.</b> With 4 of 93 tasks fixed as the starting point, only a large effect could show.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>Not a leaderboard score.</b> Every run under the competition's scoring program had 5 minutes and 40 tool calls a task, not the 60 and 100 allowed.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>An AI checked the descriptions.</b> A person checked 42 of its verdicts, the 17 clearly described tasks among them, in summary and after seeing the AI's; 51 have AI ratings only.</p>
+<p style="background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;font-size:26px;line-height:1.38"><b>The model was told something was wrong.</b> Each task comes with a failing test: noticing a silent defect unprompted is not measured.</p>
 </div>
-<p style="font-size:28px;line-height:1.4;background:#15303A;color:#F7F5EF;border-radius:16px;padding:24px 40px"><b>Read the results as:</b> what one small model did on one repository's tasks, with the screen's verdicts checked by one person in part.</p>
-<p style="position:absolute;left:128px;bottom:60px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Section 7</p>
+<p style="font-size:28px;line-height:1.4;background:#15303A;color:#F7F5EF;border-radius:16px;padding:22px 40px"><b>Read the results as:</b> what one small model did on one project's tasks, with the AI's verdicts checked by one person in part.</p>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Section 7</p>
 <aside>Six limits, all in the paper. One repository, set beside the competition's development set. No cloud baseline: the cloud agent that made these changes with a person in the loop was not rerun on the statements alone, so the title's question is answered for the small model only. A small experiment: at 4 of 93 only a large effect could show. No leaderboard score: the runs used 5 minutes and 40 tool calls where the competition allows 60 and 100. The screens are an AI's: a person checked 42 verdicts in summary, after seeing the AI's, and 51 have AI ratings only. And every task comes with a failing test, so noticing a silent defect unprompted is not measured.</aside>
 </section>

@@ -16,15 +16,17 @@ where each number in the paper comes from.
 
 <a href="docs/pitch/full_text_and_notes.md"><img src="docs/img/pitch_deck_cover.png" alt="Can a small local agent redo a cloud agent's work? The pitch, slide by slide." width="480"></a>
 
-What the runs show, on 93 tasks built from that repository's history and verified by the competition's own evaluator:
+What the runs show, on 93 tasks built from that repository's history and checked by the competition's own scoring
+program (its evaluator). "Fixed" is the paper's "resolved": the task's hidden tests pass with the model's change.
 
-- **5 of 48** tasks resolved by Gemma 4 E4B on free T4 GPUs, cheapest tasks first (10.4%, 95% CI 4.5–22.2), all of
-  them small;
-- **4, 6 and 4 of 93** in a pre-registered experiment on one A100: as published, with graph retrieval done for the
-  agent, and with a failing test's report (from the hidden test: not a benchmark condition). No difference detected
-  (exact McNemar p = 0.5 and 1.0);
-- **8 of 17 against 1 of 76**: over the five Colab runs, the tasks resolved at least once among the 17 whose
-  statements say what their tests check (the core split), and among the other 76. Described, not tested.
+- **5 of 48 tasks fixed** by Gemma 4 E4B working alone on free T4 GPUs, cheapest tasks first (10.4%, 95% CI
+  4.5–22.2). All five were small.
+- **4, 6 and 4 of 93 tasks fixed** in an experiment planned in advance (pre-registered), on one A100: with the task
+  as published, with a list of code to look at (graph retrieval), and with a failing test's report (from the hidden
+  test: not a benchmark condition). No difference detected (exact McNemar p = 0.5 and 1.0).
+- **8 of the 17 clearly described tasks fixed, against 1 of the other 76.** "Clearly described" means the task's
+  description says what its tests check (the paper's core split, from an AI screen of all 93); the counts are tasks
+  fixed at least once in the five Colab runs. Described, not tested.
 
 One model, one repository, and an AI screen that a person checked in part:
 [what this does not show](paper/small-local-agent-redo-cloud-agent-work.md#7-limitations). Each run, with its

@@ -1,24 +1,24 @@
-<section id="results" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:104px 128px 150px;display:flex;flex-direction:column;gap:32px">
-<div style="display:flex;flex-direction:column;gap:16px">
+<section id="results" style="background:#F7F5EF;color:#15303A;font-family:'Public Sans', Arial, sans-serif;padding:96px 128px 140px;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;flex-direction:column;gap:14px">
 <p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F">What the small model did</p>
-<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:54px;font-weight:700;line-height:1.14">A few small fixes. More context did not reliably help.</h2>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:52px;font-weight:700;line-height:1.16">On its own, the small model fixed 5 of 48 tasks. Extra help did not clearly raise that.</h2>
 </div>
 <div style="display:flex;gap:32px;align-items:stretch">
-<div style="flex:0 0 620px;background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;display:flex;flex-direction:column;gap:18px">
-<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F;font-size:21px">On its own, free T4 GPUs</p>
-<p style="font-family:'Libre Baskerville', Georgia, serif;font-size:84px;font-weight:700;color:#B4501F;line-height:1">5 of 48</p>
-<p style="font-size:26px;line-height:1.35">Gemma 4 E4B, cheapest tasks first (10.4%, 95% CI 4.5–22.2): a CI rule, a warning message, a label parser and two settings.</p>
-<p style="font-size:26px;line-height:1.35;border-top:1px solid #D9D3C4;padding-top:18px"><b>3 of 23</b> of the competition's own development tasks, under its evaluator.</p>
+<div style="flex:0 0 640px;background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;display:flex;flex-direction:column;gap:14px">
+<p style="font-size:23px;font-weight:700;letter-spacing:.5px;color:#B4501F;line-height:1.3">Tasks fixed working alone, on free T4 GPUs</p>
+<p style="font-family:'Libre Baskerville', Georgia, serif;font-weight:700;color:#B4501F;line-height:1.05;font-size:92px">5 of 48</p>
+<p style="font-size:27px;line-height:1.35">Gemma 4 E4B, taking the cheapest tasks first (10.4%, 95% CI 4.5–22.2). All five were small: a CI rule, a warning message, a label parser and two settings.</p>
+<p style="font-size:27px;line-height:1.35;border-top:1px solid #D9D3C4;padding-top:14px"><b>3 of 23</b> of the competition's own development tasks fixed, under its scoring program.</p>
 </div>
-<div style="flex:1 1 0;background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:32px 36px;display:flex;flex-direction:column;gap:16px">
-<p style="font-size:24px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B4501F;font-size:21px">Pre-registered experiment · all 93 tasks · one A100</p>
-<div style="display:flex;align-items:center;gap:20px"><p style="width:400px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">As published</p><div style="width:173px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">4</p></div>
-<div style="display:flex;align-items:center;gap:20px"><p style="width:400px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">With graph retrieval</p><div style="width:260px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">6</p></div>
-<div style="display:flex;align-items:center;gap:20px"><p style="width:400px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">With the failing test's report</p><div style="width:173px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">4</p></div>
-<p style="font-size:26px;line-height:1.35;background:#15303A;color:#F7F5EF;border-radius:16px;padding:24px 40px;padding:18px 28px"><b>No difference detected:</b> exact McNemar p = 0.5 and 1.0. An unplanned second session on an L4 resolved 5 and 8.</p>
-<p style="font-size:22px;line-height:1.35;color:#5C6F75">The report comes from the hidden test: a test-first workflow's context, not a benchmark condition.</p>
+<div style="flex:1 1 0;background:#FDFCF9;border:1px solid #D9D3C4;border-radius:16px;padding:30px 36px;display:flex;flex-direction:column;gap:14px">
+<p style="font-size:23px;font-weight:700;letter-spacing:.5px;color:#B4501F;line-height:1.3">Tasks fixed, of all 93, in an experiment planned in advance (one A100 GPU)</p>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:500px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">With the task as published</p><div style="width:147px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">4</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:500px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">Plus a list of code to look at (graph retrieval)</p><div style="width:220px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">6</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:500px;text-align:right;font-size:27px;line-height:1.25;color:#3D5057">Plus the report of a failing test</p><div style="width:147px;height:44px;border-radius:0 10px 10px 0;background:#2A78D6"></div><p style="font-size:34px;font-weight:700">4</p></div>
+<p style="font-size:26px;line-height:1.35;background:#15303A;color:#F7F5EF;border-radius:16px;padding:22px 40px;padding:16px 28px"><b>No difference detected.</b> Gaps this small could be chance (exact McNemar p = 0.5 and 1.0). A second, unplanned session on an L4 GPU fixed 5 and 8.</p>
+<p style="font-size:22px;line-height:1.35;color:#5C6F75">The failing test's report comes from the hidden test, so it is not something a benchmark would give.</p>
 </div>
 </div>
-<p style="position:absolute;left:128px;bottom:60px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Section 6</p>
-<aside>Left on its own on two free T4 GPUs, taking the cheapest tasks first, Gemma 4 E4B resolved 5 of the 48 tasks it ran, all of them small. Under the competition's evaluator it resolved 3 of 23 of the competition's own development tasks. Then came an experiment whose plan was fixed before any result: all 93 tasks on one A100, three ways. As published, the model resolved 4. With graph retrieval done for it, 6. With a failing test's report, 4. Neither added context differs detectably from the baseline, and a difference is not ruled out either: at 4 of 93 only a large effect could show. Retrieval's two extra fixes do not establish a reliable improvement. The report uses the hidden test, so it is not a benchmark condition.</aside>
+<p style="position:absolute;left:128px;bottom:56px;width:1664px;font-size:24px;color:#5C6F75">Source: the paper, Section 6. "Fixed" is the paper's "resolved": the task's hidden tests pass</p>
+<aside>Left on its own on two free T4 GPUs, taking the cheapest tasks first, Gemma 4 E4B resolved 5 of the 48 tasks it ran, all of them small. Under the competition's evaluator it resolved 3 of 23 of the competition's own development tasks. Then came an experiment whose plan was fixed before any result, which is what pre-registered means: all 93 tasks on one A100, three ways. As published, the model resolved 4. With graph retrieval done for it, which hands it a list of code to look at, 6. With a failing test's report, 4. Neither added context differs detectably from the baseline, and a difference is not ruled out either: at 4 of 93 only a large effect could show. Retrieval's two extra fixes do not establish a reliable improvement. The report uses the hidden test, so it is not a benchmark condition.</aside>
 </section>
