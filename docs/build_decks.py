@@ -26,6 +26,8 @@ ROOT = DOCS.parent
 PERSONAL = "A personal learning project, not affiliated with or endorsed by any employer, institution or vendor."
 REPO = "https://github.com/healthtransformationlab/gemma-developer-agent"
 PAPER = f"{REPO}/blob/main/paper/small-local-agent-redo-cloud-agent-work.pdf"
+# where GitHub Pages serves docs/ (the repository's setting: branch main, folder /docs), under the lab's domain
+SITE = "https://healthtransformationlab.org/gemma-developer-agent"
 PAPER_MD = ROOT / "paper" / "small-local-agent-redo-cloud-agent-work.md"
 # deck folder under docs/ -> (title, the line above the slides)
 DECKS = {
@@ -150,8 +152,7 @@ def render(deck: str) -> tuple[str, str]:
           f"{PERSONAL} Every patient record in the source repository is synthetic.\n\n",
           f"{len(all_slides)} slides. Each number is one that [the paper](../../paper/small-local-agent-redo-cloud-agent-work.md) or the "
           "[README](../../README.md) gives; [`paper/sources.md`](../../paper/sources.md) says where the paper's come from. To page through "
-          "them: "
-          "[`deck.pdf`](deck.pdf), or download [`deck.html`](deck.html) and open it in a browser.\n\n",
+          f"them: [play the deck]({SITE}/{deck}/deck.html), or open [`deck.pdf`](deck.pdf).\n\n",
           "Built from [`slides/`](slides/) by `python docs/build_decks.py`; edit a slide, then rebuild and run "
           "`node docs/render_slides.js`.\n"]
     for n, (stem, section, notes) in enumerate(all_slides, 1):

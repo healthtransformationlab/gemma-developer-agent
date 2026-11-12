@@ -14,7 +14,9 @@ commits and 2,269 tests, without typing code. This repository asks how much of t
 runs on a single GPU, can redo by itself. It holds a coding agent for the Gemma 4 Developer Agent Competition, the
 paper on what that agent did, and where each number in the paper comes from.
 
-<a href="docs/pitch/full_text_and_notes.md"><img src="docs/img/pitch_deck_cover.png" alt="Can a small local agent redo a cloud agent's work? The pitch, slide by slide." width="480"></a>
+<a href="https://healthtransformationlab.org/gemma-developer-agent/pitch/deck.html"><img src="docs/img/pitch_deck_cover.png" alt="Can a small local agent redo a cloud agent's work? Play the slides." width="480"></a>
+
+**[Play the slides](https://healthtransformationlab.org/gemma-developer-agent/pitch/deck.html)** · [read them with speaker notes](docs/pitch/full_text_and_notes.md) · [as a PDF](docs/pitch/deck.pdf)
 
 <details>
 <summary><b>See the 12 slides here</b> (tap to open)</summary>
@@ -92,7 +94,7 @@ hardware, interval and cost, is in [the table below](#what-has-been-run-and-what
 
 | For | Go to |
 |---|---|
-| **Executives** (8 slides, 5 minutes, plus backup) | [read the pitch with speaker notes](docs/pitch/full_text_and_notes.md) · [slides as a PDF](docs/pitch/deck.pdf) · [slides](docs/pitch/deck.html) (download and open in a browser) |
+| **Executives** (8 slides, 5 minutes, plus backup) | [play the slides](https://healthtransformationlab.org/gemma-developer-agent/pitch/deck.html) · [read the pitch with speaker notes](docs/pitch/full_text_and_notes.md) · [slides as a PDF](docs/pitch/deck.pdf) |
 | **Scientists** | [the paper](paper/small-local-agent-redo-cloud-agent-work.pdf) ([as text](paper/small-local-agent-redo-cloud-agent-work.md)), [where each number comes from](paper/sources.md), [the paper against the competition's rules](paper/rules_check.md), [every run and what it cost](#what-has-been-run-and-what-it-cost), [the experiment's plan, addenda and tables](https://github.com/healthtransformationlab/health-transformation-lab-nlp/blob/526ea08c75e063ba8d288883ccf47144ea367386/data/tasks/official_agent_runs/README.md) |
 | **Engineers** | [the agent, file by file](docs/agent_walkthrough.md), [the competition's rules as read here](docs/rulebook-notes.md), [the dataset's format](docs/dataset-format.md), [the starter notebook](docs/starter-notebook-notes.md), [how we work](AGENTS.md) |
 
