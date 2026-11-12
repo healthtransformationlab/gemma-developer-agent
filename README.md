@@ -73,14 +73,26 @@ report comes from the hidden test, so a benchmark would not give it.
 
 **3. It fixed the clearly described tasks, and almost none of the others.**
 A task is "clearly described" when its description says what its tests check. An AI screen of all 93 found 17 of
-them (the paper's core split). Counting the three runs above and two more from an unplanned second session:
+them (the paper's core split). Tasks fixed at least once, in the three planned runs above and in all five runs (two
+more came from an unplanned second session):
 
-| Kind of task | Fixed in at least one of the five runs |
-|---|---|
-| Clearly described | 8 of 17 |
-| All the others | 1 of 76 |
+| Kind of task | Planned three | All five |
+|---|---|---|
+| Clearly described | 6 of 17 | 8 of 17 |
+| All the others | 0 of 76 | 1 of 76 |
 
 These are counts of what happened, not a planned test.
+
+**The clearly described tasks are also the smaller ones.** Their fixes change 2 files at the median; the others'
+change 10.5. So the same count was made for small fixes only: 5 files or fewer, since no task with a larger fix was
+fixed in any run.
+
+| Kind of task, small fixes only | Fixed at least once, all five runs |
+|---|---|
+| Clearly described | 8 of 12 |
+| All the others | 1 of 28 |
+
+The gap is still there among small tasks. This check was made after the runs, so it describes them and tests nothing.
 
 **4. One GPU ran all 93 tasks in about 2 GPU-hours.**
 That was one A100; rented, an estimated 3.50 to 3.76 US dollars for the run.
