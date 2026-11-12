@@ -7,6 +7,7 @@
 
 **Paper Track submission:** [Can a small local agent redo a cloud agent's work?](https://kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/can-a-small-local-agent-redo-a-cloud-agents-work)
 · [the paper as a PDF](paper/small-local-agent-redo-cloud-agent-work.pdf)
+· [the paper as submitted (release)](https://github.com/healthtransformationlab/gemma-developer-agent/releases/latest)
 · [the 93 tasks on Kaggle](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks)
 
 In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960
