@@ -191,7 +191,7 @@ about 6.37 to 7.50 US dollars
 Four L4s finished a task about as fast as one A100, and used about four times the GPU time.  
 Share of a task's time spent in the model's own calls  
 66–83%  
-Summarising older turns took another 14–15%, and the graph tools under 0.1%. 45 of 207 runs ended at the model's context window.  
+In the three Kaggle arms. Summarising older turns took another 14–15%, and the graph tools under 0.1%. 45 of 207 runs ended at the model's context window.  
 Hours of agent time for each task fixed, on the first baseline  
 0.38 vs 1.80  
 0.38 on the 13 clearly described tasks it ran, against 1.80 over all 48.  

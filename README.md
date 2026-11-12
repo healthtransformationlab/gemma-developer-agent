@@ -107,15 +107,15 @@ and [the prices](https://github.com/healthtransformationlab/health-transformatio
 
 - **Rent one GPU, not four.** On these runs four L4s finished a task about as fast as one A100 (1.2 to 1.5 minutes
   against 1.2 to 1.3) and used about four times the GPU time. For a run of your own, one L4 was the cheapest here and one A100
-  the quickest. The competition scores entries on four L4s, so its own runs cost what the last row shows.
+  the quickest. The competition scores entries on four L4s; the last row is what that setup cost here.
 - **Check the task descriptions before paying to run them.** On the first baseline the 13 clearly described tasks
   took 17% of the agent's time and gave 4 of its 5 fixes: 0.38 hours of agent time a fix, against 1.80 over all 48.
 - **Handing the model a list of code to look at cost nothing extra.** Time and tokens for a task were the same or a
   little lower with it (the list is made beforehand). That choice can rest on results alone, and the results showed
   no reliable improvement.
-- **Speed up the model's own calls first.** They took 66–83% of a task's time. Summarising older turns took another
-  14–15%, the graph tools under 0.1%, and 45 of 207 runs ended when the conversation outgrew the model's context
-  window. For one task the model reads about 100 to 125 thousand tokens and writes about 5 to 7 thousand.
+- **Speed up the model's own calls first.** In the three Kaggle arms they took 66–83% of a task's time. Summarising
+  older turns took another 14–15%, the graph tools under 0.1%, and 45 of 207 runs ended when the conversation
+  outgrew the model's context window. For one task the model reads about 100 to 125 thousand tokens and writes about 5 to 7 thousand.
 
 **Next: performance work.** None of this has been done or measured yet.
 
