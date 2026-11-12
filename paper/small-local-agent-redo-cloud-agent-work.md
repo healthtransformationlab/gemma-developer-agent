@@ -44,7 +44,7 @@ Contributions:
 
 The repository holds a Python package and tests, an R twin, SQL and Databricks pipelines, and documentation, written October 25 to November 8, 2026.
 
-**Who wrote it.** Of 960 commits on `main`, 775 are marked as agent-authored and 175 are merge commits.
+**Who wrote it.** Of 960 commits on `main`, 775 are marked as agent-authored; the rest are merge commits (175), a bot's (5), the author's (4) and the initial one.
 
 **Rules the agents work under.** A checked-in `AGENTS.md` requires an issue per user story, a pull request tied to it and a test before the code; CI rejects a pull request without an issue link. Reviews of 240 pull requests are committed as files. On November 8 it held 2,269 tests in 126 files, run by CI on every pull request.
 
@@ -141,7 +141,7 @@ On Kaggle the baseline's model server stopped answering after 21 tasks, none of 
 
 ## 8. Conclusion and release
 
-A model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, and 3 of 23 of the competition's own under its evaluator. On one A100, in a pre-registered experiment, it resolved 4 of all 93 as published, 6 with graph retrieval and 4 with a failing test's report (from the hidden test). Retrieval's two extra fixes (three in an unplanned second session on an L4) do not establish a reliable improvement. Over every run, 9 of the 10 distinct tasks this model has resolved are in the core split of 17, where results on this set should be quoted. Valid tasks whose fix the graph found, but whose statements leave out what their tests need, measured little for this model. On the competition's tasks the graph holds more fixes and the screen passes half: the two sets differ in their tests more than their statements. Next is runtime performance: on Kaggle, model calls took 66–83% of a task's time.
+A model that runs on free GPUs resolved 5 of 48 cheapest-first tasks, and 3 of 23 of the competition's own under its evaluator. On one A100, in a pre-registered experiment, it resolved 4 of all 93 as published, 6 with graph retrieval and 4 with a failing test's report (from the hidden test). Retrieval's two extra fixes do not establish a reliable improvement. Over every run, 9 of the 10 distinct tasks this model has resolved are in the core split of 17, where results on this set should be quoted. Valid tasks whose fix the graph found, but whose statements leave out what their tests need, measured little for this model. On the competition's tasks the graph holds more fixes and the screen passes half: the two sets differ in their tests more than their statements. Next is runtime performance: on Kaggle, model calls took 66–83% of a task's time.
 
 **Using the set.** The dataset has the competition's layout, so its evaluator runs on it as published. In the repository, `kaggle/official_verify.py` replays the two controls; the quickstart notebook loads a task.
 
