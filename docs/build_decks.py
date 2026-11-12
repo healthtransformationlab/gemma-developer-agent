@@ -5,8 +5,9 @@ slide as an image, with its notes and its text, for reading on GitHub or for sea
 
     python docs/build_decks.py           # build every deck
     python docs/build_decks.py --check   # fail if a built file is behind its slides, if a slide carries a number
-                                         # that neither the paper nor the README has, or if the slide images and
-                                         # the PDF were made from another build (CI runs this)
+                                         # that neither the paper nor the README has, if the slide images and the
+                                         # PDF were made from another build, or if the README, which shows the
+                                         # slides, misses one (CI runs this)
 
 The images (docs/<deck>/img/) and deck.pdf are drawn from deck.html by `node docs/render_slides.js`, which needs a
 browser; run it after this script whenever a slide changes. The layout follows the source repository's
@@ -185,6 +186,11 @@ def check(deck: str) -> list[str]:
             problems.append(f"docs/{deck}/slides/{stem}.html has {number}, which is in neither the paper nor the README")
         if not (folder / "img" / f"{stem}.png").exists():
             problems.append(f"docs/{deck}/img/{stem}.png is missing: run node docs/render_slides.js")
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    if f"docs/{deck}/img/" in readme:               # the README folds the slides in: it must show every one
+        for stem, _, _ in slides(folder):
+            if f"(docs/{deck}/img/{stem}.png)" not in readme:
+                problems.append(f"README.md shows the slides and misses docs/{deck}/img/{stem}.png")
     stamp = folder / "img" / "rendered.json"
     made_from = json.loads(stamp.read_text(encoding="utf-8")).get("deck_html_sha256") if stamp.exists() else None
     if made_from != hashlib.sha256(out.encode("utf-8")).hexdigest():
