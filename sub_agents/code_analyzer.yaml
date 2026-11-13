@@ -1,10 +1,14 @@
+# The analyzer: first in the root's sequence, on every task. Its final answer is saved to session state as
+# `code_map`. Graph tools only: its tool results stay in the session the coder reads, so nothing here returns
+# file contents, and nothing edits.
 name: code_analyzer
 model: gemma-4-e4b-it-qat-w4a16-ct
-description: Read-only analyst. Given an issue, returns the symbols it names, their one-hop neighbours, the tests that cover them, and the configuration that governs them, as paths and line ranges. Never edits.
+description: Read-only analyst. Given the issue, names where it most likely lives in the code graph. Never reads files, never edits.
 instruction: !include ../prompts/analyzer.md
 include_contents: none
+output_key: code_map
+generate_content_config: !include ../configs/analyzer_sampling.yaml
 tools:
-  - read_file
   - get_code_neighbors
   - search_similar_code
   - get_code_subgraph

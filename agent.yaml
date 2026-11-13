@@ -1,23 +1,11 @@
 # Root agent config for the Gemma 4 Developer Agent Competition (adk-submission declarative schema;
-# see docs/rulebook-notes.md). Every agent uses the same base model; adapters are optional per agent.
+# see docs/rulebook-notes.md). Two agents run in order on every task (docs/adr/0001-analyzer-runs-first.md):
+# the analyzer maps the issue onto the code graph, then the coder fixes it with that map in its prompt.
+# Every agent uses the same base model; adapters are optional per agent.
 # Small-model bonus: gemma-4-e4b-it-qat-w4a16-ct. Switch all `model:` lines together for a 31B run.
+agent_class: SequentialAgent
 name: data_pipeline_fixer
-model: gemma-4-e4b-it-qat-w4a16-ct
-description: Fixes issues in Python repositories, reading the repository's conventions and metadata tables before its code, and always submits a patch before the budget runs out.
-instruction: !include prompts/system.md
-generate_content_config: !include configs/sampling.yaml
-tools:
-  - run_command
-  - read_file
-  - edit_file
-  - write_file
-  - get_status
-  - submit_patch
-  - get_code_neighbors
-  - search_similar_code
-  - get_code_subgraph
-  - agent_tool:
-      config_path: sub_agents/code_analyzer.yaml
-      skip_summarization: true      # keeps the analyzer's read_file output out of the coder's context
-skills:
-  - skills/pipeline-doctor
+description: Fixes issues in Python repositories. A read-only analyzer finds where the issue lives, then a coder makes the smallest fix and always submits a patch before the budget runs out.
+sub_agents:
+  - config_path: sub_agents/code_analyzer.yaml
+  - config_path: sub_agents/coder.yaml

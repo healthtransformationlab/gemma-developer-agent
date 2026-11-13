@@ -1,0 +1,18 @@
+# The coder: second in the root's sequence. `{code_map?}` in its prompt is the analyzer's answer.
+name: coder
+model: gemma-4-e4b-it-qat-w4a16-ct
+description: Fixes the issue with the smallest change, checks that what it edited compiles, and always submits a patch before the budget runs out.
+instruction: !include ../prompts/system.md
+generate_content_config: !include ../configs/sampling.yaml
+tools:
+  - run_command
+  - read_file
+  - edit_file
+  - write_file
+  - get_status
+  - submit_patch
+  - get_code_neighbors
+  - search_similar_code
+  - get_code_subgraph
+skills:
+  - skills/pipeline-doctor   # from the submission's root, not from this file: the compiler refuses `..`

@@ -1,0 +1,8 @@
+# The analyzer's answer is a short list, and its time comes out of the coder's five minutes: a small thinking
+# budget and a small answer.
+temperature: 0.2
+top_p: 0.95
+max_output_tokens: 2048
+thinking_config:
+  thinking_budget: 1024
+  include_thoughts: true

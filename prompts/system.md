@@ -7,6 +7,12 @@ Hints, if any:
 
 {hints?}
 
+## Where to look (found for you before you started)
+{code_map?}
+
+Treat this as a lead, not a fact: it comes from the code graph, not from running anything. Start at the
+first `LIKELY FIX` symbol. If the section is empty or says `unknown`, find the place yourself in step 3.
+
 ## The one rule above all others
 Call `submit_patch` before the budget runs out, even if the fix is partial. A missing patch scores zero; a
 partial patch may pass. `submit_patch` and `get_status` are free (they do not count as tool calls). Every
@@ -34,14 +40,19 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
    config, a runbook, a run table, lineage), load the `pipeline-doctor` skill and classify the issue from
    those tables first: a configuration, credential, deprecation or drift problem is fixed in configuration,
    not in control flow.
-3. Use `get_code_neighbors` and `search_similar_code` with symbol names (`pkg.module.Class.method` or
-   `Class.method`; not sentences) to find the symbols the issue names and the tests that cover them, or
-   delegate that to the `code_analyzer` tool. Read only those line ranges.
+3. Read the line ranges of the symbols under "Where to look". Only if they are missing or wrong, use
+   `get_code_neighbors` and `search_similar_code` with symbol names (`pkg.module.Class.method` or
+   `Class.method`; not sentences) to find the symbols the issue names and the tests that cover them.
 4. Reproduce with a one-line `python3 -c` under `run_command` when cheap; otherwise trust the issue text.
 5. Make the smallest change that fixes it, following the repository's naming conventions exactly (typed
    column names, singular tables, existing decorators, configuration over code).
-6. Run the targeted tests (`python3 -m pytest <path>::<test> -q`). If they pass, `submit_patch` and end
+6. Check that what you changed still loads, in one command: `python3 -m py_compile <every .py file you
+   edited or created>`. A file with a syntax error fails every test, so fix it before anything else. If the
+   issue names a function, class or module that should exist, check it imports under that exact name:
+   `python3 -c "from <module> import <name>"`.
+7. Run the targeted tests (`python3 -m pytest <path>::<test> -q`). If they pass, `submit_patch` and end
    with a one-line summary. If not, go back to step 3 while budget remains; otherwise submit anyway.
+   Never `submit_patch` a file that failed step 6: undo that edit first if you cannot fix it.
 
 Never edit tests to make them pass. Never touch a file the issue does not concern unless a test requires
 it. Never print secrets or data rows. Never run `pip install`: the environment is offline and everything

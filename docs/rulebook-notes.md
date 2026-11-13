@@ -8,7 +8,7 @@ are extracted and graded. What changed in this repo because of it, and what to r
   compiled against closed registries. `!include` for `.md`/`.txt` (raw) and `.yaml` (recursive, depth 10).
 - `LlmAgent` fields: `name`, `model`, `adapter`, `description`, `instruction` (supports
   `{problem_description}` and `{hints}` from session state), `tools` (tool names, `agent_tool:
-  {config_path, skip_summarization}`, or inline agents), `skills` (relative paths), `sub_agents`
+  {config_path, skip_summarization}`, or inline agents), `skills` (paths from the submission's root, in a sub-agent's file too; `..` is refused), `sub_agents`
   (`{config_path}`), `output_key`, `include_contents`, `generate_content_config`. Also `SequentialAgent`,
   `ParallelAgent`, `LoopAgent` (max 500 iterations).
 - `generate_content_config`: `max_output_tokens` 1-32,768 (default 16,384); `thinking_config.thinking_budget`
@@ -46,8 +46,10 @@ runs Phase 2 with an empty patch, which is exactly the fail-to-pass gate our tas
 Results: `summary.json`, `task_results.jsonl`, `patches/`, `test_outputs/`, `traces/`, `logs/`.
 
 ## What this changed here
-- `agent.yaml`: the analyzer is an `agent_tool` with `skip_summarization: true` (keeps its `read_file`
-  output out of the coder's context), not a `sub_agents` include.
+- `agent.yaml`: a `SequentialAgent` that runs the analyzer, then the coder, on every task; the analyzer's answer
+  reaches the coder's prompt as `{code_map?}` (`docs/adr/0001-analyzer-runs-first.md`, issue 59; it builds under
+  the competition's `compile_submission`, and has not been run on a GPU). Before that the analyzer was an `agent_tool` with `skip_summarization: true`, which
+  the model called 3 times in 20 runs.
 - `configs/sampling.yaml`: `max_output_tokens` 16,384, `thinking_budget` 4,096, `include_thoughts`.
 - `eval_config.yaml`: 5 min, 40 calls, 60 turns, 120 s per command.
 - `prompts/system.md`: `{problem_description}` and `{hints?}` (optional: the evaluator sets `hints` only for a task that has
