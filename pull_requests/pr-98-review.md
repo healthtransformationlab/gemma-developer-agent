@@ -15,9 +15,11 @@
 Nothing blocking.
 
 ## Notes
-- Unmeasured: no evaluation was run. Whether this raises the score needs a GPU run on the public development set,
-  compared with the current prompt over repeated runs, since leaderboard noise is about ±0.03–0.04. The owner
-  approves each GPU run.
-- The grep example could be copied literally by a small model; the prompt says to put the issue's own strings in
-  place of the placeholder. Worth checking in the first run's traces.
+- Measured on November 14, 2026, with the owner's go-ahead: the competition's evaluator end to end on the 23
+  development tasks that pass both controls (seed 20261110), one Kaggle kernel on four L4 GPUs, the same settings as
+  the November 11 baseline. Resolved 4 of 23 (old prompt 3 of 23); both resolved `fastapi_14301` and `rich_3454`,
+  only this prompt `fastapi_14873` and `rich_3905`, only the old one `rich_3535`; exact McNemar p = 1.0, so no
+  difference can be claimed. Empty patches fell from 5 to 2; 21 of 23 runs started with `run_command`, 17 of them
+  the localization grep; no skill calls. The rows are recorded in health-transformation-lab-nlp's official agent runs.
+- The grep example's placeholder was copied in none of the 23 runs' first calls.
 - Draft PR #60 also edits `prompts/system.md`; whichever merges second needs a small merge.
