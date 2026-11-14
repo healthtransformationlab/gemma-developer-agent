@@ -47,7 +47,7 @@ Results: `summary.json`, `task_results.jsonl`, `patches/`, `test_outputs/`, `tra
 
 ## What this changed here
 - `agent.yaml`: a `SequentialAgent` that runs the analyzer, then the coder, on every task; the analyzer's answer
-  reaches the coder's prompt as `{code_map?}` (`docs/adr/0001-analyzer-runs-first.md`, issue 59; it builds under
+  reaches the coder's prompt as `{code_map?}` (`docs/adr/0002-analyzer-runs-first.md`, issue 59; it builds under
   the competition's `compile_submission`, and has not been run on a GPU). Before that the analyzer was an `agent_tool` with `skip_summarization: true`, which
   the model called 3 times in 20 runs.
 - `configs/sampling.yaml`: `max_output_tokens` 16,384, `thinking_budget` 4,096, `include_thoughts`.

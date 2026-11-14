@@ -1,4 +1,4 @@
-# ADR 0001: the analyzer runs before the coder on every task
+# ADR 0002: the analyzer runs before the coder on every task
 
 Date: 2026-11-11 · Status: proposed · Issue: #59
 

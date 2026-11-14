@@ -1,5 +1,5 @@
 # Root agent config for the Gemma 4 Developer Agent Competition (adk-submission declarative schema;
-# see docs/rulebook-notes.md). Two agents run in order on every task (docs/adr/0001-analyzer-runs-first.md):
+# see docs/rulebook-notes.md). Two agents run in order on every task (docs/adr/0002-analyzer-runs-first.md):
 # the analyzer maps the issue onto the code graph, then the coder fixes it with that map in its prompt.
 # Every agent uses the same base model; adapters are optional per agent.
 # Small-model bonus: gemma-4-e4b-it-qat-w4a16-ct. Switch all `model:` lines together for a 31B run.

@@ -62,3 +62,11 @@ says the change helps.
 
 ## Secrets, Real Data and Claims Scan
 Secrets: none. Real data: none. Claims: none.
+
+## Changed 2026-11-14
+- The decision record is renumbered `docs/adr/0002-analyzer-runs-first.md`: `main` took 0001 on November 12 for
+  the paper's freeze (`0001-freeze-the-submitted-paper.md`). It was never on `main`, so nothing is renumbered there;
+  `agent.yaml` and `docs/rulebook-notes.md` point to the new name.
+- The compiled test file under `tests/__pycache__/` is removed (the "should fix later" item above).
+- After both: `python -m pytest tests/ -q` 9 passed; `python paper/check_rules.py --check` exits 0. Checks 2 and 3
+  are still not run, and the pull request stays a draft.
