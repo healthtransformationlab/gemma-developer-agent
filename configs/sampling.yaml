@@ -1,8 +1,10 @@
 # Rulebook §2.4 and §10: a bounded thinking budget with include_thoughts keeps <|tool_call> from being cut
-# off by a long thought block; max_output_tokens leaves room for an edit_file payload.
+# off by a long thought block; max_output_tokens leaves room for an edit_file payload (4,096 after thinking) and
+# keeps only a quarter of the server's 32,768-token window, so the conversation gets 24,576 (issue 99: at 16,384,
+# a fifth of the runs ended with ContextWindowExceededError).
 temperature: 0.2
 top_p: 0.95
-max_output_tokens: 16384
+max_output_tokens: 8192
 thinking_config:
   thinking_budget: 4096
   include_thoughts: true
