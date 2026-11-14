@@ -45,7 +45,14 @@ def pdf_text(pdf: Path) -> str:
 
 
 def norm(s: str) -> str:
-    return re.sub(r"\s+", " ", s.replace("­", "").replace("-\n", "")).lower()
+    r"""Lowercase, one space between words, and words the PDF split at a line end joined again: a soft hyphen, a
+    hyphen before a newline, or the hyphenation hyphen (U+2010) the layout inserts.
+
+    >>> norm("all 40 develop\u2010\nment tasks")
+    'all 40 development tasks'
+    """
+    s = re.sub("\u2010\\s+", "", s.replace("\u00ad", "").replace("-\n", ""))
+    return re.sub(r"\s+", " ", s).lower()
 
 
 def tracked() -> list[str]:
@@ -69,10 +76,13 @@ def rows() -> list[tuple[str, str, str, str]]:
          r(PDF.exists() and abs(pdf_n - len(md.split())) <= 0.10 * len(md.split())
            and "can a small local agent redo a cloud agent" in text)),
         ("2.4.a Data access and use", "Competition Data used only as the Website and Rules permit",
-         "the paper reports the evaluator's verdicts on this project's own tasks; no competition task is published",
+         "the paper reports the evaluator's verdicts on this project's own tasks, and counts, ratings and verdicts on "
+         "40 of the competition's development tasks; no competition task's text or file is published",
          r(both("own verification") or both("competition's own")) ),
         ("2.4.b Data security", "Competition Data not redistributed",
-         "no competition file (wheels, sample_submission, HARNESS_README, swegemma, adk_submission) is tracked",
+         "no competition file (wheels, sample_submission, HARNESS_README, swegemma, adk_submission) is tracked; the "
+         "tables on the development tasks hold ids, counts, ranks and ratings, and the host has said derived labels "
+         "may be published (Paper Track discussion 749803)",
          r(not committed) + (f": {', '.join(committed[:5])}" if committed else "")),
         ("2.5, 3.6.c Licences", "code under an OSI licence that allows commercial use",
          "the paper names Apache 2.0 for the code and CC BY 4.0 for the tasks; LICENSE is Apache 2.0",
@@ -80,10 +90,13 @@ def rows() -> list[tuple[str, str, str, str]]:
         ("2.6 External data", "external data public and free to all Participants",
          "the task set's public Kaggle link is in the paper and the PDF", r(both(DATASET))),
         ("3.6.b Public code sharing", "code shared publicly, and on the competition's forum or notebooks",
-         "the public repositories are linked in the paper and the PDF; the forum post is the owner's",
-         ("PASS (links)" if all(both(x) for x in REPOS) else "FAIL (links)") + "; OWNER (forum post)"),
+         "the public repositories are linked in the paper and the PDF; the host has said GitHub is enough for sharing "
+         "code (Paper Track discussion 751804)",
+         "PASS (links)" if all(both(x) for x in REPOS) else "FAIL (links)"),
         ("3.4.b No hand labelling of test data", "no human labels of the competition's validation or test records",
-         "the only screen in the paper is of this project's own tasks", r(both("screens rated tasks on swe-bench verified"))),
+         "the paper's screens are an AI's; the competition's development tasks have AI ratings only, which no person "
+         "labelled, predicted or checked",
+         r(both("screens rated tasks on swe-bench verified") and both("all 40 development tasks have ai ratings only"))),
         ("3.14.a Original work", "the Submission is your own work; no third-party rights infringed",
          "the paper discloses the cloud agent's part and cites its sources", r(both("cloud agent") and "## references" in md.lower())),
         ("3.1.c Eligibility, employer", "not entered for an employer without its consent",
