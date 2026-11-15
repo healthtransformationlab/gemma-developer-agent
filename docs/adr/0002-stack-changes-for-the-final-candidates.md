@@ -75,3 +75,6 @@ A reviewing model made the same argument, and the owner agreed ("do what you rec
     two calls. In the Modal colab-skill run, 0 of 10 tasks installed the skill on the previous prompt. E4B-all is held
     until a 5-task E4B run on Modal shows `run_skill_script` in at least half the tasks. If it doesn't, E4B-all goes at
     `204216e`.
+- **2026-11-15, about 23:40 UTC (#159):** entry 5 (copyfix alone) is skipped, the owner's choice. It would have held the
+  one slot for about 12 hours to check what E4B-all checks too, since it carries copyfix. 31B-d goes as soon as its
+  timing run clears it; if it isn't cleared and submitted by 02:00 UTC on November 16, E4B-all goes at `204216e`.
