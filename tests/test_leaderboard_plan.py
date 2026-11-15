@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "docs" / "leaderboard-plan.md"
-QUEUED = {"5": "9c9cd3a", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "31B-c": "2b1c444", "31B-d": "31df2c0", "5c": "0b7c63b",
+QUEUED = {"5": "9c9cd3a", "E4B-all": "204216e", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "31B-c": "2b1c444", "31B-d": "31df2c0", "5c": "0b7c63b",
           "6": "d265a78", "7": "7153a87", "8": "5d68ce8"}
 
 _spec = importlib.util.spec_from_file_location("edit_failures", ROOT / "analysis" / "edit_failures.py")
@@ -50,7 +50,7 @@ def test_the_committed_result_holds_ids_and_classes_only():
     assert classes <= set(ef.CLASSES)
 
 
-BRANCH = {"5": "main", "5b": "feat/122-skill-on-copyfix", "31B": "feat/124-31b-entry",
+BRANCH = {"5": "main", "E4B-all": "main", "5b": "feat/122-skill-on-copyfix", "31B": "feat/124-31b-entry",
           "31B-b": "feat/136-31b-budget-fit", "31B-c": "feat/140-31b-single-agent", "5c": "feat/125-distilled-adapter",
           "6": "main", "7": "main", "8": "main"}
 
@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if e in QUEUED and line.rstrip().endswith("| queued |")]
-    assert order == ["5", "5b"], order   # 31B-b, 31B-c, 31B-d held for the timing run (#150); 6, 7, 8 and 5c (#142)
+    assert order == ["5", "E4B-all"], order   # 31B-d waits on the timing run (#150); its parts and 5b are in stacks (#152)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -125,15 +125,28 @@ def test_small_entries_are_held_under_the_three_task_rule():
     assert "Three tasks or a repeat" in text
     for entry in ("6", "7", "8", "5c"):
         assert _cells(_rows()[entry])[-1].startswith("held:"), f"entry {entry} is not held"
-    for entry in ("5", "5b"):   # the 31B entries wait on the timing run (#150)
+    for entry in ("5", "E4B-all"):   # 31B-d waits on the timing run (#150); 5b is part of E4B-all (#152)
         assert _cells(_rows()[entry])[-1] == "queued", f"entry {entry} should still be queued"
     rows = [e for e in _rows() if e in QUEUED]
     assert rows.index("5c") > rows.index("8"), "5c is last in line"
 
 
 def test_the_31b_entries_wait_on_the_timing_run():
-    """#150: no 31B entry goes until a 10-task run measures the average time a task (nlp #821)."""
+    """#150: no 31B entry goes until a 10-task run measures the average time a task (nlp #821); since #152 only the
+    stack, 31B-d, goes back to queued."""
     rows = _rows()
-    for e in ("31B-b", "31B-c", "31B-d"):
-        assert rows[e].rstrip().endswith("| held: waiting on the 31B timing run (health-transformation-lab-nlp #821) |"), e
+    assert rows["31B-d"].rstrip().endswith("| held: waiting on the 31B timing run (health-transformation-lab-nlp #821) |")
     assert "about 11 hours" in PLAN.read_text()
+
+
+def test_the_final_candidates_are_the_stacks():
+    """#152 (ADR 0002): with about 6 slots and ±2–3 tasks of noise, the slots go to the stacks, E4B-all (main: copyfix,
+    the skill with its compile check, no graph tools, short anchors, scratch cleanup, 12,288) and 31B-d (Budget-Fit
+    budget, single agent, patch first); their parts are held, and a freed slot repeats the candidate nearer its line."""
+    rows = [e for e in _rows() if e in QUEUED]
+    assert rows[:3] == ["5", "E4B-all", "31B-d"], rows
+    for part, stack in (("5b", "E4B-all"), ("31B-b", "31B-d"), ("31B-c", "31B-d")):
+        assert _cells(_rows()[part])[-1].startswith(f"held: part of {stack}"), part
+    assert (ROOT / "docs" / "adr" / "0002-stack-changes-for-the-final-candidates.md").is_file()
+    assert "ADR 0002" in (ROOT / "AGENTS.md").read_text()
+    assert "Stacked final candidates" in PLAN.read_text()

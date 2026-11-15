@@ -34,7 +34,8 @@ November 15 the week's hours were spent a day in.
 - **Recorded traces and CPU come first** (a kernel's traces download for free; the competition's graphs and embeddings
   run on CPU), and a development-set run is never started to compare resolve counts: six of them on the same 23 tasks
   resolved 3 or 4 each (p = 1.0).
-- **One change per leaderboard entry**, booked in a shared plan.
+- **One change per leaderboard entry**, booked in a shared plan, except the two final candidates, which stack their
+  changes (ADR 0002, #152).
 
 The decision and its reasons: health-transformation-lab-nlp ADR 0007 (#120).
 
