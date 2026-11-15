@@ -2,7 +2,7 @@
 # see docs/rulebook-notes.md). Every agent uses the same base model; adapters are optional per agent.
 # Small-model bonus: gemma-4-e4b-it-qat-w4a16-ct. Switch all `model:` lines together for a 31B run.
 name: data_pipeline_fixer
-model: gemma-4-e4b-it-qat-w4a16-ct
+model: gemma-4-e2b-it-qat-w4a16-ct
 description: Fixes issues in Python repositories, reading the repository's conventions and metadata tables before its code, and always submits a patch before the budget runs out.
 instruction: !include prompts/system.md
 generate_content_config: !include configs/sampling.yaml
