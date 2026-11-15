@@ -120,3 +120,14 @@ def test_agents_md_rations_the_gpu_hours():
     section = text.split("## Kaggle GPU hours", 1)[1].split("\n## ", 1)[0] if "## Kaggle GPU hours" in text else ""
     assert "gpu_quota.py" in section, "say to read the quota before and after every run"
     assert "one gpu run at a time" in section.lower()
+
+
+def test_graph_tools_are_not_given_or_named():
+    """#113: one-hop graph expansion ranked the code to fix no better than regex (docs/localization-study.md), and
+    cost about two tool calls a task; search_similar_code stays as the fallback."""
+    gone = {"get_code_neighbors", "get_code_subgraph"}
+    assert not gone & _agent_tools(), f"agents still given: {gone & _agent_tools()}"
+    texts = [PROMPT, (ROOT / "prompts" / "analyzer.md").read_text()]
+    assert not [t for t in gone for text in texts if t in text], "a prompt still names a removed tool"
+    assert "search_similar_code" in _agent_tools()
+    assert re.search(r"`tests\.`[^.]*not\s+the\s+code\s+to\s+fix", PROMPT), "say search results under tests. are tests"

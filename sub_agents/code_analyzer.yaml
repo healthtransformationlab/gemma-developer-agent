@@ -6,6 +6,4 @@ instruction: !include ../prompts/analyzer.md
 include_contents: none
 tools:
   - read_file
-  - get_code_neighbors
   - search_similar_code
-  - get_code_subgraph
