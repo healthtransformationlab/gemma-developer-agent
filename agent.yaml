@@ -1,9 +1,9 @@
 # Root agent config for the Gemma 4 Developer Agent Competition (adk-submission declarative schema;
 # see docs/rulebook-notes.md). Every agent uses the same base model; adapters are optional per agent.
-# Small-model bonus: gemma-4-e4b-it-qat-w4a16-ct. Switch all `model:` lines together for a 31B run.
+# This branch is the 31B entry for the main prizes (#124): the same agent as main, on gemma-4-31b-it-qat-w4a16-ct,
+# with no adapter (copyfix is an E4B adapter). main stays the E4B entry for the small-model bonus.
 name: data_pipeline_fixer
-model: gemma-4-e4b-it-qat-w4a16-ct
-adapter: copyfix          # training-free rank-128 LoRA for the QAT copy defect (#108; adapters/copyfix, NOTICE)
+model: gemma-4-31b-it-qat-w4a16-ct
 description: Fixes issues in Python repositories, reading the repository's conventions and metadata tables before its code, and always submits a patch before the budget runs out.
 instruction: !include prompts/system.md
 generate_content_config: !include configs/sampling.yaml
