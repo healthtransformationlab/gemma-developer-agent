@@ -1,0 +1,37 @@
+---
+name: edit-fallback
+description: Two helper scripts for any Python repository - find.py ranks the files that mention the issue's names (tests left out), and edit.py applies a SEARCH/REPLACE block when edit_file fails, matching through escapes, spacing and small copy errors. Install once with run_skill_script and no arguments, then use run_command.
+---
+
+# edit-fallback skill
+
+**Install first, once:** `run_skill_script` with `skill_name` `edit-fallback` and `file_path` `scripts/install.py`,
+and no other argument. It copies the helpers to `/tmp/h/` and prints their usage. Never pass `args`,
+`short_options` or `positional_args`.
+
+**Find the code** (one `run_command`): `python3 /tmp/h/find.py NAME [NAME ...]`, with two to five names from the
+issue (a function, class, module or variable name, or a short quoted error message). It prints the repository's
+Python files, best first, with the matching lines and their numbers. Tests, docs and examples are left out.
+
+**When `edit_file` fails**, never send the same `old_string` again. Run instead:
+
+```
+python3 /tmp/h/edit.py path/to/file.py <<'EOF'
+<<<<<<< SEARCH
+one to three lines as read_file showed them
+=======
+the same lines as they should be
+>>>>>>> REPLACE
+EOF
+```
+
+- It matches in this order: exactly; with escapes undone (a literal `\n` or `\"`); ignoring spaces; then the closest
+  place (similarity 0.8 or more, clearly the best). The closest-place match is tried only when SEARCH has 8 lines or
+  fewer.
+- A close match changes only the lines SEARCH and REPLACE differ in, and keeps the file's own copy of the rest.
+- "REPLACE is already in the file": the change is done; move on.
+- "SEARCH occurs at lines ...": run again with `--near LINE`, the line you mean.
+- Otherwise it changes nothing, and prints the closest lines with their numbers to copy from.
+
+Measured on CPU over the development set's four repositories (fastapi, rich, requests, httpx):
+`docs/fallback-scripts-study.md`.
