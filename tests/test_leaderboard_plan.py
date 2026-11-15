@@ -44,7 +44,7 @@ def test_classify_tells_the_failure_causes_apart():
 
 def test_the_committed_result_holds_ids_and_classes_only():
     lines = (ROOT / "analysis" / "edit_failures.csv").read_text().splitlines()
-    assert lines[0] == "run_name,instance_id,old_string_line_count,has_backslash,failure_class_code"
+    assert lines[0] == "run_name,instance_id,old_string_line_count,has_backslash,error_kind_code,failure_class_code"
     assert len(lines) > 100
     classes = {line.rsplit(",", 1)[1] for line in lines[1:]}
     assert classes <= set(ef.CLASSES)
@@ -66,3 +66,16 @@ def test_entry_5b_cites_the_wider_check_with_open_navigator():
     row = _rows()["5b"]
     assert "getcommunityone/open-navigator" in row and "255 tasks" in row, "cite the 255-task check and open-navigator"
     assert "one repository" in row, "state the study's caveat: most of the check is one repository"
+
+
+def test_error_kinds_come_from_the_tools_own_message():
+    assert ef.error_kind("Failed to replace: old_string not found. Ensure you're not escaping content") == "not_found"
+    assert ef.error_kind("Target string occurs 2 times in rich/table.py. Please provide more surrounding context.") \
+        == "ambiguous"
+    assert ef.error_kind("old_string cannot be empty.") == "other"
+    assert "ambiguous" in ef.CLASSES
+
+
+def test_the_committed_result_records_the_error_kind():
+    header = (ROOT / "analysis" / "edit_failures.csv").read_text().splitlines()[0]
+    assert "error_kind_code" in header

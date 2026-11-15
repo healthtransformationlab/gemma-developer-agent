@@ -1,8 +1,9 @@
 """Why did each failed edit_file call fail? (#126)
 
-For every `edit_file` call that failed with "old_string not found" in a set of trace folders, compare its `old_string`
-with everything the agent had seen of the repository in that trace so far (`read_file` output, `run_command` output,
-with its earlier successful edits applied) and give one cause:
+For every `edit_file` call that failed in a set of trace folders, record the tool's own error kind (`not_found`,
+`ambiguous`: "Target string occurs N times", `other`; #132), and for a not-found failure compare its `old_string` with
+everything the agent had seen of the repository in that trace so far (`read_file` output, `run_command` output, with
+its earlier successful edits applied) and give one cause:
 
     seen_yet_failed   the exact text was in what it read (the file changed since, or a tool quirk)
     whitespace_only   it matches once runs of whitespace are made equal
@@ -10,6 +11,8 @@ with its earlier successful edits applied) and give one cause:
     near_copy         a block it read is at least 95% alike: characters dropped or changed in copying
     paraphrase        a block it read is 80% to 95% alike: lines rewritten from memory
     not_read          nothing it read is that close: invented, or never read
+    ambiguous         not a cause but the error kind: the anchor matched more than once
+    other             the tool failed for another reason (empty old_string, no change to apply)
 
 The result holds ids, counts and causes only, never task text or code, since the traces hold the competition's tasks.
 
@@ -27,7 +30,8 @@ import re
 from collections import Counter
 from pathlib import Path
 
-CLASSES = ("seen_yet_failed", "whitespace_only", "backslash_only", "near_copy", "paraphrase", "not_read")
+CLASSES = ("seen_yet_failed", "whitespace_only", "backslash_only", "near_copy", "paraphrase", "not_read", "ambiguous",
+           "other")
 NEAR, CLOSE = 0.95, 0.80
 
 
@@ -45,6 +49,16 @@ def _best_ratio(old: str, seen: str) -> float:
         if sm.real_quick_ratio() > best and sm.quick_ratio() > best:
             best = max(best, sm.ratio())
     return best
+
+
+def error_kind(message: str) -> str:
+    """The tool's own reason a failed edit_file call failed: not_found, ambiguous (matched more than once), or other."""
+    m = message.lower()
+    if "occurs" in m and "times" in m:
+        return "ambiguous"
+    if "not found" in m:
+        return "not_found"
+    return "other"
 
 
 def classify(old_string: str, seen: str) -> str:
@@ -103,10 +117,13 @@ def failures(trace_dirs: list[Path]) -> list[dict]:
                             continue
                         text = files.get(path) or next((v for k, v in files.items()
                                                         if k.endswith(path) or path.endswith(k)), "")
+                        m = re.search(r'error_message"?\s*:\s*"([^"]*)', json.dumps(out).replace('\\"', '"'))
+                        kind = error_kind(m.group(1) if m else json.dumps(out))
+                        cls = classify(old, text + "\n" + pool) if kind == "not_found" else kind
                         rows.append({"run_name": Path(root).name, "instance_id": instance_id,
                                      "old_string_line_count": old.count("\n") + 1 if old else 0,
-                                     "has_backslash": "\\" in old,
-                                     "failure_class_code": classify(old, text + "\n" + pool)})
+                                     "has_backslash": "\\" in old, "error_kind_code": kind,
+                                     "failure_class_code": cls})
     return rows
 
 
@@ -119,7 +136,7 @@ def main(argv=None) -> int:
     if a.out:
         with open(a.out, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=["run_name", "instance_id", "old_string_line_count", "has_backslash",
-                                              "failure_class_code"])
+                                              "error_kind_code", "failure_class_code"])
             w.writeheader()
             w.writerows(rows)
     counts = Counter(r["failure_class_code"] for r in rows)
