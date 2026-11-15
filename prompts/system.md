@@ -45,9 +45,10 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
    `CONTRIBUTING.md`, the first 60 lines. Load the `pipeline-doctor` skill only when the listing shows pipeline
    metadata (`ops/` or `data/ops/`); then a configuration, credential, deprecation or drift problem is fixed in
    configuration, not in control flow.
-4. From the matches, use `get_code_neighbors` and `search_similar_code` with symbol names (`pkg.module.Class.method`
-   or `Class.method`; not sentences) to find the tests that cover them, or delegate that to the `code_analyzer`
-   tool. Read only those line ranges, 40 to 80 lines around each match.
+4. From the matches, find the tests that cover them with one more grep of `tests/` for the symbol names, or delegate
+   that to the `code_analyzer` tool. `search_similar_code` (symbol names such as `pkg.module.Class.method` or
+   `Class.method`, not sentences) is for when grep finds nothing; its results under `tests.` are tests, not the code
+   to fix. Read only those line ranges, 40 to 80 lines around each match.
 5. Reproduce with a one-line `python3 -c` under `run_command` when cheap; otherwise trust the issue text.
 6. Make the smallest change that fixes it, following the repository's own naming and style.
 7. Run the targeted tests (`python3 -m pytest <path>::<test> -q`). If they pass, `submit_patch` and end with a
