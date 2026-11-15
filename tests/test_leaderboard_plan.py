@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if e in QUEUED and line.rstrip().endswith("| queued |")]
-    assert order == ["5", "31B-b", "5b", "31B-c", "5c", "6", "7", "8"], order
+    assert order == ["5", "31B-b", "5b", "31B-c"], order   # 6, 7, 8 and 5c held under the three-task rule (#142)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -100,3 +100,32 @@ def test_31b_c_is_compared_with_31b_b_and_shares_its_gate():
     row = _rows()["31B-c"]
     assert "| 31B-b |" in row, "31B-c is compared with 31B-b"
     assert re.search(r"31B-c[^.]*does not go", PLAN.read_text()), "gate 31B-c on 31B-b finishing inside 12 hours"
+
+
+def _cells(line):
+    return [c.strip() for c in line.strip().strip("|").split("|")]
+
+
+def test_every_entry_names_its_kill_criterion():
+    """#142: every queued or held entry says whether three tasks are plausible and what result stops it."""
+    header = next(line for line in PLAN.read_text().splitlines() if line.startswith("| Entry |"))
+    cols = _cells(header)
+    assert "≥3 tasks plausible?" in cols and "Kill criterion" in cols, cols
+    i3, ik = cols.index("≥3 tasks plausible?"), cols.index("Kill criterion")
+    for entry in QUEUED:
+        cells = _cells(_rows()[entry])
+        assert len(cells) == len(cols), f"entry {entry} has {len(cells)} cells, the header {len(cols)}"
+        assert cells[i3] and cells[ik], f"entry {entry}: fill both new columns"
+
+
+def test_small_entries_are_held_under_the_three_task_rule():
+    """#142: the noise is ±2-3 tasks, so an entry likely worth one or two is held; the slot goes to a three-task
+    candidate or a repeat of a final candidate."""
+    text = PLAN.read_text()
+    assert "Three tasks or a repeat" in text
+    for entry in ("6", "7", "8", "5c"):
+        assert _cells(_rows()[entry])[-1].startswith("held:"), f"entry {entry} is not held"
+    for entry in ("5", "31B-b", "5b", "31B-c"):
+        assert _cells(_rows()[entry])[-1] == "queued", f"entry {entry} should still be queued"
+    rows = [e for e in _rows() if e in QUEUED]
+    assert rows.index("5c") > rows.index("8"), "5c is last in line"
