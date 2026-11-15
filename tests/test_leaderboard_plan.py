@@ -60,3 +60,9 @@ def test_every_queued_entry_names_its_repository_and_branch():
         assert "healthtransformationlab/gemma-developer-agent" in rows[entry], f"entry {entry}: name the repository"
         assert f"/tree/{branch}" in rows[entry] or (branch == "main" and "/commit/" in rows[entry]), \
             f"entry {entry}: link its branch {branch} or its commit on main"
+
+
+def test_entry_5b_cites_the_wider_check_with_open_navigator():
+    row = _rows()["5b"]
+    assert "getcommunityone/open-navigator" in row and "255 tasks" in row, "cite the 255-task check and open-navigator"
+    assert "one repository" in row, "state the study's caveat: most of the check is one repository"
