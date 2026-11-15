@@ -1,8 +1,9 @@
-# Per-task budgets the evaluator reads from the submission (rulebook §7.1). The whole run has 12 hours for
-# ~120 tasks including sandbox setup, so about 5 minutes of agent time per task is the real ceiling.
-# The sample submission used 1 minute and 10 calls and produced NO_PATCH twice (starter notebook).
+# Per-task budgets the evaluator reads from the submission (rulebook §7.1). 31B-b (#136): the public "Budget-Fit
+# Single Agent" budget for the 31B, which several teams scored normally (about 0.20 to 0.24): 8 minutes, 28 calls,
+# 80 turns, 300-second commands. One team measured about 225 s a task on the scorer's 4xL4 including setup, so
+# about 7.5 hours for 120 tasks, inside the 12-hour limit. The 31B entry (#124) kept E4B's 5 minutes and 40 calls.
 evaluation:
-  timeout_seconds: 120          # per command
-  max_tool_calls: 40
-  max_time_minutes: 5.0
-  max_turns: 60
+  timeout_seconds: 300          # per command
+  max_tool_calls: 28
+  max_time_minutes: 8.0
+  max_turns: 80
