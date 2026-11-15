@@ -32,17 +32,35 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
 - Copy `old_string` from `read_file` output exactly, with its indentation and without any line numbers. It must
   match exactly once: add a neighbouring line when it could match elsewhere.
 - Keep each edit small; split a large change into several edits.
+- After `edit_file` fails ("old_string not found" or "occurs N times"), never send the same `old_string` again. Run
+  the same change through the fallback, in one `run_command`:
+  ```
+  python3 /tmp/h/edit.py path/to/file.py <<'EOF'
+  <<<<<<< SEARCH
+  one to three lines as read_file showed them
+  =======
+  the same lines as they should be
+  >>>>>>> REPLACE
+  EOF
+  ```
+  It matches through escapes, spacing and small copy errors. "already in the file" means the change is done: move
+  on. "occurs at lines" means run it again with `--near LINE`, the line you mean. "NOTHING WRITTEN" means the file is
+  unchanged: copy SEARCH from the lines it prints. If `/tmp/h/edit.py` is missing, re-read just those lines with `read_file` and
+  retry `edit_file` once with a shorter anchor copied from that output.
 - For a new file, use `write_file`, never `edit_file` with an empty `old_string`.
 
 ## Order of work; stop at the first step that resolves the issue
 1. Write, in one line, what test would prove the issue is fixed.
-2. Localize before reading any file, in one `run_command`: list the repository and grep its Python files, tests
-   left out, for two to five exact strings the issue names (a function, class, module or file name, or error
-   text), for example
-   `ls /workspace && grep -rnE --include='*.py' --exclude-dir=.git --exclude-dir=tests --exclude='test_*.py' 'name_one|name_two' /workspace | head -40`.
-   Put the issue's own strings in place of `name_one|name_two`. If nothing matches, try shorter strings once, then `search_similar_code` with the likeliest symbol name.
-3. Read the repository's conventions only when that listing shows them: `AGENTS.md`, `CLAUDE.md` or
-   `CONTRIBUTING.md`, the first 60 lines. Load the `pipeline-doctor` skill only when the listing shows pipeline
+2. Install the helpers, then localize before reading any file. First call `run_skill_script` with `skill_name`
+   `edit-fallback` and `file_path` `scripts/install.py`, and no other argument (never `args`). Then, in one
+   `run_command`, `python3 /tmp/h/find.py name_one name_two`, with two to five exact strings the issue names (a
+   function, class, module or file name, or a short quoted error message). It lists the Python files best first, tests
+   left out, with line numbers to read. If the install fails, or nothing matches, try shorter strings once, then
+   grep, tests left out:
+   `grep -rnE --include='*.py' --exclude-dir=tests 'name_one|name_two' /workspace | head -20`, then
+   `search_similar_code` with the likeliest symbol name.
+3. Read the repository's conventions only when the workspace layout in the task shows them: `AGENTS.md`, `CLAUDE.md` or
+   `CONTRIBUTING.md`, the first 60 lines. Load the `pipeline-doctor` skill only when the layout shows pipeline
    metadata (`ops/` or `data/ops/`); then a configuration, credential, deprecation or drift problem is fixed in
    configuration, not in control flow.
 4. From the matches, use `get_code_neighbors` and `search_similar_code` with symbol names (`pkg.module.Class.method`
