@@ -11,6 +11,7 @@ import contextlib
 import importlib.util
 import io
 import os
+import re
 import subprocess
 import sys
 import time
@@ -397,3 +398,36 @@ def test_replacing_a_whole_file_that_ends_with_a_blank_line():
     text = "a = 1\nb = 2\n\n"
     new, _ = edit.apply(text, "a = 1\nb = 2\n", "c = 3")
     assert new == "c = 3\n"
+
+
+def test_an_edit_that_breaks_compilation_is_refused(tmp_path):
+    """#144: 2 of 37 recorded patches left a file that does not compile; edit.py checks for free as it writes."""
+    f = tmp_path / "table.py"
+    f.write_text(FILE)
+    block = ("<<<<<<< SEARCH\n        self.rows.append(renderables)\n=======\n"
+             "        self.rows.append(renderables\n>>>>>>> REPLACE\n")
+    for args in ([str(f)], [str(f), "--dry-run"]):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            assert edit.main(args, io.StringIO(block)) == 0
+        assert out.getvalue().startswith("NOTHING WRITTEN: the edit would leave a syntax error"), out.getvalue()
+        assert re.search(r"at line (9|10):", out.getvalue())   # 3.10+ name the open bracket's line, older the next
+        assert f.read_text() == FILE
+    assert edit.compile_error("table.py", FILE) is None
+    assert "line" in edit.compile_error("table.py", "def f(:\n    pass\n")
+
+
+def test_a_file_that_did_not_compile_is_still_edited(tmp_path):
+    """Only an edit that breaks a file that compiled is refused, so a sandbox Python older than the repository's
+    syntax never causes a refusal; and only .py files are compiled."""
+    broken = tmp_path / "broken.py"
+    broken.write_text("def f(:\n    return 1\n")
+    block = "<<<<<<< SEARCH\n    return 1\n=======\n    return 2\n>>>>>>> REPLACE\n"
+    with contextlib.redirect_stdout(io.StringIO()):
+        assert edit.main([str(broken)], io.StringIO(block)) == 0
+    assert "return 2" in broken.read_text()
+    notes = tmp_path / "notes.txt"
+    notes.write_text("a = (\n")
+    with contextlib.redirect_stdout(io.StringIO()):
+        assert edit.main([str(notes)], io.StringIO("<<<<<<< SEARCH\na = (\n=======\nb = (\n>>>>>>> REPLACE\n")) == 0
+    assert notes.read_text() == "b = (\n"

@@ -170,6 +170,9 @@ def main():
                 e_after, _ = fb_edit.apply(content, s, r)
             except Exception:  # a crash counts as refused (unchanged); none happened in the committed run
                 e_after = None
+            if (e_after is not None and path.endswith(".py") and fb_edit.compile_error(path, content) is None
+                    and fb_edit.compile_error(path, e_after)):
+                e_after = None  # edit.py's main refuses an edit that breaks compilation (#144)
             secs = time.perf_counter() - t0
             if kind == "not_in_file":
                 b = "correct" if b_after is None or b_after == content else "wrong"

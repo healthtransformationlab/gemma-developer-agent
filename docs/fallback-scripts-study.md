@@ -71,8 +71,11 @@ merge would be a guess, it changes nothing and prints the file's lines instead:
 - tabs are mixed with spaces.
 
 Lines are split on newlines only, and each keeps its own carriage return. "Already done" is reported only where
-REPLACE sits at the place the change would go. Output starts with `NOTHING WRITTEN` when the file is unchanged, and
-the exit code is 0 either way, because the harness repeats a failing command's output.
+REPLACE sits at the place the change would go. An edit that would leave a `.py` file unable to compile is refused
+(#144), but only when the file compiled before the edit, so a sandbox Python older than the repository's syntax never
+causes a refusal. 2 of the 37 non-empty patches in our two recorded runs didn't compile. Output starts with
+`NOTHING WRITTEN` when the file is unchanged, and the exit code is 0 either way, because the harness repeats a
+failing command's output.
 
 ### Test across the four repositories (`analysis/fallback_synth.py`, `fallback_synth.csv`)
 
@@ -85,24 +88,27 @@ expected), or refused (unchanged). For "not in the file" and "already done", cor
 |---|---|---|---|
 | none | 613 | 613 / 0 / 0 | 613 / 0 / 0 |
 | escaped (one JSON-escaped line) | 613 | 613 / 0 / 0 | 613 / 0 / 0 |
-| a final "s" dropped | 433 | 5 / 0 / 428 | **303** / 2 / 128 |
+| a final "s" dropped | 433 | 5 / 0 / 428 | **303** / 1 / 129 |
 | 4 spaces less indentation | 368 | 349 / 16 / 3 | 364 / 1 / 3 |
-| one context line left out | 581 | 58 / 19 / 504 | 173 / **35** / 373 |
+| one context line left out | 581 | 58 / 19 / 504 | 173 / 19 / 389 |
 | tool-call debris (`",`) after the last line | 613 | 0 / 0 / 613 | **471** / 0 / 142 |
-| SEARCH from another file | 613 | 613 / 0 / 0 | 609 / 4 / 0 |
+| SEARCH from another file | 613 | 613 / 0 / 0 | 612 / 1 / 0 |
 | change already made | 613 | 569 / 44 / 0 | 593 / 20 / 0 |
-| **all** | 4,447 | 2,820 / 79 / 1,548 | **3,739 / 62 / 646** |
+| **all** | 4,447 | 2,820 / 79 / 1,548 | **3,742 / 42 / 663** |
 
-- **Correct:** only `edit_file` got 26 edits right, and only `edit.py` 945 (exact McNemar test, p ≈ 10⁻²⁴¹).
-- **Wrong:** only `edit_file` got 54 edits wrong, and only `edit.py` 37 (p = 0.093).
-- **The one damage where `edit.py` is worse:** "one context line left out" (35 wrong against 19). When the agent
-  leaves a line out, where its change goes can look clear when it isn't.
+- **Correct:** only `edit_file` got 23 edits right, and only `edit.py` 945 (exact McNemar test, p ≈ 10⁻²⁴⁵).
+- **Wrong:** only `edit_file` got 62 edits wrong, and only `edit.py` 25 (p = 9.1 × 10⁻⁵).
+- **"One context line left out":** this was the one damage where `edit.py` erred more (35 wrong against 19) until the
+  compile check (#144). It is now 19 against 19. When the agent leaves a line out, where its change goes can look
+  clear when it isn't, and the result often doesn't compile.
+- **Entry 5b's numbers:** the queued commit `80d23e8` was built before the compile check. Its numbers on this test are
+  the ones the leaderboard plan cites: right 3,739, wrong 62, refused 646.
 
 | Repository | Edits | `edit_file` | `edit.py` |
 |---|---|---|---|
-| fastapi | 2,924 | 1,836 / 42 / 1,046 | 2,447 / 35 / 442 |
-| rich | 1,246 | 795 / 34 / 417 | 1,046 / 24 / 176 |
-| requests | 147 | 96 / 2 / 49 | 134 / 3 / 10 |
+| fastapi | 2,924 | 1,836 / 42 / 1,046 | 2,447 / 22 / 455 |
+| rich | 1,246 | 795 / 34 / 417 | 1,049 / 18 / 179 |
+| requests | 147 | 96 / 2 / 49 | 134 / 2 / 11 |
 | httpx | 130 | 93 / 1 / 36 | 112 / 0 / 18 |
 
 ### The length check
@@ -111,10 +117,11 @@ The same test was run with no limit on SEARCH length (not committed; `MAX_FUZZY_
 
 | Length limit | Correct | Wrong | Wrong against `edit_file` (only it / only `edit.py`) | Slowest call |
 |---|---|---|---|---|
-| none | 4,012 | 87 | 54 / 62, p = 0.52 | 0.53 s |
-| 8 lines | 3,739 | 62 | 54 / 37, p = 0.093 | 0.17 s |
+| none | 4,016 | 56 | 62 / 39, p = 0.028 | 0.51 s |
+| 8 lines | 3,742 | 42 | 62 / 25, p = 9.1 × 10⁻⁵ | 0.23 s |
 
-The limit refuses 273 long synthetic edits that could have been rescued. In exchange it gets 25 fewer wrong. That is
+Both rows include the compile check (#144). The limit refuses 274 long synthetic edits that could have been rescued.
+In exchange it gets 14 fewer wrong. That is
 the right trade for the real failures: every long SEARCH that failed in the recorded runs was code that is not in the
 file. The prompt also asks for anchors of 1 to 3 lines, since anchors of 9 or more lines failed 54% of the time
 (#116).
@@ -125,9 +132,9 @@ lines that occur everywhere from anchoring the search, and dropped the listing f
 | SEARCH lines | Damaged edits, limit 8: correct / wrong / refused |
 |---|---|
 | 1-3 | 70 / 0 / 0 |
-| 4-6 | 2,138 / 43 / 244 |
-| 7-8 | 286 / 14 / 18 |
-| 9-12 | 272 / 5 / 146 |
+| 4-6 | 2,140 / 34 / 251 |
+| 7-8 | 287 / 6 / 25 |
+| 9-12 | 272 / 2 / 149 |
 | 13-20 | 196 / 0 / 133 |
 | 21 and more | 164 / 0 / 105 |
 
@@ -138,11 +145,14 @@ range of that file:
 
 | Failure | Failed edits | `edit.py`, no hint | with `--near` |
 |---|---|---|---|
-| not found | 28 | applied 9, already done 3, refused as long 10, refused with closest lines 6 | the same |
-| occurs N times | 15 | lists the lines 15 | applied 15 |
+| not found | 28 | applied 3, already done 3, refused as long 10, refused with closest lines 6, refused as a syntax error 6 | applied 3, already done 3, long 10, closest 4, conflict 2, syntax error 6 |
+| occurs N times | 15 | lists the lines 15 | applied 7, refused as a syntax error 8 |
 
-Only 7 of the 43 have a label, the agent's own later fix. Rescuing an edit is also not the same as fixing the task:
-several of these edits were wrong fixes in the right place.
+With the compile check (#144), 14 of the edits `edit.py` would have applied are refused, because the file wouldn't
+compile afterwards. In all 8 that can be checked, the "occurs N times" ones, the agent's own replacement text breaks the
+file even when applied by plain string replacement. These were wrong edits whichever tool applied them, and a file
+that doesn't compile fails every test. Only 7 of the 43 have a label, the agent's own later fix. Rescuing an edit is
+also not the same as fixing the task: several of these edits were wrong fixes in the right place.
 
 ## find.py (`analysis/find_eval.py`, `find_ranks.csv`)
 
@@ -189,18 +199,21 @@ The same two tests ran on 255 tasks from:
 
 | Repository | Damaged edits | `edit_file`: correct / wrong / refused | `edit.py` |
 |---|---|---|---|
-| health-transformation-lab-nlp | 5,202 | 2,940 / 497 / 1,765 | 4,474 / 267 / 461 |
+| health-transformation-lab-nlp | 5,202 | 2,940 / 497 / 1,765 | 4,469 / 34 / 699 |
 | pipeline-doctor | 106 | 65 / 2 / 39 | 88 / 0 / 18 |
 | gemma-developer-agent | 125 | 79 / 0 / 46 | 109 / 2 / 14 |
-| open-navigator | 11,373 | 7,107 / 311 / 3,955 | 9,835 / 122 / 1,416 |
-| **all** | 16,806 | **10,191 / 810 / 5,805** | **14,506 / 391 / 1,909** |
+| open-navigator | 11,373 | 7,107 / 311 / 3,955 | 9,836 / 76 / 1,461 |
+| **all** | 16,806 | **10,191 / 810 / 5,805** | **14,502 / 112 / 2,192** |
 
 - **`find.py`:** first place, only grep 13 against only `find.py` 75 (p ≈ 10⁻¹¹).
-- **`edit.py`, correct:** 60 against 4,375.
-- **`edit.py`, wrong:** 510 against 91 (p ≈ 10⁻⁷¹).
-- **Speed:** the slowest `edit.py` call took 0.15 seconds, and the slowest `find.py` search 2.1 seconds, on
+- **`edit.py`, correct:** 61 against 4,372.
+- **`edit.py`, wrong:** 772 against 74 (p ≈ 10⁻¹⁴⁷). Before the compile check (#144) `edit.py` was wrong 391 times;
+  the check refuses 279 of those and 4 correct edits. The 4 are probably hunks that don't compile without the
+  reference fix's other hunks.
+- **Speed:** the slowest `edit.py` call took 0.24 seconds, and the slowest `find.py` search 2.1 seconds, on
   open-navigator's 818 Python files.
-- **The gap repeats here too:** "one context line left out" is again where `edit.py` errs: 354 wrong against 314.
+- **"One context line left out":** this is still where `edit.py` errs most, but now less than `edit_file`: 78 wrong
+  against 314 (354 before the compile check).
 
 ## End to end in the harness
 
