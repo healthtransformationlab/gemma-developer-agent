@@ -14,8 +14,8 @@ Tries SEARCH as given, then without a last line of tool-call debris, then with J
 the lines SEARCH and REPLACE differ in and keeps the file's own copy of the rest; where that is a guess (SEARCH and the
 file differ where REPLACE makes its change, or their indentation disagrees) it changes nothing. It says when the change
 is already made, lists the lines when SEARCH occurs more than once, and otherwise prints the closest lines. Output
-starts with NOTHING WRITTEN when the file is unchanged. Exit 0 either way, 2 for a usage error. Python 3.8+, standard
-library only.
+starts with NOTHING WRITTEN when the file is unchanged, as it is when the edit would leave a .py file that compiled
+unable to compile. Exit 0 either way, 2 for a usage error. Python 3.8+, standard library only.
 """
 import difflib
 import os
@@ -385,6 +385,18 @@ def finish(file_lines, trailing, i, j, new, how):
     return content, how + "\n" + "\n".join(list(diff)[2:])
 
 
+def compile_error(path, text):
+    """None when text compiles as Python, else "line N: message". Only used to refuse an edit that breaks a file that
+    compiled before it, so a sandbox Python older than the repository's syntax never causes a refusal."""
+    try:
+        compile(text, path, "exec", dont_inherit=True)
+    except SyntaxError as e:
+        return "line %s: %s" % (e.lineno, e.msg)
+    except ValueError as e:  # a null byte
+        return "line ?: %s" % e
+    return None
+
+
 def _read_stdin(wait=5.0):
     """stdin's text, or "" when nothing arrives within `wait` seconds (a call without a heredoc must not hang)."""
     try:
@@ -425,6 +437,7 @@ def main(argv=None, stdin=None):
         return 2
     with open(path, encoding="utf-8", newline="") as f:
         content = f.read()
+    original = content
     reports = []
     for n, (search, replace) in enumerate(blocks, 1):
         new, msg = apply(content, search, replace, near)
@@ -435,6 +448,12 @@ def main(argv=None, stdin=None):
             return 0
         reports.append(msg)
         content = new
+    if path.endswith(".py") and compile_error(path, original) is None:
+        broken = compile_error(path, content)
+        if broken:  # it compiled before this edit and would not after: a patch that fails every test
+            print("NOTHING WRITTEN: the edit would leave a syntax error at %s" % broken)
+            print("\n".join(reports))
+            return 0
     print("\n".join(reports))
     if dry:
         print("dry run: nothing written")

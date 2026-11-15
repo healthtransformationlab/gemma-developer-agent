@@ -29,6 +29,7 @@ EOF
   `\"`): exactly, then ignoring spaces, then the closest place (similarity 0.8 or more, clearly the best). The
   closest-place match is tried only when SEARCH has 8 lines or fewer, and refused wherever it would be a guess.
 - A close match changes only the lines SEARCH and REPLACE differ in, and keeps the file's own copy of the rest.
+- It refuses an edit that would leave a `.py` file that compiled unable to compile, and says where.
 - "REPLACE is already in the file": the change is done; move on.
 - "SEARCH occurs at lines ...": run again with `--near LINE`, the line you mean.
 - Otherwise it prints `NOTHING WRITTEN` and the closest lines with their numbers to copy from.

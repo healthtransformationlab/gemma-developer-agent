@@ -53,6 +53,14 @@ def changed_span(before, after):
     return None, None
 
 
+def _with_compile_check(path, before, new_content, message):
+    """As edit.py's main does (#144): an edit that leaves a .py file that compiled unable to compile is refused."""
+    if (new_content is not None and path.endswith(".py") and fb_edit.compile_error(path, before) is None
+            and fb_edit.compile_error(path, new_content)):
+        return None, "NOTHING WRITTEN: the edit would leave a syntax error"
+    return new_content, message
+
+
 def outcome(new_content, message):
     """What edit.py did, as a code."""
     if new_content is not None:
@@ -63,8 +71,10 @@ def outcome(new_content, message):
         return "lists_lines"
     if message.startswith("SEARCH has "):
         return "refused_long"
-    if "leaves out" in message or "differ where" in message:
+    if "leaves out" in message or "differ where" in message or "is a guess" in message:
         return "refused_conflict"
+    if "syntax error" in message:
+        return "refused_syntax"
     return "refused_closest"
 
 
@@ -115,12 +125,13 @@ def replay_task(trace_path, task, repo):
         row = dict(instance_id=task["instance_id"], repo_name=task["repo"], call_num=i, file_name=path,
                    recorded_status_code=_obs(obs).get("status"), replay_failure_code=failure,
                    search_line_count=len(fb_edit.core(old.splitlines(), debris=True)))
-        new_c, msg = fb_edit.apply(content, old, new)
+        new_c, msg = _with_compile_check(path, content, *fb_edit.apply(content, old, new))
         row["edit_py_outcome_code"] = outcome(new_c, msg)
         row["edit_py_start_num"], row["edit_py_end_num"] = changed_span(content, new_c)
         near = last_read.get(path)
         if near:
-            new_n, msg_n = fb_edit.apply(content, old, new, (near[0] + near[1]) // 2)
+            new_n, msg_n = _with_compile_check(path, content,
+                                               *fb_edit.apply(content, old, new, (near[0] + near[1]) // 2))
             row["edit_py_near_outcome_code"] = outcome(new_n, msg_n)
             row["edit_py_near_start_num"], row["edit_py_near_end_num"] = changed_span(content, new_n)
         else:
