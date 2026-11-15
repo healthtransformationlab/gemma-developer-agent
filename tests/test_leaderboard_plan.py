@@ -6,8 +6,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "docs" / "leaderboard-plan.md"
-QUEUED = {"5": "9c9cd3a", "5b": "80d23e8", "31B": "ed11c15", "5c": "0b7c63b", "6": "d265a78", "7": "7153a87",
-          "8": "5d68ce8"}
+QUEUED = {"5": "9c9cd3a", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "5c": "0b7c63b", "6": "d265a78",
+          "7": "7153a87", "8": "5d68ce8"}
 
 _spec = importlib.util.spec_from_file_location("edit_failures", ROOT / "analysis" / "edit_failures.py")
 ef = importlib.util.module_from_spec(_spec)
@@ -17,7 +17,7 @@ _spec.loader.exec_module(ef)
 def _rows() -> dict[str, str]:
     rows = {}
     for line in PLAN.read_text().splitlines():
-        m = re.match(r"\|\s*\*{0,2}(\w+)\*{0,2}\s*\|", line)
+        m = re.match(r"\|\s*\*{0,2}([\w-]+)\*{0,2}\s*\|", line)
         if m:
             rows[m.group(1)] = line
     return rows
@@ -51,7 +51,7 @@ def test_the_committed_result_holds_ids_and_classes_only():
 
 
 BRANCH = {"5": "main", "5b": "feat/122-skill-on-copyfix", "31B": "feat/124-31b-entry",
-          "5c": "feat/125-distilled-adapter", "6": "main", "7": "main", "8": "main"}
+          "31B-b": "feat/136-31b-budget-fit", "5c": "feat/125-distilled-adapter", "6": "main", "7": "main", "8": "main"}
 
 
 def test_every_queued_entry_names_its_repository_and_branch():
@@ -79,3 +79,12 @@ def test_error_kinds_come_from_the_tools_own_message():
 def test_the_committed_result_records_the_error_kind():
     header = (ROOT / "analysis" / "edit_failures.csv").read_text().splitlines()[0]
     assert "error_kind_code" in header
+
+
+def test_the_31b_comes_second_and_31b_b_waits_on_its_timing():
+    """#136: the owner put the 31B right after entry 5 (the main prizes can only be won with it); 31B-b, a longer
+    budget, goes only if the 31B entry finished inside 12 hours."""
+    order = [e for e in _rows() if e in QUEUED]
+    assert order == ["5", "31B", "5b", "31B-b", "5c", "6", "7", "8"], order
+    text = PLAN.read_text()
+    assert re.search(r"31B-b[^.]*does not go", text), "gate 31B-b on the 31B entry finishing inside 12 hours"
