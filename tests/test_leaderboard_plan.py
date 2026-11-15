@@ -81,10 +81,13 @@ def test_the_committed_result_records_the_error_kind():
     assert "error_kind_code" in header
 
 
-def test_the_31b_comes_second_and_31b_b_waits_on_its_timing():
-    """#136: the owner put the 31B right after entry 5 (the main prizes can only be won with it); 31B-b, a longer
-    budget, goes only if the 31B entry finished inside 12 hours."""
-    order = [e for e in _rows() if e in QUEUED]
-    assert order == ["5", "31B", "5b", "31B-b", "5c", "6", "7", "8"], order
+def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
+    """#136 put the 31B right after entry 5; #138 gave that slot to 31B-b (8 minutes, 28 calls), since the 5-minute 31B
+    entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
+    the 12-hour limit gets a shorter budget."""
+    order = [e for e, line in _rows().items() if e in QUEUED and line.rstrip().endswith("| queued |")]
+    assert order == ["5", "31B-b", "5b", "5c", "6", "7", "8"], order
     text = PLAN.read_text()
-    assert re.search(r"31B-b[^.]*does not go", text), "gate 31B-b on the 31B entry finishing inside 12 hours"
+    assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
+    assert "#818" in text, "cite the smoke test"
+    assert re.search(r"If 31B-b runs past the 12-hour limit, its per-task\s+budget is shortened", text)
