@@ -18,13 +18,15 @@ def _sampling() -> dict:
     return yaml.safe_load((ROOT / "configs" / "sampling.yaml").read_text())
 
 
-def test_the_input_gets_at_least_three_quarters_of_the_window():
-    assert WINDOW_TOKENS - _sampling()["max_output_tokens"] >= 24576
+def test_the_input_has_room_for_the_largest_prompt_seen():
+    """Issue 105: the largest prompt in the two 8,192 runs on the 23 development tasks was 17,426 tokens."""
+    assert WINDOW_TOKENS - _sampling()["max_output_tokens"] >= 20480
 
 
 def test_an_answer_still_has_room_after_thinking():
     s = _sampling()
-    assert s["max_output_tokens"] - s["thinking_config"]["thinking_budget"] >= 4096
+    # issue 105: at 8,192 (4,096 after thinking) one edit was cut off before its tool call closed
+    assert s["max_output_tokens"] - s["thinking_config"]["thinking_budget"] >= 8192
 
 
 def test_the_rulebook_notes_state_the_configured_output_tokens():
