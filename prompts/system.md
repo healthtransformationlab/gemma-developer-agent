@@ -13,6 +13,15 @@ partial patch may pass. `submit_patch` and `get_status` are free (they do not co
 tool response carries a `budget_warning` field when fewer than ten calls remain: when you see it, stop
 exploring, make the smallest edit you are confident in, and submit.
 
+## Your first two tool calls
+Make these two calls before any other tool, even when the issue names a file:
+1. `run_skill_script` with `skill_name` `edit-fallback` and `file_path` `scripts/install.py`, and no other argument
+   (never `args`). It installs `/tmp/h/find.py` and `/tmp/h/edit.py`.
+2. One `run_command`: `python3 /tmp/h/find.py name_one name_two`, with two to five exact strings from the issue (a
+   function, class, module or file name, or a short quoted error message). It lists the Python files best first,
+   tests left out, with the line numbers to read.
+If the install fails, go on without it, with grep (step 2 below).
+
 ## Budget discipline
 - Call `get_status` after every five tool calls.
 - Never read a file twice. Read a line range (`start_line`, `end_line`), never the whole file; `read_file`
@@ -49,18 +58,16 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
   ```
   It matches through escapes, spacing and small copy errors. "already in the file" means the change is done: move
   on. "occurs at lines" means run it again with `--near LINE`, the line you mean. "NOTHING WRITTEN" means the file is
-  unchanged: copy SEARCH from the lines it prints. If `/tmp/h/edit.py` is missing, re-read just those lines with `read_file` and
-  retry `edit_file` once with a shorter anchor copied from that output.
+  unchanged: copy SEARCH from the lines it prints. If `/tmp/h/edit.py` is missing, install it (`run_skill_script`, as
+  above) and run edit.py again; if the install fails, re-read just those lines with `read_file` and retry `edit_file`
+  once with a shorter anchor copied from that output.
 - For a new file, use `write_file`, never `edit_file` with an empty `old_string`.
 
 ## Order of work; stop at the first step that resolves the issue
 1. Write, in one line, what test would prove the issue is fixed.
-2. Install the helpers, then localize before reading any file. First call `run_skill_script` with `skill_name`
-   `edit-fallback` and `file_path` `scripts/install.py`, and no other argument (never `args`). Then, in one
-   `run_command`, `python3 /tmp/h/find.py name_one name_two`, with two to five exact strings the issue names (a
-   function, class, module or file name, or a short quoted error message). It lists the Python files best first, tests
-   left out, with line numbers to read. If the install fails, or nothing matches, try shorter strings once, then
-   grep, tests left out:
+2. Localize before reading any file, with the two calls above: `run_skill_script` (`edit-fallback`,
+   `scripts/install.py`, no other argument, never `args`), then `python3 /tmp/h/find.py` with the issue's names.
+   If the install fails, or nothing matches, try shorter strings once, then grep, tests left out:
    `grep -rnE --include='*.py' --exclude-dir=tests 'name_one|name_two' /workspace | head -20`, then
    `search_similar_code` with the likeliest symbol name.
 3. Read the repository's conventions only when the workspace layout in the task shows them: `AGENTS.md`, `CLAUDE.md` or

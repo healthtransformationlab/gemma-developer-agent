@@ -71,8 +71,10 @@ def test_a_failed_edit_goes_to_edit_py_never_the_same_old_string():
     assert "python3 /tmp/h/edit.py" in editing and "<<<<<<< SEARCH" in editing and ">>>>>>> REPLACE" in editing
     assert "--near" in editing and re.search(r"already", editing)
     assert re.search(r"never\s+(send\s+)?the\s+same\s+`old_string`", editing)
-    assert re.search(r"[Ii]f `?/tmp/h/edit.py`? is missing[^.]*re-read", editing), \
-        "without the helpers, fall back to re-reading the lines and retrying once with a shorter anchor"
+    assert re.search(r"[Ii]f `/tmp/h/edit.py` is missing, install it", editing), \
+        "#154: a missing edit.py means the install was skipped: install it then and run edit.py again"
+    assert re.search(r"install fails[^.]*re-read", editing), \
+        "only if the install fails, fall back to re-reading the lines and retrying once with a shorter anchor"
 
 
 def test_conventions_and_pipeline_doctor_only_when_the_repository_has_them():
@@ -189,3 +191,19 @@ def test_edits_anchor_on_short_plain_lines_and_recover_once():
     assert re.search(r"old_string not found", editing) and re.search(r"never\s+(send\s+)?the\s+same\s+`old_string`",
                                                                      editing), \
         "after a failed edit, never send the same old_string again (#122: edit.py is the recovery)"
+
+
+def test_the_first_two_calls_install_and_find():
+    """#154: with the install as step 2 of "Order of work", no task of the Modal colab-skill run (0 of 10, agent c7d68ea)
+    and no task of the 31B smoke test (0 of 3) called run_skill_script; the agent read the files the issue named
+    first. The two calls go at the top, right after the one rule, even when the issue names a file."""
+    one_rule = PROMPT.index("## The one rule above all others")
+    first = PROMPT.find("## Your first two tool calls")
+    assert first > one_rule, "a '## Your first two tool calls' section right after the one rule"
+    assert first < PROMPT.index("## Editing") and first < PROMPT.index("## Order of work")
+    section = PROMPT[first:].split("\n## ", 1)[0]
+    install, find = section.find("`run_skill_script`"), section.find("python3 /tmp/h/find.py")
+    assert 0 <= install < find, "install first, then find.py"
+    assert "`edit-fallback`" in section and "`scripts/install.py`" in section and "`args`" in section
+    assert "even when the issue names a file" in section
+    assert re.search(r"[Ii]f the install fails", section) and "grep" in section
