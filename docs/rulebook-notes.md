@@ -16,6 +16,32 @@ are extracted and graded. What changed in this repo because of it, and what to r
 - Allowed file extensions only: `.yaml .yml .md .txt .py .json .safetensors`; no symlinks; < 3 GiB unpacked.
 - Single base model across all agents; different LoRA adapters per agent are allowed (`adapters/<name>/`).
 
+## Prizes and the two final submissions
+
+From the competition's Overview page, as the owner pasted it on November 15, 2026 (not in `HARNESS_README.md`):
+
+- **Main prizes:** 1st $37,000, 2nd $18,000, 3rd $10,000, to the top three overall, whatever the model. (The Paper
+  Track's $35,000 is a separate competition; its deadline was November 12.)
+- **Small-model bonus: $10,000** to the highest-ranking submission that uses Gemma **E2B or E4B** as its base model.
+  It must be **one of the team's two selected final submissions**. LoRA adapters are allowed, as in the main track,
+  and an eligible submission stays eligible for the main prizes. The same deadlines and tie-breaking apply.
+- **Small-model standings:** a host notebook updates them daily,
+  [`ryanholbrook/gemma-4-developer-agent-small-model-leaderboard`](https://www.kaggle.com/code/ryanholbrook/gemma-4-developer-agent-small-model-leaderboard).
+  Read it with `kaggle kernels output ryanholbrook/gemma-4-developer-agent-small-model-leaderboard -p <dir>`, which
+  writes `leaderboard.csv` (`Rank`, `TeamName`, `PublicScore`). Its November 14, 2026 output (23:55 UTC) put the top
+  two at 0.12, ten more at 0.10, and this entry (team `jcblearning`) 699th of 1,035 at 0.05. These are public scores,
+  on about half the hidden tasks (about 58, so one task is about 0.017), and the final standings use the other half.
+- **One submission a day** (`maxDailySubmissions` 1). The entry and team-merger deadline is November 25, 2026, and
+  the final submission deadline December 2, 2026, both at 23:59 UTC.
+- **Time:** 12 hours for all tasks, sandbox setup included and patch validation not. Per-task limits in
+  `eval_config.yaml` are optional (below).
+- **GPU quota:** notebooks on L4x4 machines use Kaggle GPU quota at twice the rate of T4x2 and P100 machines, and
+  L4s are only for notebooks attached to this competition, with internet off.
+
+So the two final submissions are chosen for two prizes: one is the best E4B entry, for the small-model bonus, and
+the other may use any allowed model (`gemma-4-31b-it-qat-w4a16-ct` included), for the main prizes. Every agent in
+one submission uses the same base model.
+
 ## Hardware and serving
 4 × L4 (96 GB), vLLM tensor-parallel 4, `max_model_len` 32,768, Gemma 4 tool and reasoning parsers; each
 sandbox container has 4 GiB RAM and 2 vCPUs, no network.
