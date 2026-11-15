@@ -81,9 +81,9 @@ def test_prompt_keeps_its_placeholders():
 
 
 MAX_LORA_RANK = 128     # the competition's vLLM max_lora_rank (HARNESS_README.md, section 3.1)
-COPYFIX_SHA256 = {      # Kaggle dataset michi883/ple-proj-svd-r128, as its description publishes them (#108)
-    "adapter_config.json": "3786855f2b3ea33e66d32d5ce5aacef61afc2882f92358dd36164c5f104dfbe1",
-    "adapter_model.safetensors": "9ce83a7cad3d8523c14750696dca06ee1ca89f50813047ae390ee00c7f17c888",
+DISTILLED_SHA256 = {    # Kaggle model omallo/gemma4-e4b-swe-agent-lora-from-31b, peft-lora-scale-1 v1, as downloaded (#125)
+    "adapter_config.json": "e813359ce4ae43403e533f8937ba250743fe670536dc3a7b76de4dc294300949",
+    "adapter_model.safetensors": "e7d5f6afed8f5a6c2e3b031646d95accd94749289366696039f4641bab396015",
 }
 
 
@@ -98,8 +98,8 @@ def _declared_adapters() -> dict[str, str]:
 
 def test_declared_adapters_exist_and_fit_the_server():
     declared = _declared_adapters()
-    assert declared.get("agent.yaml") == "copyfix", "the coder serves the copyfix adapter (#108)"
-    assert declared.get("code_analyzer.yaml") == "copyfix", "so does the analyzer: one model, one adapter"
+    assert declared.get("agent.yaml") == "distilled", "the coder serves the distilled adapter (#125)"
+    assert declared.get("code_analyzer.yaml") == "distilled", "so does the analyzer: one model, one adapter"
     for name in set(declared.values()):
         folder = ROOT / "adapters" / name
         assert re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", name), f"adapter name {name!r} the harness refuses"
@@ -108,7 +108,8 @@ def test_declared_adapters_exist_and_fit_the_server():
         assert (folder / "adapter_model.safetensors").is_file()
 
 
-def test_copyfix_files_match_the_published_hashes():
-    for fname, digest in COPYFIX_SHA256.items():
-        got = hashlib.sha256((ROOT / "adapters" / "copyfix" / fname).read_bytes()).hexdigest()
-        assert got == digest, f"{fname} is not the published copyfix file"
+def test_distilled_files_match_the_downloaded_hashes():
+    for fname, digest in DISTILLED_SHA256.items():
+        got = hashlib.sha256((ROOT / "adapters" / "distilled" / fname).read_bytes()).hexdigest()
+        assert got == digest, f"{fname} is not the downloaded distilled adapter file"
+    assert not (ROOT / "adapters" / "copyfix").exists(), "one adapter: copyfix is swapped out in this entry"
