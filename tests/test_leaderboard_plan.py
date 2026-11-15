@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if e in QUEUED and line.rstrip().endswith("| queued |")]
-    assert order == ["5", "31B-b", "5b", "31B-c", "31B-d"], order   # 31B-d #145; 6, 7, 8 and 5c held under the three-task rule (#142)
+    assert order == ["5", "5b"], order   # 31B-b, 31B-c, 31B-d held for the timing run (#150); 6, 7, 8 and 5c (#142)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -125,7 +125,15 @@ def test_small_entries_are_held_under_the_three_task_rule():
     assert "Three tasks or a repeat" in text
     for entry in ("6", "7", "8", "5c"):
         assert _cells(_rows()[entry])[-1].startswith("held:"), f"entry {entry} is not held"
-    for entry in ("5", "31B-b", "5b", "31B-c"):
+    for entry in ("5", "5b"):   # the 31B entries wait on the timing run (#150)
         assert _cells(_rows()[entry])[-1] == "queued", f"entry {entry} should still be queued"
     rows = [e for e in _rows() if e in QUEUED]
     assert rows.index("5c") > rows.index("8"), "5c is last in line"
+
+
+def test_the_31b_entries_wait_on_the_timing_run():
+    """#150: no 31B entry goes until a 10-task run measures the average time a task (nlp #821)."""
+    rows = _rows()
+    for e in ("31B-b", "31B-c", "31B-d"):
+        assert rows[e].rstrip().endswith("| held: waiting on the 31B timing run (health-transformation-lab-nlp #821) |"), e
+    assert "about 11 hours" in PLAN.read_text()
