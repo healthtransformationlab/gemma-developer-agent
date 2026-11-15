@@ -25,3 +25,18 @@ Nothing blocking. Held as a draft until it is measured.
   the window. Not changed here.
 - No workflow runs `tests/` on this repository until PR 98 adds `submission-check.yml`; until then the test is run by
   hand.
+
+## Measured 2026-11-15
+- The run the notes asked for was made on November 14 with the owner's approval: this branch's agent (before `main`
+  was merged in) on the same 23 verifiable development tasks as the November 11 run, under the competition's
+  evaluator, one Kaggle kernel on four L4 GPUs. Record: `health-transformation-lab-nlp` pull request 745,
+  `data/tasks/official_agent_runs/gemma-4-e4b-it-qat-w4a16-ct_swegemma_devset-max-output-8192.csv`.
+- Resolved 3 against 3 (one gained, one lost; exact McNemar p = 1.0): no change in resolved tasks is claimed.
+- Ended at the context window: 0 against 3. One call's prompt was 17,155 tokens (`rich_3930`), which 16,384 would have
+  refused.
+- The worry in the first note did not happen: the largest of 418 answers was 4,813 tokens and none reached 8,000.
+- `main` (pull request 98's prompt and its `submission-check.yml`) merged in without conflict; 9 tests pass, the
+  competition's `validate_directory` passes, `paper/check_rules.py --check` exits 0. The two changes together are not
+  measured.
+
+Nothing blocking. Ready to merge once the record (`health-transformation-lab-nlp` pull request 745) is on its `main`.
