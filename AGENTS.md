@@ -16,6 +16,19 @@ The shared rules are in `.conventions/AGENTS-common.md` (vendored from pipeline-
   repo's own issues, PR descriptions and commit messages, with a fidelity tier.
 - **Secrets**: the Kaggle token lives in the Kaggle account and a GitHub environment secret, never here.
 
+## Kaggle GPU hours
+
+Development-set runs of this repository's PRs use the same Kaggle account, and so the same weekly GPU hours, as
+health-transformation-lab-nlp, whose AGENTS.md ("Failures, retries and reruns") holds the full rules (#110). On
+November 15 the week's hours were spent a day in.
+
+- **Read the quota before and after every run**: `python kaggle/gpu_quota.py` in health-transformation-lab-nlp
+  (used, allowed, left, refresh; it refreshes Saturday 00:00 UTC). Put the run's cost in its record.
+- **One GPU run at a time**, across every session on the account. Say so to the other sessions before starting one.
+- **A PR's effect on the score is measured by a leaderboard entry**, which runs on the host's machines; a
+  development-set run of 23 tasks is for a mechanism (failed edits, context-window endings), not a resolve rate.
+- **Keep a reserve** of about 10 hours until the last two days before the refresh.
+
 ## Layout
 
 `agent.yaml`, `prompts/`, `sub_agents/`, `configs/`, `eval_config.yaml`, `skills/` are the submission;

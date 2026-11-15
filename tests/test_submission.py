@@ -112,3 +112,11 @@ def test_copyfix_files_match_the_published_hashes():
     for fname, digest in COPYFIX_SHA256.items():
         got = hashlib.sha256((ROOT / "adapters" / "copyfix" / fname).read_bytes()).hexdigest()
         assert got == digest, f"{fname} is not the published copyfix file"
+
+
+def test_agents_md_rations_the_gpu_hours():
+    """#110: this repository's runs share the Kaggle account's weekly GPU hours with health-transformation-lab-nlp."""
+    text = (ROOT / "AGENTS.md").read_text()
+    section = text.split("## Kaggle GPU hours", 1)[1].split("\n## ", 1)[0] if "## Kaggle GPU hours" in text else ""
+    assert "gpu_quota.py" in section, "say to read the quota before and after every run"
+    assert "one gpu run at a time" in section.lower()
