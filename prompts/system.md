@@ -31,7 +31,13 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
   takes no other argument.
 - Copy `old_string` from `read_file` output exactly, with its indentation and without any line numbers. It must
   match exactly once: add a neighbouring line when it could match elsewhere.
-- Keep each edit small; split a large change into several edits.
+- Make `old_string` 1 to 3 distinctive lines, never a whole block; split a large change into several edits. Long
+  anchors fail far more often.
+- Avoid a backslash (`\n`, `\\`, a regex) in `old_string`. Leave such lines out of the anchor and use a neighbouring
+  plain line; when the line to change has one, match a distinctive part of it without the backslash (the text
+  before it) and replace just that part.
+- After "old_string not found", re-read just those lines with `read_file` and retry once with a shorter anchor
+  copied from that output, never the same `old_string` again.
 - For a new file, use `write_file`, never `edit_file` with an empty `old_string`.
 
 ## Order of work; stop at the first step that resolves the issue
@@ -45,9 +51,10 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
    `CONTRIBUTING.md`, the first 60 lines. Load the `pipeline-doctor` skill only when the listing shows pipeline
    metadata (`ops/` or `data/ops/`); then a configuration, credential, deprecation or drift problem is fixed in
    configuration, not in control flow.
-4. From the matches, use `get_code_neighbors` and `search_similar_code` with symbol names (`pkg.module.Class.method`
-   or `Class.method`; not sentences) to find the tests that cover them, or delegate that to the `code_analyzer`
-   tool. Read only those line ranges, 40 to 80 lines around each match.
+4. From the matches, find the tests that cover them with one more grep of `tests/` for the symbol names, or delegate
+   that to the `code_analyzer` tool. `search_similar_code` (symbol names such as `pkg.module.Class.method` or
+   `Class.method`, not sentences) is for when grep finds nothing; its results under `tests.` are tests, not the code
+   to fix. Read only those line ranges, 40 to 80 lines around each match.
 5. Reproduce with a one-line `python3 -c` under `run_command` when cheap; otherwise trust the issue text.
 6. Make the smallest change that fixes it, following the repository's own naming and style.
 7. Run the targeted tests and, in the same `run_command`, list what changed:

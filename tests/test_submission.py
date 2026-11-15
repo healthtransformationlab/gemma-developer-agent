@@ -5,6 +5,8 @@ conventions files unless a task's repository has them, must say where to look fi
 real argument names. Run: python -m pytest -q tests
 """
 
+import hashlib
+import json
 import re
 from pathlib import Path
 
@@ -12,7 +14,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 PROMPT = (ROOT / "prompts" / "system.md").read_text()
-SUBMISSION = ["agent.yaml", "eval_config.yaml", "prompts", "configs", "sub_agents", "skills"]
+SUBMISSION = ["agent.yaml", "eval_config.yaml", "prompts", "configs", "sub_agents", "skills", "adapters"]
 ALLOWED = {".yaml", ".yml", ".md", ".txt", ".py", ".json", ".safetensors"}   # docs/rulebook-notes.md
 HARNESS_TOOLS = {"run_command", "read_file", "edit_file", "write_file", "get_status", "submit_patch",
                  "get_code_neighbors", "search_similar_code", "get_code_subgraph"}
@@ -84,3 +86,67 @@ def test_scratch_files_are_removed_before_submitting():
     assert "git status --short" in submit_step, "check the workspace with `git status --short` before submitting"
     assert re.search(r"(delete|remove)[^.]*(scratch|only\s+to\s+(try|check))", submit_step, re.I), \
         "say to delete every file made only to try or check the fix before `submit_patch`"
+
+
+MAX_LORA_RANK = 128     # the competition's vLLM max_lora_rank (HARNESS_README.md, section 3.1)
+COPYFIX_SHA256 = {      # Kaggle dataset michi883/ple-proj-svd-r128, as its description publishes them (#108)
+    "adapter_config.json": "3786855f2b3ea33e66d32d5ce5aacef61afc2882f92358dd36164c5f104dfbe1",
+    "adapter_model.safetensors": "9ce83a7cad3d8523c14750696dca06ee1ca89f50813047ae390ee00c7f17c888",
+}
+
+
+def _declared_adapters() -> dict[str, str]:
+    found = {}
+    for f in [ROOT / "agent.yaml", *sorted((ROOT / "sub_agents").glob("*.yaml"))]:
+        m = re.search(r"^adapter:\s*(\S+)", f.read_text(), re.M)
+        if m:
+            found[f.name] = m.group(1)
+    return found
+
+
+def test_declared_adapters_exist_and_fit_the_server():
+    declared = _declared_adapters()
+    assert declared.get("agent.yaml") == "copyfix", "the coder serves the copyfix adapter (#108)"
+    assert declared.get("code_analyzer.yaml") == "copyfix", "so does the analyzer: one model, one adapter"
+    for name in set(declared.values()):
+        folder = ROOT / "adapters" / name
+        assert re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", name), f"adapter name {name!r} the harness refuses"
+        config = json.loads((folder / "adapter_config.json").read_text())
+        assert config["peft_type"] == "LORA" and config["r"] <= MAX_LORA_RANK
+        assert (folder / "adapter_model.safetensors").is_file()
+
+
+def test_copyfix_files_match_the_published_hashes():
+    for fname, digest in COPYFIX_SHA256.items():
+        got = hashlib.sha256((ROOT / "adapters" / "copyfix" / fname).read_bytes()).hexdigest()
+        assert got == digest, f"{fname} is not the published copyfix file"
+
+
+def test_agents_md_rations_the_gpu_hours():
+    """#110: this repository's runs share the Kaggle account's weekly GPU hours with health-transformation-lab-nlp."""
+    text = (ROOT / "AGENTS.md").read_text()
+    section = text.split("## Kaggle GPU hours", 1)[1].split("\n## ", 1)[0] if "## Kaggle GPU hours" in text else ""
+    assert "gpu_quota.py" in section, "say to read the quota before and after every run"
+    assert "one gpu run at a time" in section.lower()
+
+
+def test_graph_tools_are_not_given_or_named():
+    """#113: one-hop graph expansion ranked the code to fix no better than regex (docs/localization-study.md), and
+    cost about two tool calls a task; search_similar_code stays as the fallback."""
+    gone = {"get_code_neighbors", "get_code_subgraph"}
+    assert not gone & _agent_tools(), f"agents still given: {gone & _agent_tools()}"
+    texts = [PROMPT, (ROOT / "prompts" / "analyzer.md").read_text()]
+    assert not [t for t in gone for text in texts if t in text], "a prompt still names a removed tool"
+    assert "search_similar_code" in _agent_tools()
+    assert re.search(r"`tests\.`[^.]*not\s+the\s+code\s+to\s+fix", PROMPT), "say search results under tests. are tests"
+
+
+def test_edits_anchor_on_short_plain_lines_and_recover_once():
+    """#116: across four development-set runs, 37% of edits failed with "old_string not found"; anchors with a
+    backslash failed 50% and anchors of 9+ lines 54%. A short, exact anchor passes, as the NLP quote gate found."""
+    editing = PROMPT.split("## Editing", 1)[1].split("\n## ", 1)[0]
+    assert re.search(r"1\s+to\s+3\s+distinctive\s+lines", editing), "limit old_string to 1 to 3 distinctive lines"
+    assert re.search(r"backslash", editing) and re.search(r"neighbouring\s+plain\s+line", editing), \
+        "anchor on a plain neighbouring line, not one with a backslash"
+    assert re.search(r"old_string not found", editing) and re.search(r"never\s+the\s+same\s+`old_string`", editing), \
+        "after a failed edit, re-read and retry once with a shorter anchor, never the same one"

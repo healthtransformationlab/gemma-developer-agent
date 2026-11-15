@@ -2,3 +2,10 @@ gemma-developer-agent
 Copyright 2026 John Bowyer
 
 Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product includes adapters/copyfix (adapter_config.json, adapter_model.safetensors), the Gemma 4 E4B
+copy-fix adapter (rank 128), Copyright 2026 Michi Yamamoto, licensed under the Apache License, Version 2.0.
+Source: https://www.kaggle.com/datasets/michi883/ple-proj-svd-r128 and
+https://github.com/michi883/gemma-copying-tensor-fix (release v1.0.1). It is a derivative of one tensor of
+google/gemma-4-E4B-it-qat-w4a16-ct (Gemma 4, Google DeepMind; Apache-2.0 per its model card). The files are
+included unmodified. Not affiliated with or endorsed by Google or the adapter's author.

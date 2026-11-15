@@ -1,10 +1,9 @@
 name: code_analyzer
 model: gemma-4-e4b-it-qat-w4a16-ct
+adapter: copyfix          # training-free rank-128 LoRA for the QAT copy defect (#108; adapters/copyfix, NOTICE)
 description: Read-only analyst. Given an issue, returns the symbols it names, their one-hop neighbours, the tests that cover them, and the configuration that governs them, as paths and line ranges. Never edits.
 instruction: !include ../prompts/analyzer.md
 include_contents: none
 tools:
   - read_file
-  - get_code_neighbors
   - search_similar_code
-  - get_code_subgraph
