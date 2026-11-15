@@ -1,0 +1,24 @@
+{
+  "r": 16,
+  "lora_alpha": 16,
+  "lora_dropout": 0.0,
+  "bias": "none",
+  "peft_type": "LORA",
+  "task_type": "CAUSAL_LM",
+  "fan_in_fan_out": false,
+  "use_rslora": false,
+  "use_dora": false,
+  "base_model_name_or_path": "google/gemma-4-e4b-it-qat-w4a16-ct",
+  "target_modules": [
+    "down_proj",
+    "gate_proj",
+    "k_proj",
+    "o_proj",
+    "q_proj",
+    "up_proj",
+    "v_proj"
+  ],
+  "inference_mode": true,
+  "init_lora_weights": true,
+  "modules_to_save": null
+}

@@ -3,7 +3,13 @@ Copyright 2026 John Bowyer
 
 Licensed under the Apache License, Version 2.0 (see LICENSE).
 
-This product includes adapters/copyfix (adapter_config.json, adapter_model.safetensors), the Gemma 4 E4B
+This product includes adapters/distilled (adapter_config.json, adapter_model.safetensors), "Gemma 4 E4B SWE-agent
+LoRA (from 31B)", a rank-16 LoRA adapter for google/gemma-4-E4B-it-qat-w4a16-ct by omallo, licensed under the Apache
+License, Version 2.0. Source: https://www.kaggle.com/models/omallo/gemma4-e4b-swe-agent-lora-from-31b (framework
+transformers, instance peft-lora-scale-1, version 1). The files are included unmodified. Not affiliated with or
+endorsed by Google or the adapter's author.
+
+On main (not in this branch), this product also includes adapters/copyfix (adapter_config.json, adapter_model.safetensors), the Gemma 4 E4B
 copy-fix adapter (rank 128), Copyright 2026 Michi Yamamoto, licensed under the Apache License, Version 2.0.
 Source: https://www.kaggle.com/datasets/michi883/ple-proj-svd-r128 and
 https://github.com/michi883/gemma-copying-tensor-fix (release v1.0.1). It is a derivative of one tensor of
