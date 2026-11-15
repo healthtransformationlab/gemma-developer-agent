@@ -2,8 +2,10 @@
 # Single Agent" budget for the 31B, which several teams scored normally (about 0.20 to 0.24): 8 minutes, 28 calls,
 # 80 turns, 300-second commands. One team measured about 225 s a task on the scorer's 4xL4 including setup, so
 # about 7.5 hours for 120 tasks, inside the 12-hour limit. The 31B entry (#124) kept E4B's 5 minutes and 40 calls.
+# 31B-d2-5m (#161): our 31B timing run (nlp #821) averaged 357 s a task at 8 minutes, past 12 hours for 120 tasks, so
+# the per-task time is 5 minutes; calls and turns stay.
 evaluation:
-  timeout_seconds: 300          # per command
+  timeout_seconds: 120          # per command (#161: one command may not take most of a 5-minute task)
   max_tool_calls: 28
-  max_time_minutes: 8.0
+  max_time_minutes: 5.0         # #161: 120 x (300 + 45) s is about 11.5 h; at 8.0 the timing run's mean (357 s) made 13.4 h
   max_turns: 80
