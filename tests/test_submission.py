@@ -5,8 +5,6 @@ conventions files unless a task's repository has them, must say where to look fi
 real argument names. Run: python -m pytest -q tests
 """
 
-import hashlib
-import json
 import re
 from pathlib import Path
 
@@ -126,13 +124,6 @@ def test_scratch_files_are_removed_before_submitting():
         "say to delete every file made only to try or check the fix before `submit_patch`"
 
 
-MAX_LORA_RANK = 128     # the competition's vLLM max_lora_rank (HARNESS_README.md, section 3.1)
-COPYFIX_SHA256 = {      # Kaggle dataset michi883/ple-proj-svd-r128, as its description publishes them (#108)
-    "adapter_config.json": "3786855f2b3ea33e66d32d5ce5aacef61afc2882f92358dd36164c5f104dfbe1",
-    "adapter_model.safetensors": "9ce83a7cad3d8523c14750696dca06ee1ca89f50813047ae390ee00c7f17c888",
-}
-
-
 def _declared_adapters() -> dict[str, str]:
     found = {}
     for f in [ROOT / "agent.yaml", *sorted((ROOT / "sub_agents").glob("*.yaml"))]:
@@ -142,22 +133,14 @@ def _declared_adapters() -> dict[str, str]:
     return found
 
 
-def test_declared_adapters_exist_and_fit_the_server():
-    declared = _declared_adapters()
-    assert declared.get("agent.yaml") == "copyfix", "the coder serves the copyfix adapter (#108)"
-    assert declared.get("code_analyzer.yaml") == "copyfix", "so does the analyzer: one model, one adapter"
-    for name in set(declared.values()):
-        folder = ROOT / "adapters" / name
-        assert re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", name), f"adapter name {name!r} the harness refuses"
-        config = json.loads((folder / "adapter_config.json").read_text())
-        assert config["peft_type"] == "LORA" and config["r"] <= MAX_LORA_RANK
-        assert (folder / "adapter_model.safetensors").is_file()
-
-
-def test_copyfix_files_match_the_published_hashes():
-    for fname, digest in COPYFIX_SHA256.items():
-        got = hashlib.sha256((ROOT / "adapters" / "copyfix" / fname).read_bytes()).hexdigest()
-        assert got == digest, f"{fname} is not the published copyfix file"
+def test_the_31b_entry_declares_one_model_and_no_adapter():
+    """#124: every agent on gemma-4-31b-it-qat-w4a16-ct; no adapter declared or shipped, since the harness registers
+    every folder under adapters/ with vLLM and copyfix is an E4B adapter."""
+    for f in [ROOT / "agent.yaml", *sorted((ROOT / "sub_agents").glob("*.yaml"))]:
+        text = f.read_text()
+        assert re.search(r"^model:\s*gemma-4-31b-it-qat-w4a16-ct\s*$", text, re.M), f"{f.name} is not on the 31B"
+    assert not _declared_adapters(), f"adapters declared on the 31B: {_declared_adapters()}"
+    assert not (ROOT / "adapters").exists() or not any((ROOT / "adapters").rglob("*.safetensors"))
 
 
 def test_agents_md_rations_the_gpu_hours():
