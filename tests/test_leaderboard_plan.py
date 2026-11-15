@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if e in QUEUED and line.rstrip().endswith("| queued |")]
-    assert order == ["5"], order   # 31B-d waits on the timing run (#150), E4B-all on the skill-use check (#156)
+    assert order == [], order   # 5 skipped (#159); 31B-d waits on the timing run (#150), E4B-all on its check (#156)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -125,7 +125,7 @@ def test_small_entries_are_held_under_the_three_task_rule():
     assert "Three tasks or a repeat" in text
     for entry in ("6", "7", "8", "5c"):
         assert _cells(_rows()[entry])[-1].startswith("held:"), f"entry {entry} is not held"
-    assert _cells(_rows()["5"])[-1] == "queued", "entry 5 should still be queued"   # the stacks wait (#150, #156)
+    assert _cells(_rows()["5"])[-1].startswith("held: skipped by the owner"), "entry 5 is skipped (#159)"
     rows = [e for e in _rows() if e in QUEUED]
     assert rows.index("5c") > rows.index("8"), "5c is last in line"
 
@@ -161,3 +161,14 @@ def test_e4b_all_waits_on_the_skill_use_check():
     assert "204216e" in _rows()["E4B-all"], "the kill criterion names the fallback commit"
     assert "jcblearning/htlnlp-colab-official-colab-skill" in PLAN.read_text(), "name the colab-skill run"
     assert "0 of 10" in _rows()["5b"], "5b's row records the colab-skill result"
+
+
+def test_entry_5_is_skipped_and_31b_d_goes_second():
+    """#159: entry 5 would hold the one slot for about 12 hours to check what E4B-all checks too (it carries copyfix),
+    so the owner skipped it; 31B-d goes when its timing run clears, and E4B-all at 204216e if not by 02:00 UTC."""
+    assert _cells(_rows()["5"])[-1].startswith("held: skipped by the owner (#159)")
+    text = PLAN.read_text()
+    assert re.search(r"02:00 UTC[^.]*204216e", text), "the fallback names 02:00 UTC and 204216e"
+    e4b_all = _cells(_rows()["E4B-all"])
+    header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
+    assert e4b_all[header.index("Compared with")].startswith("4"), "E4B-all compares with entry 4, since 5 won't score"
