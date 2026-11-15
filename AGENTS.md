@@ -28,6 +28,11 @@ November 15 the week's hours were spent a day in.
 - **A PR's effect on the score is measured by a leaderboard entry**, which runs on the host's machines; a
   development-set run of 23 tasks is for a mechanism (failed edits, context-window endings), not a resolve rate.
 - **Keep a reserve** of about 10 hours until the last two days before the refresh.
+- **The owner's explicit yes starts a Kaggle GPU run**, given for that run in the session that starts it; "do what you
+  recommend" doesn't. **Recorded traces and CPU come first** (a kernel's traces download for free; the competition's
+  graphs and embeddings run on CPU), and a development-set run is never started to compare resolve counts: six of them
+  on the same 23 tasks resolved 3 or 4 each (p = 1.0). **One change per leaderboard entry**, booked in a shared plan.
+  The decision and its reasons: health-transformation-lab-nlp ADR 0007 (#120).
 
 ## Layout
 
