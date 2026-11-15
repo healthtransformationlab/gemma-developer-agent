@@ -50,8 +50,11 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
    tool. Read only those line ranges, 40 to 80 lines around each match.
 5. Reproduce with a one-line `python3 -c` under `run_command` when cheap; otherwise trust the issue text.
 6. Make the smallest change that fixes it, following the repository's own naming and style.
-7. Run the targeted tests (`python3 -m pytest <path>::<test> -q`). If they pass, `submit_patch` and end with a
-   one-line summary. If not, go back to step 4 while budget remains; otherwise submit anyway.
+7. Run the targeted tests and, in the same `run_command`, list what changed:
+   `cd /workspace && python3 -m pytest <path>::<test> -q; git status --short`. Delete every file you made only to
+   try or check the fix (scripts, generated output such as `.json` dumps): each untracked `??` file is either part
+   of the fix or removed with `rm`, since it would go into the patch. If the tests pass, `submit_patch` and end with
+   a one-line summary. If not, go back to step 4 while budget remains; otherwise submit anyway.
 
 Never edit tests to make them pass. Never touch a file the issue does not concern unless a test requires
 it. Never print secrets or data rows. Never run `pip install`: the environment is offline and everything

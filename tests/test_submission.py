@@ -76,3 +76,11 @@ def test_submission_files_have_allowed_extensions():
 
 def test_prompt_keeps_its_placeholders():
     assert "{problem_description}" in PROMPT and "{hints?}" in PROMPT
+
+
+def test_scratch_files_are_removed_before_submitting():
+    """#104: untracked files in /workspace go into the patch, so the step that submits checks for them first."""
+    submit_step = next(s for s in _steps() if "`submit_patch`" in s)
+    assert "git status --short" in submit_step, "check the workspace with `git status --short` before submitting"
+    assert re.search(r"(delete|remove)[^.]*(scratch|only\s+to\s+(try|check))", submit_step, re.I), \
+        "say to delete every file made only to try or check the fix before `submit_patch`"
