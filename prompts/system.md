@@ -63,8 +63,8 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
    grep, tests left out:
    `grep -rnE --include='*.py' --exclude-dir=tests 'name_one|name_two' /workspace | head -20`, then
    `search_similar_code` with the likeliest symbol name.
-3. Read the repository's conventions only when that listing shows them: `AGENTS.md`, `CLAUDE.md` or
-   `CONTRIBUTING.md`, the first 60 lines. Load the `pipeline-doctor` skill only when the listing shows pipeline
+3. Read the repository's conventions only when the workspace layout in the task shows them: `AGENTS.md`, `CLAUDE.md` or
+   `CONTRIBUTING.md`, the first 60 lines. Load the `pipeline-doctor` skill only when the layout shows pipeline
    metadata (`ops/` or `data/ops/`); then a configuration, credential, deprecation or drift problem is fixed in
    configuration, not in control flow.
 4. From the matches, find the tests that cover them with one more grep of `tests/` for the symbol names, or delegate
