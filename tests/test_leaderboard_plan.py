@@ -99,7 +99,7 @@ def test_31b_c_is_compared_with_31b_b_and_shares_its_gate():
     8-minute budget it goes only if 31B-b finished inside 12 hours."""
     row = _rows()["31B-c"]
     assert "| 31B-b |" in row, "31B-c is compared with 31B-b"
-    assert re.search(r"31B-c[^.]*does not go", PLAN.read_text()), "gate 31B-c on 31B-b finishing inside 12 hours"
+    assert re.search(r"31B-c and 31B-d[^.]*do not go", PLAN.read_text()), "gate 31B-c and 31B-d on 31B-b finishing inside 12 hours"
 
 
 def _cells(line):
