@@ -48,3 +48,15 @@ def test_the_committed_result_holds_ids_and_classes_only():
     assert len(lines) > 100
     classes = {line.rsplit(",", 1)[1] for line in lines[1:]}
     assert classes <= set(ef.CLASSES)
+
+
+BRANCH = {"5": "main", "5b": "feat/122-skill-on-copyfix", "31B": "feat/124-31b-entry",
+          "5c": "feat/125-distilled-adapter", "6": "main", "7": "main", "8": "main"}
+
+
+def test_every_queued_entry_names_its_repository_and_branch():
+    rows = _rows()
+    for entry, branch in BRANCH.items():
+        assert "healthtransformationlab/gemma-developer-agent" in rows[entry], f"entry {entry}: name the repository"
+        assert f"/tree/{branch}" in rows[entry] or (branch == "main" and "/commit/" in rows[entry]), \
+            f"entry {entry}: link its branch {branch} or its commit on main"
