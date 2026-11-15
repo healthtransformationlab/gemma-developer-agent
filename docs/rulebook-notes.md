@@ -48,7 +48,8 @@ Results: `summary.json`, `task_results.jsonl`, `patches/`, `test_outputs/`, `tra
 ## What this changed here
 - `agent.yaml`: the analyzer is an `agent_tool` with `skip_summarization: true` (keeps its `read_file`
   output out of the coder's context), not a `sub_agents` include.
-- `configs/sampling.yaml`: `max_output_tokens` 16,384, `thinking_budget` 4,096, `include_thoughts`.
+- `configs/sampling.yaml`: `max_output_tokens` 8,192, `thinking_budget` 4,096, `include_thoughts`. At 16,384
+  the input got only half of the server's 32,768-token window, and a fifth of the runs ended at it (issue 99).
 - `eval_config.yaml`: 5 min, 40 calls, 60 turns, 120 s per command.
 - `prompts/system.md`: `{problem_description}` and `{hints?}` (optional: the evaluator sets `hints` only for a task that has
   some, and a required variable that is not set ends the agent before its first model call; issue 33); submit-before-budget first; the stripped
