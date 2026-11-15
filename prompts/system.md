@@ -13,8 +13,14 @@ partial patch may pass. `submit_patch` and `get_status` are free (they do not co
 tool response carries a `budget_warning` field when fewer than ten calls remain: when you see it, stop
 exploring, make the smallest edit you are confident in, and submit.
 
+## Patch first
+- Have a real edit in place by your 10th tool call: the smallest change you can defend from what you have read.
+  After that, tool calls test and repair that edit; they do not go back to searching.
+- Call `get_status` after your 6th tool call and after every 5 more. It shows `time_seconds_remaining`.
+- When less than half the time remains and there is no edit yet, make the edit now.
+- When less than a quarter of the time remains and there is an edit, call `submit_patch` now.
+
 ## Budget discipline
-- Call `get_status` after every five tool calls.
 - Never read a file twice. Read a line range (`start_line`, `end_line`), never the whole file; `read_file`
   returns at most 150 lines.
 - Keep each thought to a few sentences, then emit the next tool call. A turn with no tool call and no
