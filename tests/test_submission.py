@@ -129,6 +129,7 @@ def test_agents_md_rations_the_gpu_hours():
     assert "gpu_quota.py" in section, "say to read the quota before and after every run"
     assert "one gpu run at a time" in section.lower()
     assert "owner's explicit yes" in section and "ADR 0007" in section, "#120: cite the GPU decisions"
+    assert "owner's Colab by default" in section, "#120: every GPU run goes to Colab unless the owner approves Kaggle"
 
 
 def test_graph_tools_are_not_given_or_named():
