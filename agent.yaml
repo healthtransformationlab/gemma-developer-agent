@@ -2,6 +2,7 @@
 # see docs/rulebook-notes.md). Every agent uses the same base model; adapters are optional per agent.
 # This branch is the 31B entry for the main prizes (#124): the same agent as main, on gemma-4-31b-it-qat-w4a16-ct,
 # with no adapter (copyfix is an E4B adapter). main stays the E4B entry for the small-model bonus.
+# 31B-c (#140): a single agent; the code_analyzer sub-agent (sub_agents/, prompts/analyzer.md) is no longer given.
 name: data_pipeline_fixer
 model: gemma-4-31b-it-qat-w4a16-ct
 description: Fixes issues in Python repositories, reading the repository's conventions and metadata tables before its code, and always submits a patch before the budget runs out.
@@ -15,9 +16,6 @@ tools:
   - get_status
   - submit_patch
   - search_similar_code
-  - agent_tool:
-      config_path: sub_agents/code_analyzer.yaml
-      skip_summarization: true      # keeps the analyzer's read_file output out of the coder's context
 skills:
   - skills/edit-fallback     # find.py and edit.py, installed to /tmp/h by one no-argument call (#122)
   - skills/pipeline-doctor

@@ -198,3 +198,12 @@ def test_the_agent_runs_the_tests_find_py_named():
     step = next(s for s in _steps() if "git status --short" in s)
     assert "find.py --tests" in step and "`Tests to run`" in step and "timeout" in step
     assert re.search(r"never the whole suite", step) and re.search(r"never\s+pytest on a source file", step)
+
+
+def test_the_31b_c_entry_is_a_single_agent():
+    """#140: the 31B is short on time, and each code_analyzer use is a second model loop (13% of one run's task time in
+    the recorded spans); every scored top bundle in the write-ups is a single agent."""
+    text = re.sub(r"!include \S+", '""', (ROOT / "agent.yaml").read_text())
+    tools = yaml.safe_load(text)["tools"]
+    assert all(isinstance(t, str) for t in tools), f"an agent_tool is still given: {tools}"
+    assert "code_analyzer" not in PROMPT, "the prompt still names the code_analyzer tool"
