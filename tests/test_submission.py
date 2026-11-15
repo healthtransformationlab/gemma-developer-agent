@@ -38,13 +38,41 @@ def _agent_tools() -> set[str]:
 
 
 def test_localization_is_the_first_step_after_naming_the_test():
+    """#122: find.py ranked the reference fix's file first in 39 of 129 development tasks, against 12 for the grep it
+    replaces (docs/fallback-scripts-study.md); grep stays as the fallback, tests left out."""
     steps = _steps()
     first_reading = next(i for i, s in enumerate(steps) if "read_file" in s or "Read " in s)
-    locate = next((i for i, s in enumerate(steps) if "grep" in s and "/workspace" in s), None)
-    assert locate is not None, "no localization step: one run_command that greps /workspace"
+    locate = next((i for i, s in enumerate(steps) if "python3 /tmp/h/find.py" in s), None)
+    assert locate is not None, "no localization step: one run_command with python3 /tmp/h/find.py"
     assert locate < first_reading, "localize before reading any file"
-    assert "ls" in steps[locate] and re.search(r"tests?", steps[locate]), \
-        "the localization step lists /workspace and leaves tests out of the grep"
+    assert "grep" in steps[locate] and "/workspace" in steps[locate] and re.search(r"tests", steps[locate]), \
+        "keep grep over /workspace, tests left out, as the fallback when find.py finds nothing"
+
+
+def test_helpers_are_installed_first_with_no_other_argument():
+    """#122: run_skill_script runs install.py in the sandbox; array arguments can hang the tool-call parser (forum
+    #746336, #753973), so the call names only the skill and the script."""
+    steps = _steps()
+    install = next((i for i, s in enumerate(steps) if "`run_skill_script`" in s), None)
+    assert install is not None and install <= next(i for i, s in enumerate(steps) if "find.py" in s)
+    step = steps[install]
+    assert "`edit-fallback`" in step and "`scripts/install.py`" in step
+    assert re.search(r"no other argument", step) and "`args`" in step, "say: no other argument, never `args`"
+    assert re.search(r"[Ii]f the install (call )?fails", step) and "grep" in step, \
+        "if the install fails, the agent goes on with grep: the skill must never be what sinks a task"
+    text = re.sub(r"!include \S+", '""', (ROOT / "agent.yaml").read_text())
+    assert "skills/edit-fallback" in yaml.safe_load(text)["skills"]
+
+
+def test_a_failed_edit_goes_to_edit_py_never_the_same_old_string():
+    """#122: after a failed edit the agent made a successful retry 7 times in 43; edit.py matches through escapes,
+    spacing and small copy errors, says when a change is already made, and lists the lines of several matches."""
+    editing = PROMPT.split("## Editing", 1)[1].split("\n## ", 1)[0]
+    assert "python3 /tmp/h/edit.py" in editing and "<<<<<<< SEARCH" in editing and ">>>>>>> REPLACE" in editing
+    assert "--near" in editing and re.search(r"already", editing)
+    assert re.search(r"never\s+(send\s+)?the\s+same\s+`old_string`", editing)
+    assert re.search(r"[Ii]f `?/tmp/h/edit.py`? is missing[^.]*re-read", editing), \
+        "without the helpers, fall back to re-reading the lines and retrying once with a shorter anchor"
 
 
 def test_conventions_and_pipeline_doctor_only_when_the_repository_has_them():
@@ -74,6 +102,14 @@ def test_submission_files_have_allowed_extensions():
         files = [p] if p.is_file() else [f for f in p.rglob("*") if f.is_file() and "__pycache__" not in f.parts]
         bad += [str(f.relative_to(ROOT)) for f in files if f.suffix not in ALLOWED]
     assert not bad, f"extensions the evaluator refuses: {bad}"
+
+
+def test_submission_has_no_bytecode_cache():
+    """#122: the bundle copies these folders as they are, and the evaluator refuses a .pyc (forum #749200); the
+    tests load the skill's scripts without writing one."""
+    found = [str(f.relative_to(ROOT)) for entry in SUBMISSION if (ROOT / entry).is_dir()
+             for f in (ROOT / entry).rglob("*") if f.name == "__pycache__" or f.suffix == ".pyc"]
+    assert not found, f"bytecode caches in the submission: {found}"
 
 
 def test_prompt_keeps_its_placeholders():
@@ -150,5 +186,6 @@ def test_edits_anchor_on_short_plain_lines_and_recover_once():
     assert re.search(r"1\s+to\s+3\s+distinctive\s+lines", editing), "limit old_string to 1 to 3 distinctive lines"
     assert re.search(r"backslash", editing) and re.search(r"neighbouring\s+plain\s+line", editing), \
         "anchor on a plain neighbouring line, not one with a backslash"
-    assert re.search(r"old_string not found", editing) and re.search(r"never\s+the\s+same\s+`old_string`", editing), \
-        "after a failed edit, re-read and retry once with a shorter anchor, never the same one"
+    assert re.search(r"old_string not found", editing) and re.search(r"never\s+(send\s+)?the\s+same\s+`old_string`",
+                                                                     editing), \
+        "after a failed edit, never send the same old_string again (#122: edit.py is the recovery)"

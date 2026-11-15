@@ -79,6 +79,9 @@ Results: `summary.json`, `task_results.jsonl`, `patches/`, `test_outputs/`, `tra
   8,192 one edit was cut off before its tool call closed (issue 105). 12,288 leaves 20,480 for the input, above the
   largest prompt seen (17,426 tokens), and 8,192 for an answer after thinking.
 - `eval_config.yaml`: 5 min, 40 calls, 60 turns, 120 s per command.
+- `skills/edit-fallback` (#122): skills may ship `.py` scripts, and `run_skill_script` runs them in the task's
+  sandbox, so one call with no arguments installs `find.py` and `edit.py` to `/tmp/h/` for plain `run_command` lines
+  (`docs/fallback-scripts-study.md`).
 - `prompts/system.md`: `{problem_description}` and `{hints?}` (optional: the evaluator sets `hints` only for a task that has
   some, and a required variable that is not set ends the agent before its first model call; issue 33); submit-before-budget first; the stripped
   files; scratch in `/tmp`; symbol names for the graph tools; no `pip install`.

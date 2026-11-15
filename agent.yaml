@@ -19,4 +19,5 @@ tools:
       config_path: sub_agents/code_analyzer.yaml
       skip_summarization: true      # keeps the analyzer's read_file output out of the coder's context
 skills:
+  - skills/edit-fallback     # find.py and edit.py, installed to /tmp/h by one no-argument call (#122)
   - skills/pipeline-doctor
