@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "docs" / "leaderboard-plan.md"
-QUEUED = {"5": "9c9cd3a", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "31B-c": "2b1c444", "5c": "0b7c63b",
+QUEUED = {"5": "9c9cd3a", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "31B-c": "2b1c444", "31B-d": "31df2c0", "5c": "0b7c63b",
           "6": "d265a78", "7": "7153a87", "8": "5d68ce8"}
 
 _spec = importlib.util.spec_from_file_location("edit_failures", ROOT / "analysis" / "edit_failures.py")
@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if e in QUEUED and line.rstrip().endswith("| queued |")]
-    assert order == ["5", "31B-b", "5b", "31B-c"], order   # 6, 7, 8 and 5c held under the three-task rule (#142)
+    assert order == ["5", "31B-b", "5b", "31B-c", "31B-d"], order   # 31B-d #145; 6, 7, 8 and 5c held under the three-task rule (#142)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -99,7 +99,7 @@ def test_31b_c_is_compared_with_31b_b_and_shares_its_gate():
     8-minute budget it goes only if 31B-b finished inside 12 hours."""
     row = _rows()["31B-c"]
     assert "| 31B-b |" in row, "31B-c is compared with 31B-b"
-    assert re.search(r"31B-c[^.]*does not go", PLAN.read_text()), "gate 31B-c on 31B-b finishing inside 12 hours"
+    assert re.search(r"31B-c and 31B-d[^.]*do not go", PLAN.read_text()), "gate 31B-c and 31B-d on 31B-b finishing inside 12 hours"
 
 
 def _cells(line):
