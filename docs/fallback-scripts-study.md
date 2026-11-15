@@ -136,6 +136,31 @@ this change: `grep -rnE … | head -40`, with files taken in order of appearance
 - **Output size:** `find.py` prints at most 8 files and 3 lines each, which stays well inside the 5,000-character
   output cap.
 
+## End to end in the harness
+
+The harness's own `swegemma eval` ran one task (`htlnlp_68`, from this project's task set) with the subprocess sandbox,
+which our Kaggle runs used, and a scripted stand-in for the model (`analysis/harness_check_model.py`). This is
+SIMULATED: no model ran, so it shows the plumbing, not the agent.
+
+- **First run: a real defect.** `run_skill_script` ran `install.py`, which reported success, but the next command,
+  `python3 /tmp/h/find.py`, failed with "No such file". The subprocess sandbox rewrites `/tmp` inside a command to its
+  own folder, which it also sets as `TMPDIR`, while Python code writing to the literal `/tmp/h` reaches the real
+  `/tmp`. This is likely the earlier note that skill scripts were unreliable in the harness.
+- **The fix:**
+  - `install.py` writes the helpers to `/tmp/h` and to `$TMPDIR/h`, and reports the failure when it can write to
+    neither.
+  - `find.py` searches the current git checkout first.
+  - The prompt says what to do without the helpers.
+- **After the fix, in order:**
+  1. The install succeeded.
+  2. `find.py parse_answer` put `python/dental_omop_nlp/llm_reader.py` first, with the `def` line (133).
+  3. `edit.py` matched line 133, first with `--dry-run`, then for real; `git diff --stat` showed one file changed.
+  4. `submit_patch` gave a patch of 602 bytes with one file changed. Neither the helpers nor the harness's own
+     temporary script entered the patch.
+
+The scorer's Docker sandbox runs commands as typed, so `/tmp/h` is the same folder for the install and for the
+command. The first leaderboard entry is still the first test on the competition's own machines.
+
 ## What changed in the submission
 
 - `skills/edit-fallback/`:

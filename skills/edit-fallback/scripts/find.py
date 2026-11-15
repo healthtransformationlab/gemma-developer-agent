@@ -115,13 +115,20 @@ def scan(root, names):
     return found
 
 
+def root_dir():
+    """The repository: the current folder when it is a git checkout (the subprocess sandbox runs commands in the
+    workspace but has no real /workspace), else /workspace, else the current folder."""
+    if os.path.isdir(".git"):
+        return os.getcwd()
+    return "/workspace" if os.path.isdir("/workspace") else os.getcwd()
+
+
 def main(argv=None):
     names = list(sys.argv[1:] if argv is None else argv)
     if not names:
         print(__doc__)
         return 2
-    root = "/workspace" if os.path.isdir("/workspace") else "."
-    found = scan(root, names)
+    found = scan(root_dir(), names)
     if not found:
         print("No Python file contains %s. Try a shorter or different name from the issue." % ", ".join(names))
         return 1

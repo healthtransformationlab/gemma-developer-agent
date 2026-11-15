@@ -67,6 +67,14 @@ def test_main_prints_files_with_line_numbers_and_leaves_tests_out(tmp_path, monk
     assert "tests/test_table.py" not in text
 
 
+def test_main_searches_the_current_git_checkout_first(tmp_path, monkeypatch):
+    """In the subprocess sandbox a command runs in the workspace, but there is no real /workspace."""
+    repo = _repo(tmp_path)
+    (repo / ".git").mkdir()
+    monkeypatch.chdir(repo)
+    assert find.root_dir() == str(repo)
+
+
 def test_no_match_says_so_and_exits_1(tmp_path, monkeypatch):
     monkeypatch.chdir(_repo(tmp_path))
     out = io.StringIO()

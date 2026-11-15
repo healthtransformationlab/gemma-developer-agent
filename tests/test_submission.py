@@ -58,6 +58,8 @@ def test_helpers_are_installed_first_with_no_other_argument():
     step = steps[install]
     assert "`edit-fallback`" in step and "`scripts/install.py`" in step
     assert re.search(r"no other argument", step) and "`args`" in step, "say: no other argument, never `args`"
+    assert re.search(r"[Ii]f the install (call )?fails", step) and "grep" in step, \
+        "if the install fails, the agent goes on with grep: the skill must never be what sinks a task"
     text = re.sub(r"!include \S+", '""', (ROOT / "agent.yaml").read_text())
     assert "skills/edit-fallback" in yaml.safe_load(text)["skills"]
 
@@ -69,6 +71,8 @@ def test_a_failed_edit_goes_to_edit_py_never_the_same_old_string():
     assert "python3 /tmp/h/edit.py" in editing and "<<<<<<< SEARCH" in editing and ">>>>>>> REPLACE" in editing
     assert "--near" in editing and re.search(r"already", editing)
     assert re.search(r"never\s+(send\s+)?the\s+same\s+`old_string`", editing)
+    assert re.search(r"[Ii]f `?/tmp/h/edit.py`? is missing[^.]*re-read", editing), \
+        "without the helpers, fall back to re-reading the lines and retrying once with a shorter anchor"
 
 
 def test_conventions_and_pipeline_doctor_only_when_the_repository_has_them():

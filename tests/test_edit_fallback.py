@@ -218,12 +218,33 @@ def test_install_copies_the_helpers_and_prints_their_usage(tmp_path):
     assert install.TARGET == "/tmp/h"
     target = tmp_path / "h"
     out = io.StringIO()
-    install.main(target=str(target), out=out)
+    assert install.main(target=str(target), out=out) == 0
     for helper in ("find.py", "edit.py"):
         assert (target / helper).read_text() == (SCRIPTS / helper).read_text()
     text = out.getvalue()
-    assert f"python3 {target}/find.py" in text and f"python3 {target}/edit.py" in text
+    assert "python3 /tmp/h/find.py" in text and "python3 /tmp/h/edit.py" in text   # the path the agent types
     assert "<<<<<<< SEARCH" in text and "--near" in text
+
+
+def test_install_also_writes_where_the_subprocess_sandbox_maps_tmp(tmp_path, monkeypatch):
+    """The subprocess sandbox rewrites /tmp in a command to its own folder, which it also sets as TMPDIR; Python
+    code writing to a literal /tmp/h reaches the real /tmp (found by the end-to-end run of the harness, #122)."""
+    install = _load("install")
+    monkeypatch.setattr(install, "TARGET", str(tmp_path / "real_tmp" / "h"))
+    monkeypatch.setenv("TMPDIR", str(tmp_path / "sandbox_tmp"))
+    monkeypatch.delenv("EDIT_FALLBACK_DIR", raising=False)
+    assert install.main(out=io.StringIO()) == 0
+    for folder in (tmp_path / "real_tmp" / "h", tmp_path / "sandbox_tmp" / "h"):
+        assert (folder / "edit.py").is_file() and (folder / "find.py").is_file()
+
+
+def test_install_reports_when_it_cannot_write(tmp_path, monkeypatch):
+    install = _load("install")
+    blocker = tmp_path / "file"
+    blocker.write_text("not a folder")
+    out = io.StringIO()
+    assert install.main(target=str(blocker / "h"), out=out) == 1
+    assert "grep" in out.getvalue() and "edit_file" in out.getvalue()
 
 
 def test_installed_helpers_run_as_commands(tmp_path):

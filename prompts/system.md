@@ -49,7 +49,8 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
   ```
   It matches through escapes, spacing and small copy errors. "already in the file" means the change is done: move
   on. "occurs at lines" means run it again with `--near LINE`, the line you mean. If it changes nothing, copy
-  SEARCH from the lines it prints.
+  SEARCH from the lines it prints. If `/tmp/h/edit.py` is missing, re-read just those lines with `read_file` and
+  retry `edit_file` once with a shorter anchor copied from that output.
 - For a new file, use `write_file`, never `edit_file` with an empty `old_string`.
 
 ## Order of work; stop at the first step that resolves the issue
@@ -58,7 +59,8 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
    `edit-fallback` and `file_path` `scripts/install.py`, and no other argument (never `args`). Then, in one
    `run_command`, `python3 /tmp/h/find.py name_one name_two`, with two to five exact strings the issue names (a
    function, class, module or file name, or a short quoted error message). It lists the Python files best first, tests
-   left out, with line numbers to read. If nothing matches, try shorter strings once, then grep, tests left out:
+   left out, with line numbers to read. If the install fails, or nothing matches, try shorter strings once, then
+   grep, tests left out:
    `grep -rnE --include='*.py' --exclude-dir=tests 'name_one|name_two' /workspace | head -20`, then
    `search_similar_code` with the likeliest symbol name.
 3. Read the repository's conventions only when that listing shows them: `AGENTS.md`, `CLAUDE.md` or
