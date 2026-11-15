@@ -131,3 +131,14 @@ def test_graph_tools_are_not_given_or_named():
     assert not [t for t in gone for text in texts if t in text], "a prompt still names a removed tool"
     assert "search_similar_code" in _agent_tools()
     assert re.search(r"`tests\.`[^.]*not\s+the\s+code\s+to\s+fix", PROMPT), "say search results under tests. are tests"
+
+
+def test_edits_anchor_on_short_plain_lines_and_recover_once():
+    """#116: across four development-set runs, 37% of edits failed with "old_string not found"; anchors with a
+    backslash failed 50% and anchors of 9+ lines 54%. A short, exact anchor passes, as the NLP quote gate found."""
+    editing = PROMPT.split("## Editing", 1)[1].split("\n## ", 1)[0]
+    assert re.search(r"1\s+to\s+3\s+distinctive\s+lines", editing), "limit old_string to 1 to 3 distinctive lines"
+    assert re.search(r"backslash", editing) and re.search(r"neighbouring\s+plain\s+line", editing), \
+        "anchor on a plain neighbouring line, not one with a backslash"
+    assert re.search(r"old_string not found", editing) and re.search(r"never\s+the\s+same\s+`old_string`", editing), \
+        "after a failed edit, re-read and retry once with a shorter anchor, never the same one"
