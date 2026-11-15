@@ -172,3 +172,12 @@ def test_edits_anchor_on_short_plain_lines_and_recover_once():
     assert re.search(r"old_string not found", editing) and re.search(r"never\s+(send\s+)?the\s+same\s+`old_string`",
                                                                      editing), \
         "after a failed edit, never send the same old_string again (#122: edit.py is the recovery)"
+
+
+def test_the_31b_c_entry_is_a_single_agent():
+    """#140: the 31B is short on time, and each code_analyzer use is a second model loop (13% of one run's task time in
+    the recorded spans); every scored top bundle in the write-ups is a single agent."""
+    text = re.sub(r"!include \S+", '""', (ROOT / "agent.yaml").read_text())
+    tools = yaml.safe_load(text)["tools"]
+    assert all(isinstance(t, str) for t in tools), f"an agent_tool is still given: {tools}"
+    assert "code_analyzer" not in PROMPT, "the prompt still names the code_analyzer tool"
