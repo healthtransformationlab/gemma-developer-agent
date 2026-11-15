@@ -190,3 +190,12 @@ def test_the_first_two_calls_install_and_find():
     assert "`edit-fallback`" in section and "`scripts/install.py`" in section and "`args`" in section
     assert "even when the issue names a file" in section
     assert re.search(r"[Ii]f the install fails", section) and "grep" in section
+
+
+def test_the_31b_c_entry_is_a_single_agent():
+    """#140: the 31B is short on time, and each code_analyzer use is a second model loop (13% of one run's task time in
+    the recorded spans); every scored top bundle in the write-ups is a single agent."""
+    text = re.sub(r"!include \S+", '""', (ROOT / "agent.yaml").read_text())
+    tools = yaml.safe_load(text)["tools"]
+    assert all(isinstance(t, str) for t in tools), f"an agent_tool is still given: {tools}"
+    assert "code_analyzer" not in PROMPT, "the prompt still names the code_analyzer tool"
