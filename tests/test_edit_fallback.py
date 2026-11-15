@@ -7,6 +7,7 @@ block, changing only the lines the agent meant to change. Each case below is one
 """
 
 import ast
+import contextlib
 import importlib.util
 import io
 import os
@@ -180,7 +181,7 @@ def test_main_writes_on_success_and_exits_with_its_codes(tmp_path):
              "        self.rows.insert(0, renderables)\n>>>>>>> REPLACE\n")
     assert edit.main([str(f)], io.StringIO(block)) == 0
     assert "self.rows.insert(0, renderables)" in f.read_text()
-    assert edit.main([str(f)], io.StringIO(block)) == 1          # SEARCH is gone now: nothing written
+    assert edit.main([str(f)], io.StringIO(block)) == 0          # SEARCH is gone now: NOTHING WRITTEN, exit 0
     assert edit.main([str(f)], io.StringIO("no block")) == 2
     assert edit.main([str(tmp_path / "missing.py")], io.StringIO(block)) == 2
     before = f.read_text()
@@ -277,3 +278,122 @@ def test_install_runs_through_adks_own_skill_wrapper(tmp_path):
     assert (tmp_path / "h" / "edit.py").read_text() == (SCRIPTS / "edit.py").read_text()
     assert (tmp_path / "h" / "find.py").read_text() == (SCRIPTS / "find.py").read_text()
     assert "find.py" in r.stdout
+
+
+# ---- regressions from the review of PR 123: each was a wrong change reported as success -------------------------
+
+def test_a_real_quote_line_is_not_taken_for_tool_call_debris():
+    text = 'X = [\n    "a",\n    "",\n]\n'
+    new, _ = edit.apply(text, '    "a",\n    "",', '    "b",\n    "",')
+    assert new == 'X = [\n    "b",\n    "",\n]\n'
+
+
+def test_first_line_that_lost_its_indentation_does_not_shift_the_rest():
+    text = "def f(x):\n    if x:\n        a()\n    b()\n    return x\n"
+    new, _ = edit.apply(text, "if x:\n        a()\n    b()", "if x:\n        a()\n    c()")
+    assert new in (None, text.replace("    b()", "    c()"))
+    text2 = "class A:\n    def f(self):\n        x = 1\n        return x\n"
+    new2, _ = edit.apply(text2, "def f(self):\n        x = 1", "def f(self):\n        x = 2")
+    assert new2 in (None, text2.replace("x = 1", "x = 2"))
+
+
+def test_tabs_in_the_file_against_spaces_in_search_are_refused():
+    text = "def f():\n\tx = 1\n\treturn x\n"
+    new, msg = edit.apply(text, "    x = 1\n    return x", "    x = 2\n    return x")
+    assert new in (None, text.replace("x = 1", "x = 2"))
+
+
+def test_a_changed_line_inside_an_unequal_block_is_a_conflict():
+    text = ("class C:\n    def setup(self, name, value):\n        self.name = name\n        self.value = value\n"
+            "        self.extra = None\n        return self\n")
+    head = "    def setup(self, name, value):\n        self.nme = name\n"
+    search = head + "        self.valu = value\n        return self"
+    replace = head + "        self.total = value\n        return self"
+    new, _ = edit.apply(text, search, replace)
+    assert new is None
+    with pytest.raises(edit.Conflict):
+        edit.merge(["a1", "a2", "a3", "z"], ["A", "B", "z"], ["A", "B2", "z"])
+
+
+def test_changing_a_search_line_the_file_does_not_have_is_a_conflict():
+    text = "def f(a):\n    check(a)\n    x = a + 1\n    log(x)\n    return x\n"
+    new, _ = edit.apply(text, "    check(a)\n    x = a + 1\n    y = x * 2\n    log(x)",
+                        "    check(a)\n    x = a + 1\n    y = x * 3\n    log(x)")
+    assert new is None
+
+
+def test_already_done_only_where_the_change_would_go():
+    text = ("def area(self):\n    w = self.width\n    h = self.height\n    return w * h\n\n"
+            "def name(self):\n    return None\n")
+    new, msg = edit.apply(text, "    h = self.heigt\n    return w * h", "    return None")
+    assert not msg.startswith("REPLACE is already")
+    assert new == text.replace("    h = self.height\n    return w * h\n", "    return None\n")
+    adjacent = "    validate(x)\n    process(x)\n    old_process(x)\n"
+    new2, _ = edit.apply(adjacent, "    old_process(x)", "    validate(x)\n    process(x)")
+    assert new2 == "    validate(x)\n    process(x)\n    validate(x)\n    process(x)\n"
+
+
+def test_a_backslash_in_the_code_keeps_the_raw_text_first():
+    text = 'class Doc:\n    def render(self):\n        sep = "\\n"\n        return sep.join(self.lines)\n'
+    new, _ = edit.apply(text, '        sep = "\\n"\n        return sep.join(self.line)',
+                        '        sep = "\\n\\n"\n        return sep.join(self.lines)')
+    assert new == text.replace('sep = "\\n"', 'sep = "\\n\\n"')
+
+
+def test_near_breaks_ties_only():
+    text = ("def get_width(self):\n    value = self._width\n    return value\n\n"
+            "def get_height(self):\n    value = self._height\n    return value\n")
+    search = "def get_widt(self):\n    value = self._width"
+    replace = "def get_widt(self):\n    value = self._width or 0"
+    expected = text.replace("    value = self._width\n", "    value = self._width or 0\n")
+    assert edit.apply(text, search, replace)[0] == expected
+    assert edit.apply(text, search, replace, near=5)[0] == expected
+
+
+def test_only_newlines_split_lines_and_each_keeps_its_ending():
+    ff = 'import os\n\x0c\ndef f():\n    return 1\n\n# s = "a\u2028b"\nx = 1\n'
+    assert edit.apply(ff, "    return 1", "    return 2")[0] == ff.replace("return 1", "return 2")
+    mixed = "a = 1\nb = 2\r\nc = 3\nd = 4\n"
+    assert edit.apply(mixed, "d = 4", "d = 5")[0] == mixed.replace("d = 4", "d = 5")
+    crlf = "a = 1\r\nb = 2\r\nc = 3\r\n"
+    assert edit.apply(crlf, "b = 2", "b = 20\nb2 = 1")[0] == "a = 1\r\nb = 20\r\nb2 = 1\r\nc = 3\r\n"
+    lone = 'x = "a\rb"\ny = 1\n'
+    assert edit.apply(lone, "y = 1", "y = 2")[0] == lone.replace("y = 1", "y = 2")
+
+
+def test_a_refusal_says_nothing_written_first_and_exits_0(tmp_path):
+    f = tmp_path / "m.py"
+    f.write_text(FILE)
+    out = io.StringIO()
+    block = "<<<<<<< SEARCH\n    def remove_row(self):\n=======\n    def remove_row(self, i):\n>>>>>>> REPLACE\n"
+    with contextlib.redirect_stdout(out):
+        assert edit.main([str(f)], io.StringIO(block)) == 0
+    assert out.getvalue().startswith("NOTHING WRITTEN")
+    assert f.read_text() == FILE
+    two = ("<<<<<<< SEARCH\n        return self\n=======\n        return None\n>>>>>>> REPLACE\n" * 1).replace(
+        "        return self\n=", "        self.rows.append(renderables)\n=") + block
+    out2 = io.StringIO()
+    with contextlib.redirect_stdout(out2):
+        edit.main([str(f)], io.StringIO(two))
+    assert out2.getvalue().startswith("NOTHING WRITTEN: block 2 of 2") and f.read_text() == FILE
+
+
+def test_no_block_on_stdin_does_not_wait_forever(tmp_path):
+    f = tmp_path / "m.py"
+    f.write_text(FILE)
+    r = subprocess.run([sys.executable, str(SCRIPTS / "edit.py"), str(f)], stdin=subprocess.PIPE,
+                       capture_output=True, text=True, timeout=30)   # stdin left open, nothing written to it
+    assert r.returncode == 2 and "No SEARCH/REPLACE block" in r.stdout
+
+
+def test_a_blank_line_at_the_end_of_search_is_part_of_it():
+    """Found on open-navigator: SEARCH is unique only with its blank last line; trimming it matched twice."""
+    text = "class A:\n    x: int = 0\n    y: int = 0\n    z = 1\n\nclass B:\n    x: int = 0\n    y: int = 0\n\n"
+    new, msg = edit.apply(text, "    x: int = 0\n    y: int = 0\n", "    x: int = 0\n    y: int = 0\n    w: int = 0\n")
+    assert new == text.replace("    y: int = 0\n\n", "    y: int = 0\n    w: int = 0\n\n"), msg
+
+
+def test_replacing_a_whole_file_that_ends_with_a_blank_line():
+    text = "a = 1\nb = 2\n\n"
+    new, _ = edit.apply(text, "a = 1\nb = 2\n", "c = 3")
+    assert new == "c = 3\n"

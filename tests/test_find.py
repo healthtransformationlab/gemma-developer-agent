@@ -1,6 +1,6 @@
 """The edit-fallback skill's find.py (#122): the repository's Python files ranked by the issue's names, tests, docs
 and examples left out, with matching line numbers. On the 129 development tasks it put the reference fix's file first
-in 43, against 12 for the prompt's grep | head -40 (analysis/find_ranks.csv). Run: python -m pytest -q tests
+in 39, against 12 for the prompt's grep | head -40 (analysis/find_ranks.csv). Run: python -m pytest -q tests
 """
 
 import contextlib
@@ -100,3 +100,38 @@ def test_output_is_short(tmp_path, monkeypatch):
         find.main(["add_row"])
     assert len(out.getvalue()) < 2500
     assert f"{find.MAX_FILES}" and out.getvalue().count("(names") == find.MAX_FILES
+
+
+def test_every_name_on_a_line_is_credited(tmp_path):
+    (tmp_path / "pkg").mkdir()
+    (tmp_path / "pkg" / "render.py").write_text("def render_table(width, padding):\n    return width + padding\n")
+    found = find.scan(str(tmp_path), ["render_table", "width", "padding"])
+    assert found[0][4] == 3
+
+
+def test_code_under_scripts_counts_and_left_out_files_are_counted(tmp_path, monkeypatch):
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "pkg").mkdir()
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "scripts" / "load_claims.py").write_text("def load_claims(path):\n    return path\n")
+    (tmp_path / "pkg" / "run.py").write_text("from scripts.load_claims import load_claims\n")
+    (tmp_path / "tests" / "test_load.py").write_text("from scripts.load_claims import load_claims\n")
+    found = find.scan(str(tmp_path), ["load_claims"])
+    assert found[0][2] == "scripts/load_claims.py"
+    monkeypatch.chdir(tmp_path)
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        find.main(["load_claims"])
+    assert "1 more in tests, docs or examples" in out.getvalue()
+
+
+def test_output_is_capped_even_with_long_paths(tmp_path, monkeypatch):
+    deep = tmp_path / ("a_very_long_directory_name_for_testing_" * 5)
+    deep.mkdir()
+    for k in range(20):
+        (deep / (f"module_with_a_long_name_number_{k}_" * 3 + ".py")).write_text("def add_row():\n    add_row()\n" * 5)
+    monkeypatch.chdir(tmp_path)
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        find.main(["add_row"])
+    assert len(out.getvalue()) <= 4000

@@ -25,13 +25,13 @@ the same lines as they should be
 EOF
 ```
 
-- It matches in this order: exactly; with escapes undone (a literal `\n` or `\"`); ignoring spaces; then the closest
-  place (similarity 0.8 or more, clearly the best). The closest-place match is tried only when SEARCH has 8 lines or
-  fewer.
+- It tries SEARCH as written, then trimmed and without tool-call debris, then with escapes undone (a literal `\n` or
+  `\"`): exactly, then ignoring spaces, then the closest place (similarity 0.8 or more, clearly the best). The
+  closest-place match is tried only when SEARCH has 8 lines or fewer, and refused wherever it would be a guess.
 - A close match changes only the lines SEARCH and REPLACE differ in, and keeps the file's own copy of the rest.
 - "REPLACE is already in the file": the change is done; move on.
 - "SEARCH occurs at lines ...": run again with `--near LINE`, the line you mean.
-- Otherwise it changes nothing, and prints the closest lines with their numbers to copy from.
+- Otherwise it prints `NOTHING WRITTEN` and the closest lines with their numbers to copy from.
 
 Measured on CPU over the development set's four repositories (fastapi, rich, requests, httpx):
 `docs/fallback-scripts-study.md`.

@@ -26,8 +26,8 @@ the same lines as they should be
 >>>>>>> REPLACE
 EOF
 It matches exactly, then with escapes undone, then ignoring spaces, then the closest place; it says when the change
-is already made, lists the lines when SEARCH occurs more than once (then add --near LINE), and changes nothing when
-unsure.
+is already made, lists the lines when SEARCH occurs more than once (then add --near LINE), and when unsure it prints
+NOTHING WRITTEN and the closest lines to copy from.
 """
 
 FAILED = """Could not install the helpers ({error}). Do without them: localize with grep (tests left out), and after a

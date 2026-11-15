@@ -48,8 +48,8 @@ code. Put any scratch script in `/tmp`, never in `/workspace`, or delete it befo
   EOF
   ```
   It matches through escapes, spacing and small copy errors. "already in the file" means the change is done: move
-  on. "occurs at lines" means run it again with `--near LINE`, the line you mean. If it changes nothing, copy
-  SEARCH from the lines it prints. If `/tmp/h/edit.py` is missing, re-read just those lines with `read_file` and
+  on. "occurs at lines" means run it again with `--near LINE`, the line you mean. "NOTHING WRITTEN" means the file is
+  unchanged: copy SEARCH from the lines it prints. If `/tmp/h/edit.py` is missing, re-read just those lines with `read_file` and
   retry `edit_file` once with a shorter anchor copied from that output.
 - For a new file, use `write_file`, never `edit_file` with an empty `old_string`.
 

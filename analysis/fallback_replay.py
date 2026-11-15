@@ -29,7 +29,12 @@ fb_edit = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(fb_edit)
 
 REPO_DIR = {"fastapi/fastapi": "fastapi", "Textualize/rich": "rich", "psf/requests": "requests",
-            "encode/httpx": "httpx"}
+            "encode/httpx": "httpx",
+            # this organisation's repositories (the generality check; the competition's development set decides)
+            "healthtransformationlab/health-transformation-lab-nlp": "health-transformation-lab-nlp",
+            "healthtransformationlab/pipeline-doctor": "pipeline-doctor",
+            "healthtransformationlab/gemma-developer-agent": "gemma-developer-agent",
+            "getcommunityone/open-navigator": "open-navigator"}
 
 
 def git_show(repo, commit, path):
@@ -107,7 +112,7 @@ def replay_task(trace_path, task, repo):
             continue
         except Exception as ex:  # the harness's failure: the case edit.py is for
             failure = "multiple" if ("occurs" in str(ex) or "flexibly matches" in str(ex)) else "not_found"
-        row = dict(instance_id=task["instance_id"], repo_name=task["repo"], call_num=i, file_path=path,
+        row = dict(instance_id=task["instance_id"], repo_name=task["repo"], call_num=i, file_name=path,
                    recorded_status_code=_obs(obs).get("status"), replay_failure_code=failure,
                    search_line_count=len(fb_edit.core(old.splitlines(), debris=True)))
         new_c, msg = fb_edit.apply(content, old, new)

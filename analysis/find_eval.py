@@ -22,7 +22,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO_DIR = {"fastapi/fastapi": "fastapi", "Textualize/rich": "rich", "psf/requests": "requests",
-            "encode/httpx": "httpx"}
+            "encode/httpx": "httpx",
+            # this organisation's repositories (the generality check; the competition's development set decides)
+            "healthtransformationlab/health-transformation-lab-nlp": "health-transformation-lab-nlp",
+            "healthtransformationlab/pipeline-doctor": "pipeline-doctor",
+            "healthtransformationlab/gemma-developer-agent": "gemma-developer-agent",
+            "getcommunityone/open-navigator": "open-navigator"}
 TEST = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)conftest\.py$")
 
 
@@ -59,7 +64,7 @@ def rank(files, gold):
 
 
 def main(tasks_path, repos_dir, out_path):
-    rows = []
+    rows, skipped = [], 0
     for line in open(tasks_path):
         t = json.loads(line)
         gold = {f for f in re.findall(r"^\+\+\+ b/(\S+)", t["patch"], re.M) if f.endswith(".py") and not TEST.search(f)}
@@ -69,7 +74,11 @@ def main(tasks_path, repos_dir, out_path):
         td = tempfile.mkdtemp()
         try:
             archive = subprocess.run(["git", "-C", str(Path(repos_dir) / REPO_DIR[t["repo"]]), "archive",
-                                      t["base_commit"]], capture_output=True, check=True)
+                                      t["base_commit"], "--", ":(glob)**/*.py"],  # both searches read .py only
+                                     capture_output=True)
+            if archive.returncode != 0:  # base commit not in the local clone: skipped, and counted
+                skipped += 1
+                continue
             subprocess.run(["tar", "-x", "-C", td], input=archive.stdout, check=True)
             g_files, g_chars, f_files, secs = [], 0, [], 0.0
             if words:
@@ -89,7 +98,7 @@ def main(tasks_path, repos_dir, out_path):
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader()
         w.writerows(rows)
-    print(len(rows), "tasks")
+    print(len(rows), "tasks;", skipped, "skipped (base commit not in the local clone)")
 
 
 if __name__ == "__main__":

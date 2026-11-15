@@ -1,5 +1,7 @@
-"""The numbers in docs/fallback-scripts-study.md, from the three CSVs the study wrote (#122). Pairs are compared with
-the exact McNemar test (two-sided binomial on the discordant pairs).
+"""The numbers in docs/fallback-scripts-study.md, from the CSVs the study wrote (#122): the competition's development
+set (find_ranks.csv, fallback_synth.csv, fallback_replay.csv), then this organisation's own repositories as the
+generality check (find_ranks_own.csv, fallback_synth_own.csv). Pairs are compared with the exact McNemar test
+(two-sided binomial on the discordant pairs).
 
 usage: fallback_summary.py [analysis dir]   (default: this script's folder)
 """
@@ -9,7 +11,6 @@ from collections import Counter
 from math import comb
 from pathlib import Path
 
-REPOS = ["fastapi/fastapi", "Textualize/rich", "psf/requests", "encode/httpx"]
 DAMAGES = ["exact", "escaped", "copy_s", "indent", "drop_line", "junk_tail", "not_in_file", "already_done"]
 
 
@@ -26,9 +27,13 @@ def hit(row, col, k):
     return row[col] != "" and int(row[col]) <= k
 
 
+def repos_of(rows):
+    return list(dict.fromkeys(x["repo_name"] for x in rows))
+
+
 def find_table(rows):
     out = ["| Repository | Tasks | Top 1: grep / find.py | Top 3 | Top 8 |", "|---|---|---|---|---|"]
-    for repo in REPOS + ["all"]:
+    for repo in repos_of(rows) + ["all"]:
         r = [x for x in rows if repo == "all" or x["repo_name"] == repo]
         cells = [f"{sum(hit(x, 'grep_file_rank_num', k) for x in r)} / "
                  f"{sum(hit(x, 'find_file_rank_num', k) for x in r)}" for k in (1, 3, 8)]
@@ -50,7 +55,7 @@ def synth_table(rows):
         r = [x for x in rows if d == "all" or x["damage_code"] == d]
         out.append(f"| {d} | {len(r)} | {cwr(r, 'edit_file_outcome_code')} | {cwr(r, 'edit_py_outcome_code')} |")
     out += ["", "| Repository | Edits | edit_file | edit.py |", "|---|---|---|---|"]
-    for repo in REPOS:
+    for repo in repos_of(rows):
         r = [x for x in rows if x["repo_name"] == repo]
         out.append(f"| {repo} | {len(r)} | {cwr(r, 'edit_file_outcome_code')} | {cwr(r, 'edit_py_outcome_code')} |")
     for what in ("correct", "wrong"):
@@ -81,11 +86,16 @@ def replay_table(rows):
 
 def main(folder):
     folder = Path(folder)
+    print("## The competition's development set\n")
     print(find_table(list(csv.DictReader(open(folder / "find_ranks.csv")))))
     print()
     print(synth_table(list(csv.DictReader(open(folder / "fallback_synth.csv")))))
     print()
     print(replay_table(list(csv.DictReader(open(folder / "fallback_replay.csv")))))
+    print("\n## This organisation's repositories (the generality check)\n")
+    print(find_table(list(csv.DictReader(open(folder / "find_ranks_own.csv")))))
+    print()
+    print(synth_table(list(csv.DictReader(open(folder / "fallback_synth_own.csv")))))
 
 
 if __name__ == "__main__":

@@ -34,7 +34,12 @@ _spec.loader.exec_module(fb_edit)
 fb_edit.MAX_FUZZY_LINES = int(os.environ.get("MAX_FUZZY_LINES", fb_edit.MAX_FUZZY_LINES))
 
 REPO_DIR = {"fastapi/fastapi": "fastapi", "Textualize/rich": "rich", "psf/requests": "requests",
-            "encode/httpx": "httpx"}
+            "encode/httpx": "httpx",
+            # this organisation's repositories (the generality check; the competition's development set decides)
+            "healthtransformationlab/health-transformation-lab-nlp": "health-transformation-lab-nlp",
+            "healthtransformationlab/pipeline-doctor": "pipeline-doctor",
+            "healthtransformationlab/gemma-developer-agent": "gemma-developer-agent",
+            "getcommunityone/open-navigator": "open-navigator"}
 TEST = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)conftest\.py$")
 
 
@@ -175,7 +180,7 @@ def main():
             else:
                 b = score(content, b_after, target)
                 e = score(content, e_after, target)
-            rows.append(dict(instance_id=t["instance_id"], repo_name=t["repo"], file_path=path, hunk_start_num=start,
+            rows.append(dict(instance_id=t["instance_id"], repo_name=t["repo"], file_name=path, hunk_start_num=start,
                              search_line_count=len(old), damage_code=kind, edit_file_outcome_code=b,
                              edit_py_outcome_code=e, edit_py_seconds=round(secs, 3),
                              file_line_count=base.count("\n") + 1))

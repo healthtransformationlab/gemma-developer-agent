@@ -38,7 +38,7 @@ def _agent_tools() -> set[str]:
 
 
 def test_localization_is_the_first_step_after_naming_the_test():
-    """#122: find.py ranked the reference fix's file first in 43 of 129 development tasks, against 12 for the grep it
+    """#122: find.py ranked the reference fix's file first in 39 of 129 development tasks, against 12 for the grep it
     replaces (docs/fallback-scripts-study.md); grep stays as the fallback, tests left out."""
     steps = _steps()
     first_reading = next(i for i, s in enumerate(steps) if "read_file" in s or "Read " in s)

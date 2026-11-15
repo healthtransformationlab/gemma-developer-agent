@@ -13,7 +13,8 @@ import re
 import sys
 
 SKIP_DIRS = {".git", "__pycache__", "node_modules", ".tox", ".venv", "venv", "build", "dist", ".eggs", "site-packages"}
-LOW_DIRS = {"tests", "test", "testing", "docs", "docs_src", "doc", "examples", "example", "benchmarks", "scripts"}
+LOW_DIRS = {"tests", "test", "testing", "docs", "docs_src", "doc", "examples", "example"}  # scripts/ is code
+MAX_CHARS = 4000  # run_command shows 5,000
 MAX_FILES = 8
 MAX_LINES = 3
 MAX_FILE_BYTES = 2000000
@@ -24,6 +25,12 @@ def is_low(rel):
     name = parts[-1]
     return (any(p in LOW_DIRS for p in parts[:-1]) or name.startswith("test_") or name.endswith("_test.py")
             or name == "conftest.py")
+
+
+def is_tooling(rel):
+    """Top-level scripts/ and benchmarks/: code (pipeline repositories keep theirs there), ranked a little lower,
+    since in library repositories they are release and docs tooling."""
+    return rel.split("/")[0] in ("scripts", "benchmarks")
 
 
 def terms(names):
@@ -94,22 +101,24 @@ def scan(root, names):
                 continue
             matched, defined, hits, shown_lines = set(), set(), 0, []
             for no, line in enumerate(lines, 1):
-                for shown, pat, defpat in pats:
+                on_line, line_def = False, False
+                for shown, pat, defpat in pats:  # every name on the line counts
                     if pat.search(line):
                         matched.add(shown)
                         hits += 1
-                        is_def = bool(defpat and defpat.search(line))
-                        if is_def:
+                        on_line = True
+                        if defpat and defpat.search(line):
                             defined.add(shown)
-                        shown_lines.append((0 if is_def else 1, no, line.strip()))
-                        break
+                            line_def = True
+                if on_line:
+                    shown_lines.append((0 if line_def else 1, no, line.strip()))
             bonus = module_path_bonus(rel, names)
             if not matched and not bonus:
                 continue
             if not matched:  # the file is the named module but never says its own name
                 matched.add(rel)
                 shown_lines.append((1, 1, lines[0].strip() if lines else ""))
-            score = 3 * len(matched) + 4 * len(defined) + 3 * bonus + min(hits, 20) / 10.0
+            score = 3 * len(matched) + 4 * len(defined) + 3 * bonus + min(hits, 20) / 10.0 - 2 * is_tooling(rel)
             found.append((is_low(rel), -score, rel, sorted(shown_lines)[:MAX_LINES], len(matched), len(defined)))
     found.sort(key=lambda r: (r[0], r[1], len(r[2]), r[2]))
     return found
@@ -133,14 +142,21 @@ def main(argv=None):
         print("No Python file contains %s. Try a shorter or different name from the issue." % ", ".join(names))
         return 1
     main_files = [r for r in found if not r[0]]
+    low_count = len(found) - len(main_files)
     shown = (main_files or found)[:MAX_FILES]
+    out = []
     for low, neg, rel, lines, nm, nd in shown:
-        print("%s  (names %d, defines %d)" % (rel, nm, nd))
-        for _, no, text in lines:
-            print("  %d: %s" % (no, text[:160]))
-    rest = len(main_files) - len(shown) if main_files else 0
+        out.append("%s  (names %d, defines %d)" % (rel, nm, nd))
+        out.extend("  %d: %s" % (no, text[:160]) for _, no, text in lines)
+    rest = (len(main_files) if main_files else len(found)) - len(shown)
     if rest > 0:
-        print("... %d more files" % rest)
+        out.append("... %d more files" % rest)
+    if main_files and low_count:
+        out.append("... %d more in tests, docs or examples" % low_count)
+    text = "\n".join(out)
+    if len(text) > MAX_CHARS:
+        text = text[:MAX_CHARS - 20].rsplit("\n", 1)[0] + "\n... (cut)"
+    print(text)
     return 0
 
 
