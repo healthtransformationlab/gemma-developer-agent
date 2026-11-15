@@ -64,3 +64,14 @@ A reviewing model made the same argument, and the owner agreed ("do what you rec
   starting with the part whose evidence is weakest.
 - **More slots open:** Kaggle's pending limit changes, or scoring speeds up.
 - **A new single change** passes the three-task rule with evidence strong enough to be worth a slot of its own.
+
+## Amended
+
+- **2026-11-15 (#156):**
+  - **Order.** 31B-d goes before E4B-all once the timing run clears it, as the owner set ("31b needs to be second slot")
+    and as the approved recommendation said ("when the timing run clears, submit 31B-d first"). The rows had E4B-all
+    first.
+  - **E4B-all's commit.** It moves from `204216e` to `a09e97e` (#154), which makes the install and `find.py` the first
+    two calls. In the Modal colab-skill run, 0 of 10 tasks installed the skill on the previous prompt. E4B-all is held
+    until a 5-task E4B run on Modal shows `run_skill_script` in at least half the tasks. If it doesn't, E4B-all goes at
+    `204216e`.
