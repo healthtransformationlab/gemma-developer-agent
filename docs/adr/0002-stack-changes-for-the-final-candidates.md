@@ -78,3 +78,12 @@ A reviewing model made the same argument, and the owner agreed ("do what you rec
 - **2026-11-15, about 23:40 UTC (#159):** entry 5 (copyfix alone) is skipped, the owner's choice. It would have held the
   one slot for about 12 hours to check what E4B-all checks too, since it carries copyfix. 31B-d goes as soon as its
   timing run clears it; if it isn't cleared and submitted by 02:00 UTC on November 16, E4B-all goes at `204216e`.
+- **2026-11-16, about 18:33 UTC (#174):** the 31B gets every slot until it is competitive, the owner's choice ("don't
+  score the small model let's get the big one competitive first"). 31B-d2-5m scored 0.12, against a pack at 0.17 to
+  0.22.
+  - **Next entry.** 31B-public, the public Budget-Fit bundle exactly as published, as the baseline. It is not one of
+    the stacks and not ours: it shows what the bundle scores on our account, and our 31B changes are then measured
+    against it.
+  - **E4B-all** is held, with its commit (`a09e97e`) and its passed check. It goes when the owner gives the small model
+    a slot.
+  - **Unchanged:** a final candidate is a stack of our own, chosen on reproducibility, running time and failure modes.
