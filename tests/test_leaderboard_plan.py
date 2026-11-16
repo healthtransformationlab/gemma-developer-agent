@@ -86,8 +86,8 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     """#136 put the 31B right after entry 5; #138 gave that slot to 31B-b (8 minutes, 28 calls), since the 5-minute 31B
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
-    order = [e for e, line in _rows().items() if e in QUEUED and line.rstrip().endswith("| queued |")]
-    assert order == ["E4B-all"], order   # 31B-d2-5m submitted (#164); E4B-all's check passed (#166)
+    order = [e for e, line in _rows().items() if line.rstrip().endswith("| queued |")]
+    assert order == ["31B-public"], order   # 31B-d2-5m scored 0.12; the 31B gets the slots, E4B-all is held (#174)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -151,12 +151,13 @@ def test_the_final_candidates_are_the_stacks():
     assert "Stacked final candidates" in PLAN.read_text()
 
 
-def test_e4b_all_is_queued_after_its_check():
+def test_e4b_all_passed_its_check_at_a09e97e():
     """#166: the skill-use check (#156) passed: on the Kaggle run devset-e4b-all-k every one of 23 tasks called
-    run_skill_script first and find.py second, so E4B-all goes at a09e97e, the commit that merged #154."""
+    run_skill_script first and find.py second, so E4B-all's commit is a09e97e, the one that merged #154. Since #174 it
+    is held behind the 31B, not queued."""
     cells = _cells(_rows()["E4B-all"])
     assert "a09e97e" in cells[2], "E4B-all names the commit that merged #154"
-    assert cells[-1] == "queued", cells[-1]
+    assert cells[-1].startswith("held: the owner wants the 31B competitive first"), cells[-1]
     assert "204216e" in _rows()["E4B-all"], "the kill criterion still names the fallback commit"
     text = PLAN.read_text()
     assert "jcblearning/htlnlp-colab-official-colab-skill" in text, "name the colab-skill run"
@@ -178,13 +179,45 @@ def test_31b_d2_5m_is_queued_second():
     """#162: the timing run put 31B-d at 8 minutes past 12 hours (357 s a task); the owner chose 31B-d2 at 5 minutes
     (#161) for the open slot, ahead of the 02:00 UTC fallback."""
     rows = _rows()
-    assert _cells(rows["31B-d2-5m"])[-1] in ("queued", "submitted 2026-11-16 00:08 UTC, pending")
+    assert _cells(rows["31B-d2-5m"])[-1] in ("queued", "submitted 2026-11-16 00:08 UTC, pending", "**0.12**")
     assert _cells(rows["31B-d"])[-1].startswith("held: over 12 hours at 8 minutes")
     assert "357" in rows["31B-d"] and "#821" in rows["31B-d"]
     assert "31B-d2-5m replaces the 02:00 UTC fallback" in PLAN.read_text()
 
 
-def test_31b_d2_5m_is_submitted():
-    """#164: 31B-d2-5m went in as ref 58406723 at 00:08 UTC on November 16; the row says so, so no queue takes it again."""
+def test_31b_d2_5m_scored_012():
+    """#164: 31B-d2-5m went in as ref 58406723 at 00:08 UTC on November 16. #174: it scored 0.12, and the row says so,
+    so no queue takes it again."""
     cells = _cells(_rows()["31B-d2-5m"])
-    assert cells[1] == "58406723" and cells[-1] == "submitted 2026-11-16 00:08 UTC, pending", cells
+    assert cells[1] == "58406723" and cells[-1] == "**0.12**", cells
+
+
+PUBLIC_FILES = {"agent.yaml": "680799291cc7", "configs/sampling.yaml": "571a934e8991",
+                "eval_config.yaml": "916cf6cb34a6", "prompts/system.md": "475cc9b7fcc0"}
+
+
+def test_31b_public_is_queued_and_e4b_all_is_held():
+    """#174: 0.12 is below the pack (about 2,200 teams at 0.17-0.18, about 620 at 0.20-0.22), most of it on the public
+    Budget-Fit bundle, which we have never scored on our own account. The owner (November 16): "don't score the small
+    model let's get the big one competitive first". So the bundle goes next, exactly as published, and E4B-all waits."""
+    rows, text = _rows(), PLAN.read_text()
+    header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
+    cells = _cells(rows["31B-public"])
+    assert len(cells) == len(header), f"31B-public has {len(cells)} cells, the header {len(header)}"
+    assert cells[-1] == "queued", cells[-1]
+    row = rows["31B-public"]
+    assert "verracodeguacas/gemma-4-agent-budget-fit-single-agent" in row, "name the notebook"
+    assert "exactly as published" in row
+    for name, sha in PUBLIC_FILES.items():
+        assert name in row and sha in row, f"give {name}'s hash, {sha}"
+    assert cells[header.index("Model")] == "**31B**"
+    assert cells[header.index("Compared with")].startswith("31B-d2-5m"), "its score is read against our 0.12"
+    assert cells[header.index("≥3 tasks plausible?")] and cells[header.index("Kill criterion")]
+    names = [e for e in rows if e in QUEUED or e == "31B-public"]
+    assert names.index("31B-public") == names.index("31B-d2-5m") + 1, "it goes right after 31B-d2-5m"
+    assert _cells(rows["E4B-all"])[-1].startswith("held: the owner wants the 31B competitive first (November 16")
+    assert "**The 31B gets every slot until it is competitive**" in text
+    assert "don't score the small model let's get the big one competitive first" in " ".join(text.split()), \
+        "quote the owner"
+    adr = (ROOT / "docs" / "adr" / "0002-stack-changes-for-the-final-candidates.md").read_text()
+    assert "#174" in adr and "31B-public" in adr, "the ADR records the change of which candidate a slot goes to"
