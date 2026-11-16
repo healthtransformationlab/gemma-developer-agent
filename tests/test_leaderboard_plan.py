@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if e in QUEUED and line.rstrip().endswith("| queued |")]
-    assert order == [], order   # 31B-d2-5m submitted (#164); 5 skipped (#159); 31B-d over 12 h; E4B-all waits (#156)
+    assert order == ["E4B-all"], order   # 31B-d2-5m submitted (#164); E4B-all's check passed (#166)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -151,17 +151,17 @@ def test_the_final_candidates_are_the_stacks():
     assert "Stacked final candidates" in PLAN.read_text()
 
 
-def test_e4b_all_waits_on_the_skill_use_check():
-    """#156: on 204216e's prompt no task of the colab-skill run installed the skill (0 of 10); #154 moved the two calls
-    to the top. E4B-all carries that commit and waits for a 5-task check that the agent makes them, else goes at
-    204216e."""
+def test_e4b_all_is_queued_after_its_check():
+    """#166: the skill-use check (#156) passed: on the Kaggle run devset-e4b-all-k every one of 23 tasks called
+    run_skill_script first and find.py second, so E4B-all goes at a09e97e, the commit that merged #154."""
     cells = _cells(_rows()["E4B-all"])
     assert "a09e97e" in cells[2], "E4B-all names the commit that merged #154"
-    assert cells[-1].startswith("held: waiting on the skill-use check"), cells[-1]
-    assert "204216e" in _rows()["E4B-all"], "the kill criterion names the fallback commit"
-    assert "jcblearning/htlnlp-colab-official-colab-skill" in PLAN.read_text(), "name the colab-skill run"
+    assert cells[-1] == "queued", cells[-1]
+    assert "204216e" in _rows()["E4B-all"], "the kill criterion still names the fallback commit"
+    text = PLAN.read_text()
+    assert "jcblearning/htlnlp-colab-official-colab-skill" in text, "name the colab-skill run"
+    assert "devset-e4b-all-k" in text and "23 of 23" in text, "name the check that passed"
     assert "0 of 10" in _rows()["5b"], "5b's row records the colab-skill result"
-
 
 def test_entry_5_is_skipped_and_31b_d_goes_second():
     """#159: entry 5 would hold the one slot for about 12 hours to check what E4B-all checks too (it carries copyfix),
