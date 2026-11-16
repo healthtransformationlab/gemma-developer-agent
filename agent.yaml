@@ -3,6 +3,7 @@
 # This branch is the 31B entry for the main prizes (#124): the same agent as main, on gemma-4-31b-it-qat-w4a16-ct,
 # with no adapter (copyfix is an E4B adapter). main stays the E4B entry for the small-model bonus.
 # 31B-d2 (#158): 31B-b, 31B-c and 31B-d replayed on main, so it has the first two calls (#154) and the compile check.
+# 31B-e (#172): replayed again on main at 7a1141f, so it also has find.py --tests (#170); 36 calls.
 # 31B-c (#140): a single agent; the code_analyzer sub-agent (sub_agents/, prompts/analyzer.md) is no longer given.
 name: data_pipeline_fixer
 model: gemma-4-31b-it-qat-w4a16-ct

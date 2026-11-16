@@ -4,8 +4,9 @@
 # about 7.5 hours for 120 tasks, inside the 12-hour limit. The 31B entry (#124) kept E4B's 5 minutes and 40 calls.
 # 31B-d2-5m (#161): our 31B timing run (nlp #821) averaged 357 s a task at 8 minutes, past 12 hours for 120 tasks, so
 # the per-task time is 5 minutes; calls and turns stay.
+# 31B-e (#172): 31B-d2-5m plus find.py --tests (#170) and 36 calls; the 5-minute cap still bounds every task.
 evaluation:
   timeout_seconds: 120          # per command (#161: one command may not take most of a 5-minute task)
-  max_tool_calls: 28
+  max_tool_calls: 36            # 31B-e (#172): 15 of 23 dev tasks of 31B-d2 ended at 27-28 of 28 calls
   max_time_minutes: 5.0         # #161: 120 x (300 + 45) s is about 11.5 h; at 8.0 the timing run's mean (357 s) made 13.4 h
   max_turns: 80

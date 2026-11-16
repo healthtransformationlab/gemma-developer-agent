@@ -33,3 +33,13 @@ def test_the_31b_budget_fits_120_tasks_in_12_hours():
     ev = yaml.safe_load((Path(__file__).resolve().parents[1] / "eval_config.yaml").read_text())["evaluation"]
     assert 120 * (ev["max_time_minutes"] * 60 + 45) <= 12 * 3600, ev
     assert ev["timeout_seconds"] <= 120, ev
+
+
+def test_31b_e_has_the_tests_step_and_36_calls():
+    """#172: 31B-e is 31B-d2-5m plus #170's `find.py --tests` step 7, with 36 calls: 15 of 23 development tasks of
+    31B-d2 ended at 27 or 28 of its 28 calls. The time stays at 5 minutes until the scorer's time for 58406723 is known,
+    so more calls cannot lengthen a task."""
+    import yaml
+    ev = yaml.safe_load((Path(__file__).resolve().parents[1] / "eval_config.yaml").read_text())["evaluation"]
+    assert ev["max_tool_calls"] == 36 and ev["max_time_minutes"] == 5.0, ev
+    assert "find.py --tests" in PROMPT and "## Patch first" in PROMPT
