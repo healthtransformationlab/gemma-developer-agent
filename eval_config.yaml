@@ -8,5 +8,5 @@
 evaluation:
   timeout_seconds: 120          # per command (#161: one command may not take most of a 5-minute task)
   max_tool_calls: 36            # 31B-e (#172): 15 of 23 dev tasks of 31B-d2 ended at 27-28 of 28 calls
-  max_time_minutes: 5.0         # #161: 120 x (300 + 45) s is about 11.5 h; at 8.0 the timing run's mean (357 s) made 13.4 h
+  max_time_minutes: 8.0         # 31B-e8 (#173): the public bundle's cap; dev tasks averaged 209 s at 8 minutes, and at 5 minutes 13 of 33 hit the limit
   max_turns: 80
