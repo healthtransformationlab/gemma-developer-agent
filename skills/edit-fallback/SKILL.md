@@ -13,6 +13,10 @@ and no other argument. It copies the helpers to `/tmp/h/` and prints their usage
 issue (a function, class, module or variable name, or a short quoted error message). It prints the repository's
 Python files, best first, with the matching lines and their numbers. Tests, docs and examples are left out.
 
+**After an edit, the tests to run:** `python3 /tmp/h/find.py --tests path/you/changed.py NAME [NAME ...]` prints one
+line, `Tests to run: python3 -m pytest ... -x -q`: that file's own `test_<name>.py` first, then the test files that
+mention the names. Run that, never the whole suite and never pytest on a source file.
+
 **When `edit_file` fails**, never send the same `old_string` again. Run instead:
 
 ```

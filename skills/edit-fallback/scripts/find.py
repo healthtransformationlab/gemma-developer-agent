@@ -1,11 +1,15 @@
 """Find the code an issue is about: the repository's Python files ranked by the names you give.
 
 usage: python3 /tmp/h/find.py NAME [NAME ...]
+       python3 /tmp/h/find.py --tests FILE_YOU_CHANGED NAME [NAME ...]
 
 NAME is a function, class, module or variable name from the issue (`Table.add_row`, `rich.table`, `get_openapi`), or
 a short quoted error message. Tests, docs and examples are left out (they are listed last, only if nothing else
 matches). Files are ranked by how many of the names they contain, whether they define them (def/class/assignment),
 and whether a dotted name is their module path; each comes with its matching lines and their numbers, for read_file.
+With --tests, after an edit, it prints only the test files to run for the file you changed (`Tests to run:
+python3 -m pytest ... -x -q`): up to three, that file's own test_<stem>.py first, then by how many of the names they
+mention.
 Python 3.8+, standard library only; reads /workspace (or the current directory).
 """
 import os
@@ -18,6 +22,9 @@ MAX_CHARS = 4000  # run_command shows 5,000
 MAX_FILES = 8
 MAX_LINES = 3
 MAX_FILE_BYTES = 2000000
+TEST_DIRS = {"tests", "test", "testing"}
+NOT_TEST_DIRS = {"docs", "docs_src", "doc", "examples", "example"}
+MAX_TESTS = 3
 
 
 def is_low(rel):
@@ -25,6 +32,15 @@ def is_low(rel):
     name = parts[-1]
     return (any(p in LOW_DIRS for p in parts[:-1]) or name.startswith("test_") or name.endswith("_test.py")
             or name == "conftest.py")
+
+
+def is_test(rel):
+    """A test module (not conftest.py, and not under docs or examples)."""
+    parts = rel.split("/")
+    name = parts[-1]
+    if name == "conftest.py" or any(p in NOT_TEST_DIRS for p in parts[:-1]):
+        return False
+    return any(p in TEST_DIRS for p in parts[:-1]) or name.startswith("test_") or name.endswith("_test.py")
 
 
 def is_tooling(rel):
@@ -119,9 +135,34 @@ def scan(root, names):
                 matched.add(rel)
                 shown_lines.append((1, 1, lines[0].strip() if lines else ""))
             score = 3 * len(matched) + 4 * len(defined) + 3 * bonus + min(hits, 20) / 10.0 - 2 * is_tooling(rel)
-            found.append((is_low(rel), -score, rel, sorted(shown_lines)[:MAX_LINES], len(matched), len(defined)))
+            found.append((is_low(rel), -score, rel, sorted(shown_lines)[:MAX_LINES], len(matched), len(defined), hits))
     found.sort(key=lambda r: (r[0], r[1], len(r[2]), r[2]))
     return found
+
+
+def test_files(root, found, top_rel, limit=MAX_TESTS):
+    """The test files to run for top_rel, the file changed (#170): ranked by how many of the names they mention,
+    its own test_<stem>.py raised by two; then by matches, then the shorter path. Those that mention no name are left
+    out, except test_<stem>.py. Measured on the 129 development tasks in analysis/find_ranks.csv
+    (find_tests_rank_num), with the reference fix's file as the file changed."""
+    want = None
+    if top_rel:
+        stem = os.path.basename(top_rel)[:-3].lstrip("_")
+        want = "test_%s.py" % stem if stem and stem != "init" else None
+    scored = {}
+    for r in found:
+        rel, names_matched, hits = r[2], r[4], r[6]
+        if is_test(rel) and names_matched and rel != top_rel:
+            scored[rel] = (names_matched + 2 * (os.path.basename(rel) == want), hits)
+    if want:
+        for dirpath, dirnames, filenames in os.walk(root):
+            dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS and not d.startswith("."))
+            if want in filenames:
+                rel = os.path.relpath(os.path.join(dirpath, want), root).replace(os.sep, "/")
+                if is_test(rel) and rel not in scored:
+                    scored[rel] = (2, 0)
+    order = sorted(scored, key=lambda rel: (-scored[rel][0], -scored[rel][1], len(rel), rel))
+    return order[:limit]
 
 
 def root_dir():
@@ -137,7 +178,19 @@ def main(argv=None):
     if not names:
         print(__doc__)
         return 2
-    found = scan(root_dir(), names)
+    root = root_dir()
+    if names[0] == "--tests":
+        if len(names) < 2:
+            print(__doc__)
+            return 2
+        changed = names[1].replace("/workspace/", "").lstrip("./")
+        tests = test_files(root, scan(root, names[2:]) if names[2:] else [], changed)
+        if not tests:
+            print("No test file found for %s: run the test file that imports its module." % changed)
+            return 1
+        print("Tests to run: python3 -m pytest %s -x -q" % " ".join(tests))
+        return 0
+    found = scan(root, names)
     if not found:
         print("No Python file contains %s. Try a shorter or different name from the issue." % ", ".join(names))
         return 1
@@ -145,7 +198,7 @@ def main(argv=None):
     low_count = len(found) - len(main_files)
     shown = (main_files or found)[:MAX_FILES]
     out = []
-    for low, neg, rel, lines, nm, nd in shown:
+    for low, neg, rel, lines, nm, nd, hits in shown:
         out.append("%s  (names %d, defines %d)" % (rel, nm, nd))
         out.extend("  %d: %s" % (no, text[:160]) for _, no, text in lines)
     rest = (len(main_files) if main_files else len(found)) - len(shown)

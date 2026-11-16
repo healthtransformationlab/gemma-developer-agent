@@ -135,3 +135,62 @@ def test_output_is_capped_even_with_long_paths(tmp_path, monkeypatch):
     with contextlib.redirect_stdout(out):
         find.main(["add_row"])
     assert len(out.getvalue()) <= 4000
+
+
+def _tests_repo(tmp_path):
+    files = {
+        "pkg/table.py": "class Table:\n    def add_row(self, *cells):\n        pass\n",
+        "pkg/console.py": "def render(t):\n    return t\n",
+        "tests/test_table.py": "from pkg.table import Table\n\ndef test_one():\n    Table()\n",
+        "tests/test_misc.py": "from pkg.table import Table\nTable().add_row(1)\nTable().add_row(2)\n",
+        "tests/test_console.py": "from pkg.console import render\n",
+        "docs_src/tutorial.py": "from pkg.table import Table\nTable().add_row('a')\n",
+        "examples/test_demo.py": "from pkg.table import Table\nTable().add_row('a')\n",
+    }
+    for rel, text in files.items():
+        p = tmp_path / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text)
+    return tmp_path
+
+
+def test_test_files_rank_by_names_with_the_top_files_own_test_raised(tmp_path):
+    """#170: on the 129 development tasks, test files ranked by how many of the issue's names they mention, with
+    test_<stem>.py of the top file raised, named a file the hidden tests change first in 61 and in the top 3 in 71."""
+    root = str(_tests_repo(tmp_path))
+    found = find.scan(root, ["Table", "add_row"])
+    tests = find.test_files(root, found, "pkg/table.py")
+    assert tests[0] == "tests/test_table.py", "test_<stem>.py of the top file comes first (1 name + 2)"
+    assert tests[1] == "tests/test_misc.py", "then the test that mentions both names"
+    assert "tests/test_console.py" not in tests, "a test that mentions none of the names is left out"
+    assert not any(t.startswith(("docs_src/", "examples/")) for t in tests), "docs and examples are not tests"
+    assert len(find.test_files(root, found, "pkg/table.py", limit=1)) == 1
+
+
+def test_tests_mode_prints_the_tests_for_the_file_changed(tmp_path, monkeypatch):
+    """#170: after an edit, `find.py --tests FILE NAME...` prints one line, the test files for the file changed. With
+    the reference fix's file as the file changed, its first file was one the hidden tests change in 59 of the 129
+    development tasks, and one of its first three in 66 (analysis/find_ranks.csv, find_tests_rank_num)."""
+    monkeypatch.chdir(_tests_repo(tmp_path))
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        assert find.main(["--tests", "/workspace/pkg/table.py", "add_row"]) == 0
+    assert out.getvalue().strip() == "Tests to run: python3 -m pytest tests/test_table.py tests/test_misc.py -x -q"
+
+
+def test_tests_mode_with_no_test_file_says_what_to_do(tmp_path, monkeypatch):
+    (tmp_path / "pkg").mkdir()
+    (tmp_path / "pkg" / "core.py").write_text("def solo():\n    pass\n")
+    monkeypatch.chdir(tmp_path)
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        assert find.main(["--tests", "pkg/core.py", "solo"]) == 1
+    assert "No test file found for pkg/core.py" in out.getvalue()
+
+
+def test_the_normal_output_has_no_tests_line(tmp_path, monkeypatch):
+    monkeypatch.chdir(_tests_repo(tmp_path))
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        assert find.main(["add_row"]) == 0
+    assert "Tests to run" not in out.getvalue()

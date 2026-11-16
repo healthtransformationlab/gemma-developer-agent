@@ -4,7 +4,8 @@ tasks, per repository (#122). CPU only.
 Each task's repository is checked out at its base commit from a local clone of the public repository
 (fastapi/fastapi, Textualize/rich, psf/requests, encode/httpx). The query is the issue's first five identifiers, as
 analysis/localize.py extracts them (the prompt asks for two to five); the answer is the reference patch's non-test
-files. Writes one row per task, ids and ranks only, no competition data.
+files. Writes one row per task, ids and ranks only, no competition data. find_tests_rank_num (#170): the rank of the first
+file `find.py --tests <reference file> <names>` names that the task's hidden test patch changes.
 
 usage: find_eval.py <tasks.jsonl> <dir holding clones named fastapi, rich, requests, httpx> <out.csv>
 """
@@ -70,6 +71,7 @@ def main(tasks_path, repos_dir, out_path):
         gold = {f for f in re.findall(r"^\+\+\+ b/(\S+)", t["patch"], re.M) if f.endswith(".py") and not TEST.search(f)}
         if not gold:
             continue
+        hidden = set(re.findall(r"^\+\+\+ b/(\S+)", t.get("test_patch") or "", re.M))
         words = identifiers(t["problem_statement"])[:5]
         td = tempfile.mkdtemp()
         try:
@@ -80,7 +82,7 @@ def main(tasks_path, repos_dir, out_path):
                 skipped += 1
                 continue
             subprocess.run(["tar", "-x", "-C", td], input=archive.stdout, check=True)
-            g_files, g_chars, f_files, secs = [], 0, [], 0.0
+            g_files, g_chars, f_files, secs, tests = [], 0, [], 0.0, []
             if words:
                 g_files, g_chars = grep_files(td, words)
                 t0 = time.perf_counter()
@@ -88,10 +90,12 @@ def main(tasks_path, repos_dir, out_path):
                 secs = time.perf_counter() - t0
                 main_files = [r for r in found if not r[0]]
                 f_files = [r[2] for r in (main_files or found)][:find.MAX_FILES]
+                tests = find.test_files(td, found, sorted(gold)[0])   # #170: --tests, the reference file as changed
             rows.append(dict(instance_id=t["instance_id"], repo_name=t["repo"], query_word_count=len(words),
                              gold_file_count=len(gold), grep_file_rank_num=rank(g_files, gold),
                              find_file_rank_num=rank(f_files, gold), grep_output_char_count=g_chars,
-                             find_seconds=round(secs, 3)))
+                             find_seconds=round(secs, 3),
+                             find_tests_rank_num=rank(tests, hidden) if hidden else None))
         finally:
             shutil.rmtree(td, ignore_errors=True)
     with open(out_path, "w", newline="") as f:
