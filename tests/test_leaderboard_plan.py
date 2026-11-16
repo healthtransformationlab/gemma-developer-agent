@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if e in QUEUED and line.rstrip().endswith("| queued |")]
-    assert order == ["31B-d2-5m"], order   # 5 skipped (#159); 31B-d over 12 h (#162); E4B-all waits (#156)
+    assert order == [], order   # 31B-d2-5m submitted (#164); 5 skipped (#159); 31B-d over 12 h; E4B-all waits (#156)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -178,7 +178,13 @@ def test_31b_d2_5m_is_queued_second():
     """#162: the timing run put 31B-d at 8 minutes past 12 hours (357 s a task); the owner chose 31B-d2 at 5 minutes
     (#161) for the open slot, ahead of the 02:00 UTC fallback."""
     rows = _rows()
-    assert _cells(rows["31B-d2-5m"])[-1] == "queued"
+    assert _cells(rows["31B-d2-5m"])[-1] in ("queued", "submitted 2026-11-16 00:08 UTC, pending")
     assert _cells(rows["31B-d"])[-1].startswith("held: over 12 hours at 8 minutes")
     assert "357" in rows["31B-d"] and "#821" in rows["31B-d"]
     assert "31B-d2-5m replaces the 02:00 UTC fallback" in PLAN.read_text()
+
+
+def test_31b_d2_5m_is_submitted():
+    """#164: 31B-d2-5m went in as ref 58406723 at 00:08 UTC on November 16; the row says so, so no queue takes it again."""
+    cells = _cells(_rows()["31B-d2-5m"])
+    assert cells[1] == "58406723" and cells[-1] == "submitted 2026-11-16 00:08 UTC, pending", cells
