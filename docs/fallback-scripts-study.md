@@ -281,6 +281,47 @@ blank line. Both are fixed and tested.
 - **Compiler:** the competition's compiler (`adk_submission.compile_submission`) loads the submission with both
   skills.
 
+## In use: the Kaggle E4B-all run (`analysis/devset_traces.py`, `devset_e4b_all_k.csv`)
+
+The first run with the skill actually used. This is a development-set run on Kaggle's 4×L4 (label devset-e4b-all-k,
+November 16, 2026), at agent a09e97e (#154, where the install and `find.py` are the first two calls). It ran the same
+23 tasks as the five earlier E4B runs. One run of 23 tasks, so mechanism, not a resolve rate (AGENTS.md).
+
+- **The calls were made:** all 23 tasks installed the skill and ran `find.py` as their first two calls, against 0 of 10
+  on the previous prompt (health-transformation-lab-nlp `colab_skill_script_use.csv`).
+- **The agent follows `find.py`:** the first file it read was `find.py`'s top file in 18 of 23 tasks.
+- **`find.py` with the model's own names did better than with the CPU study's extracted ones:** a reference file came
+  first in 12 of 23 tasks (52%), against 39 of 129 (30%) above.
+- **Resolving went with ranking:** all 5 resolved tasks had a reference file first. None of the 10 tasks where
+  `find.py` didn't list one was resolved. Easier tasks also name better identifiers, so this shows association, not
+  cause.
+- **Why the misses happened:** of the 6 wrong-file patches, 5 had no reference file in `find.py`'s list. Their names
+  were loose words from the issue ("fonts fix", "preserve newlines"), or the fix's file is one it creates.
+
+**`docs_src/` stays low.** FastAPI's tests run its `docs_src/` tutorials, and two misses were there. With `docs_src/`
+treated as code (`find_ranks_docs_src_as_code.csv`), the reference file is first in 40 of 129, in the top 3 in 62 and
+in the top 8 in 74, against 39, 61 and 79 now. That gains 2 tasks and loses 7, because tutorial files push library
+files out of the top 8.
+
+**The agent's own tests mostly tell it nothing.** Only 4 of 23 tasks ran a pytest command that named a test file. The
+rest pointed pytest at the source file it changed, so no tests ran, or at the whole suite, which gave noise, or for
+FastAPI `No module named 'inline_snapshot'`, a test dependency the sandbox lacks.
+
+The evaluator's own test run (`test_exit_code`) shows what was missed:
+
+| Failure stage | Tasks | Tests failed (1) | Timed out (124) | Didn't load (2) | Passed (0) |
+|---|---|---|---|---|---|
+| patch on a reference file | 10 | 7 | 2 | 1 | 0 |
+| patch on another file | 6 | 4 | 0 | 2 | 0 |
+| an edit, no reference file patched | 2 | 2 | 0 | 0 | 0 |
+| resolved | 5 | 0 | 0 | 0 | 5 |
+
+Of the right-file failures, 3 hung or broke loading, which a targeted test run shows in seconds. The agent submitted
+after 142 s on average of its 300.
+
+The next candidate is a test command `find.py` prints for its top file, and a prompt step that runs it instead of
+the whole suite. It's measured first on CPU: how often that file is the one the hidden tests are added to.
+
 ## Limits
 
 - **Synthetic damage is our model of the errors.** It was built from the kinds read in the real failures, one damage
