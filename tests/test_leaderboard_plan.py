@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "docs" / "leaderboard-plan.md"
-QUEUED = {"5": "9c9cd3a", "E4B-all": "a09e97e", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "31B-c": "2b1c444", "31B-d": "31df2c0", "5c": "0b7c63b",
+QUEUED = {"5": "9c9cd3a", "31B-d2-5m": "27d3020", "E4B-all": "a09e97e", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "31B-c": "2b1c444", "31B-d": "31df2c0", "5c": "0b7c63b",
           "6": "d265a78", "7": "7153a87", "8": "5d68ce8"}
 
 _spec = importlib.util.spec_from_file_location("edit_failures", ROOT / "analysis" / "edit_failures.py")
@@ -50,7 +50,7 @@ def test_the_committed_result_holds_ids_and_classes_only():
     assert classes <= set(ef.CLASSES)
 
 
-BRANCH = {"5": "main", "E4B-all": "main", "5b": "feat/122-skill-on-copyfix", "31B": "feat/124-31b-entry",
+BRANCH = {"5": "main", "31B-d2-5m": "feat/161-31b-d2-5-minutes", "E4B-all": "main", "5b": "feat/122-skill-on-copyfix", "31B": "feat/124-31b-entry",
           "31B-b": "feat/136-31b-budget-fit", "31B-c": "feat/140-31b-single-agent", "5c": "feat/125-distilled-adapter",
           "6": "main", "7": "main", "8": "main"}
 
@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if e in QUEUED and line.rstrip().endswith("| queued |")]
-    assert order == [], order   # 5 skipped (#159); 31B-d waits on the timing run (#150), E4B-all on its check (#156)
+    assert order == ["31B-d2-5m"], order   # 5 skipped (#159); 31B-d over 12 h (#162); E4B-all waits (#156)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -134,7 +134,7 @@ def test_the_31b_entries_wait_on_the_timing_run():
     """#150: no 31B entry goes until a 10-task run measures the average time a task (nlp #821); since #152 only the
     stack, 31B-d, goes back to queued."""
     rows = _rows()
-    assert rows["31B-d"].rstrip().endswith("| held: waiting on the 31B timing run (health-transformation-lab-nlp #821) |")
+    assert _cells(rows["31B-d"])[-1].startswith("held: over 12 hours at 8 minutes"), "the timing run decided (#162)"
     assert "about 11 hours" in PLAN.read_text()
 
 
@@ -143,7 +143,7 @@ def test_the_final_candidates_are_the_stacks():
     the skill with its compile check, no graph tools, short anchors, scratch cleanup, 12,288) and 31B-d (Budget-Fit
     budget, single agent, patch first); their parts are held, and a freed slot repeats the candidate nearer its line."""
     rows = [e for e in _rows() if e in QUEUED]
-    assert rows[:3] == ["5", "31B-d", "E4B-all"], rows   # the 31B second (#156)
+    assert rows[:4] == ["5", "31B-d2-5m", "31B-d", "E4B-all"], rows   # the 31B second (#156, #162)
     for part, stack in (("5b", "E4B-all"), ("31B-b", "31B-d"), ("31B-c", "31B-d")):
         assert _cells(_rows()[part])[-1].startswith(f"held: part of {stack}"), part
     assert (ROOT / "docs" / "adr" / "0002-stack-changes-for-the-final-candidates.md").is_file()
@@ -172,3 +172,13 @@ def test_entry_5_is_skipped_and_31b_d_goes_second():
     e4b_all = _cells(_rows()["E4B-all"])
     header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
     assert e4b_all[header.index("Compared with")].startswith("4"), "E4B-all compares with entry 4, since 5 won't score"
+
+
+def test_31b_d2_5m_is_queued_second():
+    """#162: the timing run put 31B-d at 8 minutes past 12 hours (357 s a task); the owner chose 31B-d2 at 5 minutes
+    (#161) for the open slot, ahead of the 02:00 UTC fallback."""
+    rows = _rows()
+    assert _cells(rows["31B-d2-5m"])[-1] == "queued"
+    assert _cells(rows["31B-d"])[-1].startswith("held: over 12 hours at 8 minutes")
+    assert "357" in rows["31B-d"] and "#821" in rows["31B-d"]
+    assert "31B-d2-5m replaces the 02:00 UTC fallback" in PLAN.read_text()
