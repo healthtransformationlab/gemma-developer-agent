@@ -207,3 +207,11 @@ def test_the_first_two_calls_install_and_find():
     assert "`edit-fallback`" in section and "`scripts/install.py`" in section and "`args`" in section
     assert "even when the issue names a file" in section
     assert re.search(r"[Ii]f the install fails", section) and "grep" in section
+
+
+def test_the_agent_runs_the_tests_find_py_named():
+    """#170: only 4 of 23 tasks of the Kaggle E4B-all run ran a test file; the rest ran pytest on a source file or on
+    the whole suite. Step 7 asks `find.py --tests` for the file it changed and runs that line, under a timeout."""
+    step = next(s for s in _steps() if "git status --short" in s)
+    assert "find.py --tests" in step and "`Tests to run`" in step and "timeout" in step
+    assert re.search(r"never the whole suite", step) and re.search(r"never\s+pytest on a source file", step)
