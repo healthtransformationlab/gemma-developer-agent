@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Coding Agent Architecture</title>
+<meta name="description" content="The developer coding agent and the three projects it runs on: the whole picture, and the picture beside what each part means.">
+<style>
+/* One picture, two ways to read it: whole (Context) or beside its five lines (Side by side). The tab is kept in the
+   address (#context, #side-by-side) so a link can open either. Self-contained: no script or font from elsewhere. */
+:root {
+  --bg: #f7f8fa; --surface: #ffffff; --fg: #18212b; --muted: #55606d; --line: #d9dee5;
+  --accent: #0b6b74; --accent-fg: #ffffff; --accent-soft: #e2f1f2; color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11161c; --surface: #19212a; --fg: #e8edf2; --muted: #a3afbc; --line: #2c3743;
+  --accent: #5cc4cd; --accent-fg: #0b1a1c; --accent-soft: #17323a; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #11161c; --surface: #19212a; --fg: #e8edf2; --muted: #a3afbc; --line: #2c3743;
+  --accent: #5cc4cd; --accent-fg: #0b1a1c; --accent-soft: #17323a; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+.wrap { max-width: 1400px; margin: 0 auto; padding: 20px 16px 48px; }
+header h1 { font-size: clamp(1.4rem, 3.2vw, 2rem); line-height: 1.2; margin: 0 0 6px; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); max-width: 75ch; }
+a { color: var(--accent); }
+.tabs { display: flex; gap: 8px; margin: 18px 0 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.tabs button { font: inherit; font-weight: 600; font-size: 1rem; color: var(--fg); background: transparent;
+  border: 1px solid transparent; border-bottom: 0; border-radius: 10px 10px 0 0; padding: 10px 18px; cursor: pointer;
+  margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { background: var(--surface); border-color: var(--line); color: var(--accent); }
+.tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+.tools button, .tools a.btn { font: inherit; font-size: 0.9rem; font-weight: 500; color: var(--fg); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; cursor: pointer; text-decoration: none; }
+.tools button:hover, .tools a.btn:hover { border-color: var(--accent); color: var(--accent); }
+.tools .hint { color: var(--muted); font-size: 0.88rem; }
+.viewer { overflow: auto; border: 1px solid var(--line); border-radius: 12px; background: #ffffff;
+  height: calc(100vh - 230px); min-height: 320px; cursor: grab; touch-action: pan-x pan-y; }
+.viewer.dragging { cursor: grabbing; }
+.viewer img { display: block; max-width: none; user-select: none; -webkit-user-drag: none; }
+.side { display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .side { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; } }
+.side figure { margin: 0; background: #ffffff; border: 1px solid var(--line); border-radius: 12px; padding: 8px; }
+@media (min-width: 900px) { .side figure { position: sticky; top: 12px; } }
+.side figure img { display: block; width: 100%; height: auto; }
+.side figcaption { font-size: 0.85rem; color: #55606d; padding: 6px 4px 0; }
+.points { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+.points h2 { font-size: 1.15rem; margin: 0 0 10px; }
+.points ol { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 12px; }
+.points li strong { display: block; }
+.model { background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; margin-top: 16px; font-size: 0.95rem; }
+.model strong { display: block; margin-bottom: 2px; }
+.foot { color: var(--muted); font-size: 0.85rem; margin-top: 18px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Can an open model on one GPU redo a cloud agent's work?</h1>
+  <p>The developer coding agent and the three projects it runs on. <strong>Context</strong> shows the whole picture,
+  with zoom. <strong>Side by side</strong> shows it next to what each part means.
+  From <a href="https://github.com/healthtransformationlab/gemma-developer-agent">gemma-developer-agent</a>; a personal
+  learning project, not affiliated with any employer or organisation.</p>
+</header>
+
+<div class="tabs" role="tablist" aria-label="Views of the picture">
+  <button type="button" role="tab" id="tab-context" aria-controls="context" aria-selected="true">Context</button>
+  <button type="button" role="tab" id="tab-side-by-side" aria-controls="side-by-side" aria-selected="false" tabindex="-1">Side by side</button>
+</div>
+
+<section id="context" role="tabpanel" aria-labelledby="tab-context">
+  <div class="tools">
+    <button type="button" data-zoom="out">Zoom out</button>
+    <button type="button" data-zoom="fit">Fit</button>
+    <button type="button" data-zoom="in">Zoom in</button>
+    <a class="btn" href="../img/coding_agent_architecture.png">Open the image</a>
+    <span class="hint">Drag to move around when zoomed in.</span>
+  </div>
+  <div class="viewer" id="viewer">
+    <img id="whole" src="../img/coding_agent_architecture.png" width="3236" height="1673" alt="The developer coding agent and the three projects it runs on. Left: Health Transformation Lab (93 tasks from 197 real code changes), Open Navigator (150 of the 255 tasks in a wider check of the search and edit skills) and the competition's development set (129 tasks). Centre: the agent, Gemma 4 E4B with a read-only helper agent, two skills, a five-minute budget and its tools; below it, how it is watched and scored: traces, the competition's evaluator, an AI screen of the tasks and a pre-registered experiment; it runs on Hugging Face, Kaggle, Colab and Databricks, with Snowflake and dbt in the design phase. Bottom left: finding the cause from traces, where a function names the stage at which each run stopped. Right: what the runs showed.">
+  </div>
+</section>
+
+<section id="side-by-side" role="tabpanel" aria-labelledby="tab-side-by-side" hidden>
+  <div class="side">
+    <figure>
+      <a href="../img/coding_agent_architecture.png"><img src="../img/coding_agent_architecture.png" width="3236" height="1673" alt="The same picture: the three projects on the left, the agent in the centre with how it is watched and scored below it, finding the cause bottom left, and what the runs showed on the right."></a>
+      <figcaption>Tap the picture to open it full size. The source is
+        <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/docs/img/coding_agent_architecture.drawio">coding_agent_architecture.drawio</a>.</figcaption>
+    </figure>
+    <div class="points">
+      <h2>The picture in five lines</h2>
+      <ol>
+        <li><strong>Three projects (left).</strong> Two of ours,
+          <a href="https://github.com/healthtransformationlab/health-transformation-lab-nlp">health-transformation-lab-nlp</a>
+          and <a href="https://github.com/getcommunityone/open-navigator">open-navigator</a>, and the competition's
+          development set: <a href="https://github.com/healthtransformationlab/gemma-developer-agent#what-has-been-run-and-what-it-cost">where the task set comes from</a>,
+          <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/docs/leaderboard-plan.md">the wider check</a>.</li>
+        <li><strong>The agent (centre).</strong> One open model, one configuration file:
+          <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/agent.yaml">agent.yaml</a>,
+          <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/docs/agent_walkthrough.md">the agent, file by file</a>.</li>
+        <li><strong>Finding the cause (bottom left).</strong> A function reads each run's trace and names the stage where
+          it stopped: never read a file the fix changes, no edit went through, an empty patch, a patch on the wrong file,
+          or a patch on the right file whose tests still fail:
+          <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/analysis/failure_stages.py">analysis/failure_stages.py</a>,
+          <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/docs/fallback-scripts-study.md">the study of the two helper scripts it led to</a>.</li>
+        <li><strong>Watched and scored (below the agent).</strong> Every step traced, every patch scored by the
+          competition's own evaluator, in an experiment planned in advance:
+          <a href="https://github.com/healthtransformationlab/gemma-developer-agent#what-has-been-run-and-what-it-cost">every run and what it cost</a>.</li>
+        <li><strong>What it showed (right).</strong>
+          <a href="https://github.com/healthtransformationlab/gemma-developer-agent#results-at-a-glance">Results at a glance</a>,
+          each number with its run and interval.</li>
+      </ol>
+      <div class="model">
+        <strong>Which model</strong>
+        The picture shows the agent on <code>main</code> and in the paper: Gemma 4 E4B, the small model, with a
+        read-only helper agent. The leaderboard entries since November 16 run Gemma 4 31B as one agent, from the
+        branches in <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/docs/leaderboard-plan.md">the leaderboard plan</a>:
+        31B parameters, served 4-bit on one GPU (an A100 in our Colab runs).
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="foot">Every patient record in the source repository is synthetic.</p>
+</div>
+
+<script>
+(function () {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  function show(id, focus) {
+    tabs.forEach(function (t) {
+      var on = t.getAttribute('aria-controls') === id;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      if (on && focus) t.focus();
+    });
+    if (id === 'context') fit();
+  }
+  function fromHash() { return location.hash === '#side-by-side' ? 'side-by-side' : 'context'; }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () {
+      var id = t.getAttribute('aria-controls');
+      if (history.replaceState) history.replaceState(null, '', '#' + id); else location.hash = id;
+      show(id, false);
+    });
+    t.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      next.click(); next.focus(); e.preventDefault();
+    });
+  });
+  window.addEventListener('hashchange', function () { show(fromHash(), false); });
+
+  // Zoom: the image's width in pixels; "fit" shows the whole picture inside the viewer.
+  var viewer = document.getElementById('viewer'), img = document.getElementById('whole');
+  var natural = 3236, ratio = 1673 / 3236, width = 0;
+  function setWidth(w, cx, cy) {
+    var old = width || w;
+    var px = (viewer.scrollLeft + (cx || viewer.clientWidth / 2)) / old;
+    var py = (viewer.scrollTop + (cy || viewer.clientHeight / 2)) / old;
+    width = Math.max(200, Math.min(natural * 1.5, w));
+    img.style.width = width + 'px'; img.style.height = (width * ratio) + 'px';
+    viewer.scrollLeft = px * width - (cx || viewer.clientWidth / 2);
+    viewer.scrollTop = py * width - (cy || viewer.clientHeight / 2);
+  }
+  function fit() {
+    if (!viewer.clientWidth) return;
+    setWidth(Math.min(viewer.clientWidth - 2, (viewer.clientHeight - 2) / ratio));
+    viewer.scrollLeft = 0; viewer.scrollTop = 0;
+  }
+  document.querySelectorAll('[data-zoom]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var z = b.getAttribute('data-zoom');
+      if (z === 'fit') fit(); else setWidth(width * (z === 'in' ? 1.4 : 1 / 1.4));
+    });
+  });
+  var drag = null;
+  viewer.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'mouse') return;
+    drag = { x: e.clientX, y: e.clientY, l: viewer.scrollLeft, t: viewer.scrollTop };
+    viewer.classList.add('dragging'); viewer.setPointerCapture(e.pointerId);
+  });
+  viewer.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    viewer.scrollLeft = drag.l - (e.clientX - drag.x); viewer.scrollTop = drag.t - (e.clientY - drag.y);
+  });
+  ['pointerup', 'pointercancel'].forEach(function (n) {
+    viewer.addEventListener(n, function () { drag = null; viewer.classList.remove('dragging'); });
+  });
+  window.addEventListener('resize', function () { if (!document.getElementById('context').hidden) fit(); });
+  show(fromHash(), false);
+  if (!img.complete) img.addEventListener('load', fit);
+})();
+</script>
+</body>
+</html>

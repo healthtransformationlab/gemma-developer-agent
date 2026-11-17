@@ -1,5 +1,14 @@
-# gemma-developer-agent
-**Can a small local agent redo a cloud agent's work?**
+# Can an open model on one GPU redo a cloud agent's work?
+
+A Gemma 4 coding agent for the Gemma 4 Developer Agent Competition, the paper on what it did, and where each number
+comes from (repository `gemma-developer-agent`).
+
+<a href="https://healthtransformationlab.org/gemma-developer-agent/architecture/"><img src="docs/img/view_architecture_button.svg" alt="View the architecture diagram: a page with two tabs, Context and Side by side" width="640"></a>
+
+**Which model.** The agent on `main` and the paper run Gemma 4 E4B, the small model (the entry for the small-model
+bonus). The leaderboard entries since November 16 run Gemma 4 31B as one agent, from the
+branches in [the leaderboard plan](docs/leaderboard-plan.md): 31B parameters, served 4-bit on one GPU (an A100 in our
+Colab runs). So "small" in the paper's title is about E4B.
 
 > **Personal learning project.** Built on my own time: not affiliated with or endorsed by any employer, institution or
 > vendor, and nothing here is any organization's plan, study or finding. Every patient record in the source repository
@@ -10,7 +19,7 @@
 **The picture in five lines** (the source is [`docs/img/coding_agent_architecture.drawio`](docs/img/coding_agent_architecture.drawio)):
 
 - **Three projects.** Two of ours, [health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp) and [open-navigator](https://github.com/getcommunityone/open-navigator), and the competition's development set: [where the task set comes from](#what-has-been-run-and-what-it-cost), [the wider check](docs/leaderboard-plan.md).
-- **The agent.** One small open model, one configuration file: [`agent.yaml`](agent.yaml), [the agent, file by file](docs/agent_walkthrough.md).
+- **The agent.** One open model (the picture shows E4B, as on `main`), one configuration file: [`agent.yaml`](agent.yaml), [the agent, file by file](docs/agent_walkthrough.md).
 - **Finding the cause.** A function reads each run's trace and names the stage where it stopped: never read a file the fix changes, no edit went through, an empty patch, a patch on the wrong file, or a patch on the right file whose tests still fail: [`analysis/failure_stages.py`](analysis/failure_stages.py), [the study of the two helper scripts it led to](docs/fallback-scripts-study.md). The agent also carries the [pipeline-doctor](https://github.com/healthtransformationlab/pipeline-doctor) method as a skill, and no run so far has called it ([`skills/pipeline-doctor/`](skills/pipeline-doctor/SKILL.md)).
 - **Watched and scored.** Every step traced, every patch scored by the competition's own evaluator, in an experiment planned in advance: [every run and what it cost](#what-has-been-run-and-what-it-cost).
 - **What it showed.** [Results at a glance](#results-at-a-glance), each number with its run and interval.
@@ -22,8 +31,8 @@
 · [the 93 tasks on Kaggle](https://www.kaggle.com/datasets/jcblearning/health-transformation-lab-coding-agent-tasks)
 
 In fifteen days, one person in the loop with a cloud coding agent took a health-data repository from nothing to 960
-commits and 2,269 tests, without typing code. This repository asks how much of that work a small model, one that
-runs on a single GPU, can redo by itself. It holds a coding agent for the Gemma 4 Developer Agent Competition, the
+commits and 2,269 tests, without typing code. This repository asks how much of that work an open model that runs
+on a single GPU can redo by itself. It holds a coding agent for the Gemma 4 Developer Agent Competition, the
 paper on what that agent did, and where each number in the paper comes from.
 
 <a href="https://healthtransformationlab.org/gemma-developer-agent/pitch/deck.html"><img src="docs/img/pitch_deck_cover.png" alt="Can a small local agent redo a cloud agent's work? Play the slides." width="480"></a>
