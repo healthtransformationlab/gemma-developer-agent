@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if _cells(line)[-1].startswith("queued")]
-    assert order == ["31B-e8", "31B-e8-fix"], order   # one of the two takes the next slot (#178, #182); E4B-all held (#174)
+    assert order == ["31B-e8"], order   # it takes the next slot; 31B-e8-fix held (#190); E4B-all held (#174)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -204,7 +204,7 @@ def test_31b_public_is_queued_and_e4b_all_is_held():
     header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
     cells = _cells(rows["31B-public"])
     assert len(cells) == len(header), f"31B-public has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1].startswith("pending: submitted November 17, 00:05 UTC"), cells[-1]   # #176
+    assert cells[-1] == "**0.15**", cells[-1]   # #190; it was pending from November 17, 00:05 UTC (#176)
     assert "58448837" in cells[header.index("Ref")], "give its ref"
     row = rows["31B-public"]
     assert "verracodeguacas/gemma-4-agent-budget-fit-single-agent" in row, "name the notebook"
@@ -252,7 +252,8 @@ def test_31b_e8_takes_the_november_18_slot():
     header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
     cells = _cells(rows["31B-e8"])
     assert len(cells) == len(header), f"31B-e8 has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1].startswith("queued"), cells[-1]
+    assert cells[-1].startswith("queued for 00:00 UTC, November 18"), cells[-1]
+    assert "unless" not in cells[-1], "#190: the fix is held, so 31B-e8 goes without a condition"
     row = rows["31B-e8"]
     assert "af1e006" in row and "feat/173-31b-e8" in row
     assert cells[header.index("Model")] == "**31B**"
@@ -262,18 +263,26 @@ def test_31b_e8_takes_the_november_18_slot():
     assert "Switch to our agent, 8 min" in " ".join(text.split()), "quote the owner"
 
 
-def test_31b_e8_fix_takes_the_slot_only_if_its_check_passes():
-    """#182: the owner wants the scratch-script fix in the next entry, tested on a smaller sample first: our
-    repository's 25 tasks, where 31B-e8 solved 17. It goes only if failed write_file calls are near 0 and it solves at
-    least 15; otherwise 31B-e8 as tested goes."""
+def test_31b_e8_fix_is_held_after_its_check():
+    """#182: the owner wanted the scratch-script fix in the next entry, tested first on our repository's 25 tasks,
+    where 31B-e8 solved 17; it was to go only if it solved at least 15. #190: it solved 14 (only 31B-e8 solved 3, only
+    the fix 0), and the owner chose 31B-e8 as tested, so the fix is held until its practice-set pairing."""
     rows, text = _rows(), PLAN.read_text()
     header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
     cells = _cells(rows["31B-e8-fix"])
     assert len(cells) == len(header), f"31B-e8-fix has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1].startswith("queued"), cells[-1]
+    assert cells[-1].startswith("held:"), cells[-1]
+    for needed in ("14 of 25", "17", "ok do the tested"):
+        assert needed in cells[-1], f"say {needed}"
     row = rows["31B-e8-fix"]
-    for needed in ("af1e006", "e8fix-nlp25", "15 of 25", "17", "write_file", "11:30 PM UTC"):
+    for needed in ("af1e006", "e8fix-nlp25", "15 of 25", "write_file"):
         assert needed in row, f"say {needed}"
     assert cells[header.index("Compared with")].startswith("31B-e8")
-    assert "unless 31B-e8-fix passes its check" in _cells(rows["31B-e8"])[-1]
     assert "I definately want the fix in on next run" in " ".join(text.split()), "quote the owner"
+
+
+def test_31b_public_scored_015():
+    """#190: 31B-public (ref 58448837) completed at about 22:29 UTC on November 17 with 0.15, about two tasks above
+    31B-d2-5m's 0.12, which the plan counts as noise, and below the pack's 0.17."""
+    cells = _cells(_rows()["31B-public"])
+    assert cells[1] == "58448837" and cells[-1] == "**0.15**", cells
