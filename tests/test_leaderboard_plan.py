@@ -86,8 +86,8 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     """#136 put the 31B right after entry 5; #138 gave that slot to 31B-b (8 minutes, 28 calls), since the 5-minute 31B
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
-    order = [e for e, line in _rows().items() if line.rstrip().endswith("| queued |")]
-    assert order == ["31B-public"], order   # 31B-d2-5m scored 0.12; the 31B gets the slots, E4B-all is held (#174)
+    order = [e for e, line in _rows().items() if _cells(line)[-1].startswith("queued")]
+    assert order == ["31B-public-r2"], order   # 31B-public is pending; its repeat is next (#176); E4B-all held (#174)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -204,7 +204,8 @@ def test_31b_public_is_queued_and_e4b_all_is_held():
     header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
     cells = _cells(rows["31B-public"])
     assert len(cells) == len(header), f"31B-public has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1] == "queued", cells[-1]
+    assert cells[-1].startswith("pending: submitted November 17, 00:05 UTC"), cells[-1]   # #176
+    assert "58448837" in cells[header.index("Ref")], "give its ref"
     row = rows["31B-public"]
     assert "verracodeguacas/gemma-4-agent-budget-fit-single-agent" in row, "name the notebook"
     assert "exactly as published" in row
@@ -221,3 +222,23 @@ def test_31b_public_is_queued_and_e4b_all_is_held():
         "quote the owner"
     adr = (ROOT / "docs" / "adr" / "0002-stack-changes-for-the-final-candidates.md").read_text()
     assert "#174" in adr and "31B-public" in adr, "the ADR records the change of which candidate a slot goes to"
+
+
+def test_31b_public_repeat_is_booked_for_november_18():
+    """#176: no change has shown a three-task gain on the development tasks (8 minutes 25 against 27 on 97 tasks; the
+    big-fix rule 14 against 14 on 48; our agent and the bundle 12 against 12 on our own 25), so the next slot repeats
+    31B-public whatever it scores, unless it errors or runs out of time, which cuts its 8 minutes instead."""
+    rows, text = _rows(), PLAN.read_text()
+    header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
+    cells = _cells(rows["31B-public-r2"])
+    assert len(cells) == len(header), f"31B-public-r2 has {len(cells)} cells, the header {len(header)}"
+    assert cells[-1].startswith("queued"), cells[-1]
+    row = rows["31B-public-r2"]
+    for name, sha in PUBLIC_FILES.items():
+        assert name in row and sha in row, f"the same {name}, {sha}"
+    assert cells[header.index("Compared with")].startswith("31B-public"), "read against the first scoring"
+    assert cells[header.index("≥3 tasks plausible?")] and cells[header.index("Kill criterion")]
+    for evidence in ("25 against 27", "14 against 14", "12 against 12"):
+        assert evidence in row, f"cite {evidence}"
+    names = [e for e in rows if e in QUEUED or e.startswith("31B-public")]
+    assert names.index("31B-public-r2") == names.index("31B-public") + 1, "it goes right after 31B-public"
