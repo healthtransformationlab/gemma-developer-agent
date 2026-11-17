@@ -5,6 +5,15 @@
 > vendor, and nothing here is any organization's plan, study or finding. Every patient record in the source repository
 > is synthetic.
 
+<a href="docs/img/coding_agent_architecture.png"><img src="docs/img/coding_agent_architecture.png" alt="The developer coding agent and the three projects it runs on. Left: Health Transformation Lab (93 tasks from 197 real code changes), Open Navigator (150 of the 255 tasks in a wider check of the search and edit skills) and the competition's development set (129 tasks). Centre: the agent, Gemma 4 E4B with a read-only helper agent, two skills, a five-minute budget and its tools; below it, how it is watched and scored: traces, the competition's evaluator, an AI screen of the tasks and a pre-registered experiment; it runs on Hugging Face, Kaggle, Colab and Databricks, with Snowflake and dbt in the design phase. Right: what the runs showed, as in Results at a glance below."></a>
+
+**The picture in four lines** (the source is [`docs/img/coding_agent_architecture.drawio`](docs/img/coding_agent_architecture.drawio)):
+
+- **Three projects.** Two of ours, [health-transformation-lab-nlp](https://github.com/healthtransformationlab/health-transformation-lab-nlp) and [open-navigator](https://github.com/getcommunityone/open-navigator), and the competition's development set: [where the task set comes from](#what-has-been-run-and-what-it-cost), [the wider check](docs/leaderboard-plan.md).
+- **The agent.** One small open model, one configuration file: [`agent.yaml`](agent.yaml), [the agent, file by file](docs/agent_walkthrough.md).
+- **Watched and scored.** Every step traced, every patch scored by the competition's own evaluator, in an experiment planned in advance: [every run and what it cost](#what-has-been-run-and-what-it-cost).
+- **What it showed.** [Results at a glance](#results-at-a-glance), each number with its run and interval.
+
 **Paper Track submission:** [Can a small local agent redo a cloud agent's work?](https://kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/can-a-small-local-agent-redo-a-cloud-agents-work)
 · [the paper as a PDF](paper/small-local-agent-redo-cloud-agent-work.pdf)
 · [as a Word file, for review](paper/small-local-agent-redo-cloud-agent-work.docx)
