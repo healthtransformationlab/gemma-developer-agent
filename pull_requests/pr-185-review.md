@@ -17,4 +17,6 @@ Reviewed against `.conventions/AGENTS-common.md` and `AGENTS.md`.
 - **Not blocking:** "Snowflake + dbt: design phase" records the owner's intent; nothing in the repository runs there.
 - **Not checked:** how the picture reads on GitHub at phone width.
 
+- **Added after the first review:** the pipeline doctor is on the picture and has its own line. Its status wording ("rules built and tested; skill not yet called in a run") follows the README's "The plan, and what is still to run".
+
 Nothing blocking.
