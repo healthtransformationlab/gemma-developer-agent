@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "docs" / "leaderboard-plan.md"
-QUEUED = {"5": "9c9cd3a", "31B-d2-5m": "27d3020", "E4B-all": "a09e97e", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "31B-c": "2b1c444", "31B-d": "31df2c0", "5c": "0b7c63b",
+QUEUED = {"31B-e8": "af1e006", "5": "9c9cd3a", "31B-d2-5m": "27d3020", "E4B-all": "a09e97e", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "31B-c": "2b1c444", "31B-d": "31df2c0", "5c": "0b7c63b",
           "6": "d265a78", "7": "7153a87", "8": "5d68ce8"}
 
 _spec = importlib.util.spec_from_file_location("edit_failures", ROOT / "analysis" / "edit_failures.py")
@@ -50,7 +50,7 @@ def test_the_committed_result_holds_ids_and_classes_only():
     assert classes <= set(ef.CLASSES)
 
 
-BRANCH = {"5": "main", "31B-d2-5m": "feat/161-31b-d2-5-minutes", "E4B-all": "main", "5b": "feat/122-skill-on-copyfix", "31B": "feat/124-31b-entry",
+BRANCH = {"31B-e8": "feat/173-31b-e8", "5": "main", "31B-d2-5m": "feat/161-31b-d2-5-minutes", "E4B-all": "main", "5b": "feat/122-skill-on-copyfix", "31B": "feat/124-31b-entry",
           "31B-b": "feat/136-31b-budget-fit", "31B-c": "feat/140-31b-single-agent", "5c": "feat/125-distilled-adapter",
           "6": "main", "7": "main", "8": "main"}
 
@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if _cells(line)[-1].startswith("queued")]
-    assert order == ["31B-public-r2"], order   # 31B-public is pending; its repeat is next (#176); E4B-all held (#174)
+    assert order == ["31B-e8"], order   # 31B-public is pending; 31B-e8 takes the next slot (#178); E4B-all held (#174)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -142,7 +142,7 @@ def test_the_final_candidates_are_the_stacks():
     """#152 (ADR 0002): with about 6 slots and ±2–3 tasks of noise, the slots go to the stacks, E4B-all (main: copyfix,
     the skill with its compile check, no graph tools, short anchors, scratch cleanup, 12,288) and 31B-d (Budget-Fit
     budget, single agent, patch first); their parts are held, and a freed slot repeats the candidate nearer its line."""
-    rows = [e for e in _rows() if e in QUEUED]
+    rows = [e for e in _rows() if e in QUEUED and e != "31B-e8"]   # 31B-e8 (#178) is checked on its own
     assert rows[:4] == ["5", "31B-d2-5m", "31B-d", "E4B-all"], rows   # the 31B second (#156, #162)
     for part, stack in (("5b", "E4B-all"), ("31B-b", "31B-d"), ("31B-c", "31B-d")):
         assert _cells(_rows()[part])[-1].startswith(f"held: part of {stack}"), part
@@ -232,7 +232,7 @@ def test_31b_public_repeat_is_booked_for_november_18():
     header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
     cells = _cells(rows["31B-public-r2"])
     assert len(cells) == len(header), f"31B-public-r2 has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1].startswith("queued"), cells[-1]
+    assert cells[-1].startswith("held: the slot went to 31B-e8"), cells[-1]   # #178
     row = rows["31B-public-r2"]
     for name, sha in PUBLIC_FILES.items():
         assert name in row and sha in row, f"the same {name}, {sha}"
@@ -242,3 +242,21 @@ def test_31b_public_repeat_is_booked_for_november_18():
         assert evidence in row, f"cite {evidence}"
     names = [e for e in rows if e in QUEUED or e.startswith("31B-public")]
     assert names.index("31B-public-r2") == names.index("31B-public") + 1, "it goes right after 31B-public"
+
+
+def test_31b_e8_takes_the_november_18_slot():
+    """#178: on our own NLP repository's 25 tasks (code the model has not seen, like the hidden private repositories)
+    31B-e8 solved 17 against the public bundle's 12 (5 against 0); on the practice set the bundle leads, 36 against 31
+    (6 against 1). The owner switched the slot to 31B-e8 on November 17."""
+    rows, text = _rows(), PLAN.read_text()
+    header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
+    cells = _cells(rows["31B-e8"])
+    assert len(cells) == len(header), f"31B-e8 has {len(cells)} cells, the header {len(header)}"
+    assert cells[-1].startswith("queued"), cells[-1]
+    row = rows["31B-e8"]
+    assert "af1e006" in row and "feat/173-31b-e8" in row
+    assert cells[header.index("Model")] == "**31B**"
+    assert cells[header.index("Compared with")].startswith("31B-public")
+    for evidence in ("17 of 25", "12 of 25", "36", "31 of 129", "5 against 0", "6 against 1"):
+        assert evidence in row, f"cite {evidence}"
+    assert "Switch to our agent, 8 min" in " ".join(text.split()), "quote the owner"
