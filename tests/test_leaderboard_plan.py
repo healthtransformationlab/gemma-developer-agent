@@ -87,7 +87,7 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
     order = [e for e, line in _rows().items() if _cells(line)[-1].startswith("queued")]
-    assert order == ["31B-e8"], order   # it takes the next slot; 31B-e8-fix held (#190); E4B-all held (#174)
+    assert order == [], order   # 31B-e8 went in as 58486057 (#193); 31B-e8-fix held (#190); E4B-all held (#174)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -252,8 +252,8 @@ def test_31b_e8_takes_the_november_18_slot():
     header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
     cells = _cells(rows["31B-e8"])
     assert len(cells) == len(header), f"31B-e8 has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1].startswith("queued for 00:00 UTC, November 18"), cells[-1]
-    assert "unless" not in cells[-1], "#190: the fix is held, so 31B-e8 goes without a condition"
+    assert cells[-1].startswith("pending: submitted November 18, 00:03 UTC"), cells[-1]   # #193
+    assert cells[header.index("Ref")] == "58486057", "give its ref (#193)"
     row = rows["31B-e8"]
     assert "af1e006" in row and "feat/173-31b-e8" in row
     assert cells[header.index("Model")] == "**31B**"
