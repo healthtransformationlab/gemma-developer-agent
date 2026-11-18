@@ -50,6 +50,26 @@ a { color: var(--accent); }
 .points h2 { font-size: 1.15rem; margin: 0 0 10px; }
 .points ol { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 12px; }
 .points li strong { display: block; }
+/* Side by side drill-down (#192): a line zooms the picture to its part and outlines it; a part selects its line. */
+.side-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 0 2px 8px; }
+.side-tools button { font: inherit; font-size: 0.88rem; font-weight: 500; color: var(--fg); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 5px 11px; cursor: pointer; }
+.side-tools button:hover { border-color: var(--accent); color: var(--accent); }
+.side-tools .hint { color: #55606d; font-size: 0.85rem; }
+.side-viewer { position: relative; overflow: hidden; border-radius: 8px; aspect-ratio: 3236 / 1673; cursor: pointer;
+  touch-action: none; }
+.side-viewer.zoomed { cursor: grab; }
+.side-viewer.dragging { cursor: grabbing; }
+.side-stage { position: absolute; inset: 0; transform-origin: 0 0; transition: transform 0.45s ease; }
+.side-viewer.dragging .side-stage { transition: none; }
+.side-stage img { width: 100%; height: 100%; display: block; user-select: none; -webkit-user-drag: none; }
+.side-mark { position: absolute; border: 3px solid #0b6b74; border-radius: 10px; pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(15, 25, 35, 0.28); transition: all 0.45s ease; }
+@media (prefers-reduced-motion: reduce) { .side-stage, .side-mark { transition: none; } }
+.points li[data-part] { cursor: pointer; border-radius: 8px; padding: 6px 8px; margin-left: -8px; border: 1px solid transparent; }
+.points li[data-part]:hover { border-color: var(--line); }
+.points li[data-part]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.points li[data-part][aria-current="true"] { background: var(--accent-soft); border-color: var(--accent); }
 .model { background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; margin-top: 16px; font-size: 0.95rem; }
 .model strong { display: block; margin-bottom: 2px; }
 .foot { color: var(--muted); font-size: 0.85rem; margin-top: 18px; }
@@ -61,7 +81,7 @@ a { color: var(--accent); }
 <header>
   <h1>Can an open model on one GPU redo a cloud agent's work?</h1>
   <p>The developer coding agent and the three projects it runs on. <strong>Context</strong> shows the whole picture,
-  with zoom. <strong>Side by side</strong> shows it next to what each part means.
+  with zoom. <strong>Side by side</strong> shows it next to what each part means: choose a line to zoom into its part.
   From <a href="https://github.com/healthtransformationlab/gemma-developer-agent">gemma-developer-agent</a>; a personal
   learning project, not affiliated with any employer or organisation.</p>
 </header>
@@ -87,30 +107,39 @@ a { color: var(--accent); }
 <section id="side-by-side" role="tabpanel" aria-labelledby="tab-side-by-side" hidden>
   <div class="side">
     <figure>
-      <a href="../img/coding_agent_architecture.png"><img src="../img/coding_agent_architecture.png" width="3236" height="1673" alt="The same picture: the three projects on the left, the agent in the centre with how it is watched and scored below it, finding the cause bottom left, and what the runs showed on the right."></a>
-      <figcaption>Tap the picture to open it full size. The source is
+      <div class="side-tools">
+        <button type="button" id="side-whole">Whole picture</button>
+        <span class="hint" id="side-hint">Choose a line, or click a part of the picture, to zoom into it.</span>
+      </div>
+      <div class="side-viewer" id="side-viewer">
+        <div class="side-stage" id="side-stage">
+          <img src="../img/coding_agent_architecture.png" width="3236" height="1673" alt="The same picture: the three projects on the left, the agent in the centre with how it is watched and scored below it, finding the cause bottom left, and what the runs showed on the right.">
+          <div class="side-mark" id="side-mark" hidden></div>
+        </div>
+      </div>
+      <figcaption><a href="../img/coding_agent_architecture.png">Open the picture full size</a>. The source is
         <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/docs/img/coding_agent_architecture.drawio">coding_agent_architecture.drawio</a>.</figcaption>
     </figure>
     <div class="points">
       <h2>The picture in five lines</h2>
       <ol>
-        <li><strong>Three projects (left).</strong> Two of ours,
+        <li data-part="projects" data-box="0.020,0.035,0.207,0.735" tabindex="0"><strong>Three projects (left).</strong> Two of ours,
           <a href="https://github.com/healthtransformationlab/health-transformation-lab-nlp">health-transformation-lab-nlp</a>
           and <a href="https://github.com/getcommunityone/open-navigator">open-navigator</a>, and the competition's
           development set: <a href="https://github.com/healthtransformationlab/gemma-developer-agent#what-has-been-run-and-what-it-cost">where the task set comes from</a>,
           <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/docs/leaderboard-plan.md">the wider check</a>.</li>
-        <li><strong>The agent (centre).</strong> One open model, one configuration file:
+        <li data-part="agent" data-box="0.243,0.035,0.497,0.465" tabindex="0"><strong>The agent (centre).</strong> One open model, one configuration file:
           <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/agent.yaml">agent.yaml</a>,
           <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/docs/agent_walkthrough.md">the agent, file by file</a>.</li>
-        <li><strong>Finding the cause (bottom left).</strong> A function reads each run's trace and names the stage where
+        <li data-part="cause" data-box="0.030,0.775,0.188,0.160" tabindex="0"><strong>Finding the cause (bottom left).</strong> A function reads each run's trace and names the stage where
           it stopped: never read a file the fix changes, no edit went through, an empty patch, a patch on the wrong file,
           or a patch on the right file whose tests still fail:
           <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/analysis/failure_stages.py">analysis/failure_stages.py</a>,
           <a href="https://github.com/healthtransformationlab/gemma-developer-agent/blob/main/docs/fallback-scripts-study.md">the study of the two helper scripts it led to</a>.</li>
-        <li><strong>Watched and scored (below the agent).</strong> Every step traced, every patch scored by the
+        <li data-part="scored" data-box="0.243,0.512,0.497,0.440" tabindex="0"><strong>Watched and scored (below the agent).</strong> Every step traced, every patch scored by the
           competition's own evaluator, in an experiment planned in advance:
           <a href="https://github.com/healthtransformationlab/gemma-developer-agent#what-has-been-run-and-what-it-cost">every run and what it cost</a>.</li>
-        <li><strong>What it showed (right).</strong>
+        <li data-part="showed" data-box="0.755,0.035,0.222,0.917" tabindex="0"><strong>What it showed (right).</strong>
           <a href="https://github.com/healthtransformationlab/gemma-developer-agent#results-at-a-glance">Results at a glance</a>,
           each number with its run and interval.</li>
       </ol>
@@ -141,11 +170,12 @@ a { color: var(--accent); }
     });
     if (id === 'context') fit();
   }
-  function fromHash() { return location.hash === '#side-by-side' ? 'side-by-side' : 'context'; }
+  function fromHash() { return location.hash.indexOf('#side-by-side') === 0 ? 'side-by-side' : 'context'; }
   tabs.forEach(function (t, i) {
     t.addEventListener('click', function () {
       var id = t.getAttribute('aria-controls');
-      if (history.replaceState) history.replaceState(null, '', '#' + id); else location.hash = id;
+      var h = '#' + id + (id === 'side-by-side' && cur ? '/' + cur : '');
+      if (history.replaceState) history.replaceState(null, '', h); else location.hash = h;
       show(id, false);
     });
     t.addEventListener('keydown', function (e) {
@@ -154,7 +184,7 @@ a { color: var(--accent); }
       next.click(); next.focus(); e.preventDefault();
     });
   });
-  window.addEventListener('hashchange', function () { show(fromHash(), false); });
+  window.addEventListener('hashchange', function () { show(fromHash(), false); drillFromHash(); });
 
   // Zoom: the image's width in pixels; "fit" shows the whole picture inside the viewer.
   var viewer = document.getElementById('viewer'), img = document.getElementById('whole');
@@ -193,7 +223,73 @@ a { color: var(--accent); }
     viewer.addEventListener(n, function () { drag = null; viewer.classList.remove('dragging'); });
   });
   window.addEventListener('resize', function () { if (!document.getElementById('context').hidden) fit(); });
+  // Side by side drill-down (#192). Each line carries its part's box as fractions of the picture (data-box="x,y,w,h").
+  // Choosing a line scales the picture so the part fills the viewer, outlines it, and keeps it in the address
+  // (#side-by-side/<part>); clicking the picture selects the part under the pointer; drag pans when zoomed.
+  var sv = document.getElementById('side-viewer'), stage = document.getElementById('side-stage');
+  var mark = document.getElementById('side-mark'), items = Array.prototype.slice.call(document.querySelectorAll('li[data-part]'));
+  var cur = null, z = { s: 1, x: 0, y: 0 };
+  function box(li) { return li.getAttribute('data-box').split(',').map(Number); }
+  function apply() { stage.style.transform = 'translate(' + z.x + 'px,' + z.y + 'px) scale(' + z.s + ')'; sv.classList.toggle('zoomed', z.s > 1); }
+  function clamp() {
+    var W = sv.clientWidth, H = sv.clientHeight;
+    z.x = Math.min(0, Math.max(W - W * z.s, z.x)); z.y = Math.min(0, Math.max(H - H * z.s, z.y));
+  }
+  function drill(part, keep) {
+    var li = items.filter(function (i) { return i.getAttribute('data-part') === part; })[0];
+    items.forEach(function (i) { i.setAttribute('aria-current', i === li ? 'true' : 'false'); });
+    cur = li ? part : null;
+    if (!li) { z = { s: 1, x: 0, y: 0 }; mark.hidden = true; apply(); }
+    else {
+      var b = box(li), W = sv.clientWidth, H = sv.clientHeight;
+      var s = Math.max(1, Math.min(1 / b[2], 1 / b[3]) * 0.92);
+      z = { s: s, x: W / 2 - (b[0] + b[2] / 2) * W * s, y: H / 2 - (b[1] + b[3] / 2) * H * s };
+      clamp(); apply();
+      mark.hidden = false;
+      mark.style.left = (b[0] * 100) + '%'; mark.style.top = (b[1] * 100) + '%';
+      mark.style.width = (b[2] * 100) + '%'; mark.style.height = (b[3] * 100) + '%';
+      mark.style.borderWidth = (3 / s) + 'px';
+    }
+    if (!keep) {
+      var h = '#side-by-side' + (cur ? '/' + cur : '');
+      if (history.replaceState) history.replaceState(null, '', h); else location.hash = h;
+    }
+  }
+  function drillFromHash() {
+    var m = location.hash.match(/^#side-by-side\/([a-z]+)$/);
+    if (fromHash() === 'side-by-side') drill(m ? m[1] : null, true);
+  }
+  items.forEach(function (li) {
+    li.addEventListener('click', function (e) { if (e.target.closest('a')) return; drill(li.getAttribute('data-part')); });
+    li.addEventListener('keydown', function (e) {
+      if (e.target !== li || (e.key !== 'Enter' && e.key !== ' ')) return;
+      drill(li.getAttribute('data-part')); e.preventDefault();
+    });
+  });
+  document.getElementById('side-whole').addEventListener('click', function () { drill(null); });
+  var sd = null, moved = false;
+  sv.addEventListener('pointerdown', function (e) {
+    sd = { x: e.clientX, y: e.clientY, zx: z.x, zy: z.y }; moved = false; sv.setPointerCapture(e.pointerId);
+  });
+  sv.addEventListener('pointermove', function (e) {
+    if (!sd) return;
+    var dx = e.clientX - sd.x, dy = e.clientY - sd.y;
+    if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+    if (moved && z.s > 1) { sv.classList.add('dragging'); z.x = sd.zx + dx; z.y = sd.zy + dy; clamp(); apply(); }
+  });
+  sv.addEventListener('pointerup', function (e) {
+    var wasDrag = moved; sd = null; sv.classList.remove('dragging');
+    if (wasDrag) return;
+    var r = sv.getBoundingClientRect();
+    var fx = ((e.clientX - r.left) - z.x) / (r.width * z.s), fy = ((e.clientY - r.top) - z.y) / (r.height * z.s);
+    var hit = items.filter(function (li) { var b = box(li); return fx >= b[0] && fx <= b[0] + b[2] && fy >= b[1] && fy <= b[1] + b[3]; })[0];
+    if (hit) drill(hit.getAttribute('data-part') === cur ? null : hit.getAttribute('data-part'));
+  });
+  sv.addEventListener('pointercancel', function () { sd = null; sv.classList.remove('dragging'); });
+  window.addEventListener('resize', function () { if (cur) drill(cur, true); });
+
   show(fromHash(), false);
+  drillFromHash();
   if (!img.complete) img.addEventListener('load', fit);
 })();
 </script>
