@@ -252,7 +252,7 @@ def test_31b_e8_takes_the_november_18_slot():
     header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
     cells = _cells(rows["31B-e8"])
     assert len(cells) == len(header), f"31B-e8 has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1].startswith("pending: submitted November 18, 00:03 UTC"), cells[-1]   # #193
+    assert cells[-1] == "**0.17**", cells[-1]   # #196; submitted November 18, 00:03 UTC (#193)
     assert cells[header.index("Ref")] == "58486057", "give its ref (#193)"
     row = rows["31B-e8"]
     assert "af1e006" in row and "feat/173-31b-e8" in row
@@ -286,3 +286,10 @@ def test_31b_public_scored_015():
     31B-d2-5m's 0.12, which the plan counts as noise, and below the pack's 0.17."""
     cells = _cells(_rows()["31B-public"])
     assert cells[1] == "58448837" and cells[-1] == "**0.15**", cells
+
+
+def test_31b_e8_scored_017():
+    """#196: 31B-e8 (ref 58486057) completed at about 00:20 UTC on November 19 with 0.17, our best: about one task
+    above 31B-public's 0.15 and three above 31B-d2-5m's 0.12."""
+    cells = _cells(_rows()["31B-e8"])
+    assert cells[1] == "58486057" and cells[-1] == "**0.17**", cells
