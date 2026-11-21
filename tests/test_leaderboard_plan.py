@@ -192,6 +192,31 @@ def test_31b_d2_5m_scored_012():
     assert cells[1] == "58406723" and cells[-1] == "**0.12**", cells
 
 
+def test_31b_e8_r2_and_50calls_timed_out():
+    """#202: refs 58575084 (exact 31B-e8 repeat) and 58622854 (50 calls) both ended with the notebook runtime
+    limit, so neither has a score."""
+    rows = _rows()
+    header = _cells(next(line for line in PLAN.read_text().splitlines() if line.startswith("| Entry |")))
+    r2 = _cells(rows["31B-e8-r2"])
+    c50 = _cells(rows["31B-e8-50calls"])
+    assert r2[header.index("Ref")] == "58575084"
+    assert c50[header.index("Ref")] == "58622854"
+    assert r2[-1].startswith("timed out:") and "exceeded the allowed runtime" in r2[-1]
+    assert c50[-1].startswith("timed out:") and "exceeded the allowed runtime" in c50[-1]
+
+
+def test_31b_e8_fix_c32t6_is_pending():
+    """#202: ref 58685342 is 31B-e8-fix with max_tool_calls 32 and max_time_minutes 6.0, Score pending."""
+    rows, text = _rows(), PLAN.read_text()
+    header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
+    cells = _cells(rows["31B-e8-fix-c32t6"])
+    assert cells[header.index("Ref")] == "58685342"
+    assert cells[-1] == "pending", cells[-1]
+    assert "6f7ff699" in rows["31B-e8-fix-c32t6"] and "e532e35a" in rows["31B-e8-fix-c32t6"]
+    assert "Two post-0.17 entries timed out" in text
+    assert "31B-e8-fix-c32t6 went in" in text
+
+
 PUBLIC_FILES = {"agent.yaml": "680799291cc7", "configs/sampling.yaml": "571a934e8991",
                 "eval_config.yaml": "916cf6cb34a6", "prompts/system.md": "475cc9b7fcc0"}
 
