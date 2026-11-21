@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "docs" / "leaderboard-plan.md"
-QUEUED = {"31B-e8": "af1e006", "5": "9c9cd3a", "31B-d2-5m": "27d3020", "E4B-all": "a09e97e", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "31B-c": "2b1c444", "31B-d": "31df2c0", "5c": "0b7c63b",
+QUEUED = {"5": "9c9cd3a", "31B-d2-5m": "27d3020", "E4B-all": "a09e97e", "5b": "80d23e8", "31B": "ed11c15", "31B-b": "c75c619", "31B-c": "2b1c444", "31B-d": "31df2c0", "5c": "0b7c63b",
           "6": "d265a78", "7": "7153a87", "8": "5d68ce8"}
 
 _spec = importlib.util.spec_from_file_location("edit_failures", ROOT / "analysis" / "edit_failures.py")
@@ -50,7 +50,7 @@ def test_the_committed_result_holds_ids_and_classes_only():
     assert classes <= set(ef.CLASSES)
 
 
-BRANCH = {"31B-e8": "feat/173-31b-e8", "5": "main", "31B-d2-5m": "feat/161-31b-d2-5-minutes", "E4B-all": "main", "5b": "feat/122-skill-on-copyfix", "31B": "feat/124-31b-entry",
+BRANCH = {"5": "main", "31B-d2-5m": "feat/161-31b-d2-5-minutes", "E4B-all": "main", "5b": "feat/122-skill-on-copyfix", "31B": "feat/124-31b-entry",
           "31B-b": "feat/136-31b-budget-fit", "31B-c": "feat/140-31b-single-agent", "5c": "feat/125-distilled-adapter",
           "6": "main", "7": "main", "8": "main"}
 
@@ -86,8 +86,8 @@ def test_31b_b_takes_the_second_slot_and_the_5_minute_31b_is_held():
     """#136 put the 31B right after entry 5; #138 gave that slot to 31B-b (8 minutes, 28 calls), since the 5-minute 31B
     entry ran out of time on all 3 tasks of its smoke test (health-transformation-lab-nlp #818). A 31B-b that runs past
     the 12-hour limit gets a shorter budget."""
-    order = [e for e, line in _rows().items() if _cells(line)[-1].startswith("queued")]
-    assert order == [], order   # 31B-e8 went in as 58486057 (#193); 31B-e8-fix held (#190); E4B-all held (#174)
+    order = [e for e, line in _rows().items() if line.rstrip().endswith("| queued |")]
+    assert order == ["31B-public"], order   # 31B-d2-5m scored 0.12; the 31B gets the slots, E4B-all is held (#174)
     text = PLAN.read_text()
     assert re.search(r"\| 31B \|[^\n]*\| held: replaced by 31B-b", text), "the 5-minute 31B row is marked held"
     assert "#818" in text, "cite the smoke test"
@@ -142,7 +142,7 @@ def test_the_final_candidates_are_the_stacks():
     """#152 (ADR 0002): with about 6 slots and ±2–3 tasks of noise, the slots go to the stacks, E4B-all (main: copyfix,
     the skill with its compile check, no graph tools, short anchors, scratch cleanup, 12,288) and 31B-d (Budget-Fit
     budget, single agent, patch first); their parts are held, and a freed slot repeats the candidate nearer its line."""
-    rows = [e for e in _rows() if e in QUEUED and e != "31B-e8"]   # 31B-e8 (#178) is checked on its own
+    rows = [e for e in _rows() if e in QUEUED]
     assert rows[:4] == ["5", "31B-d2-5m", "31B-d", "E4B-all"], rows   # the 31B second (#156, #162)
     for part, stack in (("5b", "E4B-all"), ("31B-b", "31B-d"), ("31B-c", "31B-d")):
         assert _cells(_rows()[part])[-1].startswith(f"held: part of {stack}"), part
@@ -204,8 +204,7 @@ def test_31b_public_is_queued_and_e4b_all_is_held():
     header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
     cells = _cells(rows["31B-public"])
     assert len(cells) == len(header), f"31B-public has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1] == "**0.15**", cells[-1]   # #190; it was pending from November 17, 00:05 UTC (#176)
-    assert "58448837" in cells[header.index("Ref")], "give its ref"
+    assert cells[-1] == "queued", cells[-1]
     row = rows["31B-public"]
     assert "verracodeguacas/gemma-4-agent-budget-fit-single-agent" in row, "name the notebook"
     assert "exactly as published" in row
@@ -222,74 +221,3 @@ def test_31b_public_is_queued_and_e4b_all_is_held():
         "quote the owner"
     adr = (ROOT / "docs" / "adr" / "0002-stack-changes-for-the-final-candidates.md").read_text()
     assert "#174" in adr and "31B-public" in adr, "the ADR records the change of which candidate a slot goes to"
-
-
-def test_31b_public_repeat_is_booked_for_november_18():
-    """#176: no change has shown a three-task gain on the development tasks (8 minutes 25 against 27 on 97 tasks; the
-    big-fix rule 14 against 14 on 48; our agent and the bundle 12 against 12 on our own 25), so the next slot repeats
-    31B-public whatever it scores, unless it errors or runs out of time, which cuts its 8 minutes instead."""
-    rows, text = _rows(), PLAN.read_text()
-    header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
-    cells = _cells(rows["31B-public-r2"])
-    assert len(cells) == len(header), f"31B-public-r2 has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1].startswith("held: the slot went to 31B-e8"), cells[-1]   # #178
-    row = rows["31B-public-r2"]
-    for name, sha in PUBLIC_FILES.items():
-        assert name in row and sha in row, f"the same {name}, {sha}"
-    assert cells[header.index("Compared with")].startswith("31B-public"), "read against the first scoring"
-    assert cells[header.index("≥3 tasks plausible?")] and cells[header.index("Kill criterion")]
-    for evidence in ("25 against 27", "14 against 14", "12 against 12"):
-        assert evidence in row, f"cite {evidence}"
-    names = [e for e in rows if e in QUEUED or e.startswith("31B-public")]
-    assert names.index("31B-public-r2") == names.index("31B-public") + 1, "it goes right after 31B-public"
-
-
-def test_31b_e8_takes_the_november_18_slot():
-    """#178: on our own NLP repository's 25 tasks (code the model has not seen, like the hidden private repositories)
-    31B-e8 solved 17 against the public bundle's 12 (5 against 0); on the practice set the bundle leads, 36 against 31
-    (6 against 1). The owner switched the slot to 31B-e8 on November 17."""
-    rows, text = _rows(), PLAN.read_text()
-    header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
-    cells = _cells(rows["31B-e8"])
-    assert len(cells) == len(header), f"31B-e8 has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1] == "**0.17**", cells[-1]   # #196; submitted November 18, 00:03 UTC (#193)
-    assert cells[header.index("Ref")] == "58486057", "give its ref (#193)"
-    row = rows["31B-e8"]
-    assert "af1e006" in row and "feat/173-31b-e8" in row
-    assert cells[header.index("Model")] == "**31B**"
-    assert cells[header.index("Compared with")].startswith("31B-public")
-    for evidence in ("17 of 25", "12 of 25", "36", "31 of 129", "5 against 0", "6 against 1"):
-        assert evidence in row, f"cite {evidence}"
-    assert "Switch to our agent, 8 min" in " ".join(text.split()), "quote the owner"
-
-
-def test_31b_e8_fix_is_held_after_its_check():
-    """#182: the owner wanted the scratch-script fix in the next entry, tested first on our repository's 25 tasks,
-    where 31B-e8 solved 17; it was to go only if it solved at least 15. #190: it solved 14 (only 31B-e8 solved 3, only
-    the fix 0), and the owner chose 31B-e8 as tested, so the fix is held until its practice-set pairing."""
-    rows, text = _rows(), PLAN.read_text()
-    header = _cells(next(line for line in text.splitlines() if line.startswith("| Entry |")))
-    cells = _cells(rows["31B-e8-fix"])
-    assert len(cells) == len(header), f"31B-e8-fix has {len(cells)} cells, the header {len(header)}"
-    assert cells[-1].startswith("held:"), cells[-1]
-    for needed in ("14 of 25", "17", "ok do the tested"):
-        assert needed in cells[-1], f"say {needed}"
-    row = rows["31B-e8-fix"]
-    for needed in ("af1e006", "e8fix-nlp25", "15 of 25", "write_file"):
-        assert needed in row, f"say {needed}"
-    assert cells[header.index("Compared with")].startswith("31B-e8")
-    assert "I definately want the fix in on next run" in " ".join(text.split()), "quote the owner"
-
-
-def test_31b_public_scored_015():
-    """#190: 31B-public (ref 58448837) completed at about 22:29 UTC on November 17 with 0.15, about two tasks above
-    31B-d2-5m's 0.12, which the plan counts as noise, and below the pack's 0.17."""
-    cells = _cells(_rows()["31B-public"])
-    assert cells[1] == "58448837" and cells[-1] == "**0.15**", cells
-
-
-def test_31b_e8_scored_017():
-    """#196: 31B-e8 (ref 58486057) completed at about 00:20 UTC on November 19 with 0.17, our best: about one task
-    above 31B-public's 0.15 and three above 31B-d2-5m's 0.12."""
-    cells = _cells(_rows()["31B-e8"])
-    assert cells[1] == "58486057" and cells[-1] == "**0.17**", cells
