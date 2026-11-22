@@ -7,11 +7,15 @@ NAME is a function, class, module or variable name from the issue (`Table.add_ro
 a short quoted error message. Tests, docs and examples are left out (they are listed last, only if nothing else
 matches). Files are ranked by how many of the names they contain, whether they define them (def/class/assignment),
 and whether a dotted name is their module path; each comes with its matching lines and their numbers, for read_file.
+The output opens with "Functions to read first:": up to three functions or classes, by path and line, that the
+names point to (named by a NAME counts three times what using it does; tests, docs and examples left out).
 With --tests, after an edit, it prints only the test files to run for the file you changed (`Tests to run:
 python3 -m pytest ... -x -q`): up to three, that file's own test_<stem>.py first, then by how many of the names they
 mention.
 Python 3.8+, standard library only; reads /workspace (or the current directory).
 """
+import ast
+import math
 import os
 import re
 import sys
@@ -25,6 +29,7 @@ MAX_FILE_BYTES = 2000000
 TEST_DIRS = {"tests", "test", "testing"}
 NOT_TEST_DIRS = {"docs", "docs_src", "doc", "examples", "example"}
 MAX_TESTS = 3
+MAX_FUNCS = 3
 
 
 def is_low(rel):
@@ -140,6 +145,76 @@ def scan(root, names):
     return found
 
 
+def _defs(text):
+    """Each function and class in a file: (name, first line, last line, kind)."""
+    try:
+        tree = ast.parse(text)
+    except (SyntaxError, ValueError):
+        return []
+    out = []
+    for n in ast.walk(tree):
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            out.append((n.name, n.lineno, getattr(n, "end_lineno", None) or n.lineno,
+                        "class" if isinstance(n, ast.ClassDef) else "def"))
+    return out
+
+
+def rank_functions(root, names, limit=MAX_FUNCS):
+    """The functions and classes the names point to (#44): a function named by a NAME scores 3 x idf, one whose body
+    uses a NAME 1 x idf, idf counted over the repository's functions. Tests, docs and examples are left out (a class
+    is read by its first 30 lines, so a large class does not win on its methods' bodies). Returns
+    [(rel, line, kind, name, score)], best first."""
+    wanted = []
+    for shown, needle, kind in terms(names):
+        if kind == "name" and needle not in wanted:
+            wanted.append(needle)
+    if not wanted:
+        return []
+    pats = {w: re.compile(r"(?<!\w)" + re.escape(w) + r"(?!\w)") for w in wanted}
+    nodes = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS and not d.startswith("."))
+        for fn in sorted(filenames):
+            if not fn.endswith(".py"):
+                continue
+            full = os.path.join(dirpath, fn)
+            rel = os.path.relpath(full, root).replace(os.sep, "/")
+            if is_low(rel):
+                continue
+            try:
+                if os.path.getsize(full) > MAX_FILE_BYTES:
+                    continue
+                with open(full, encoding="utf-8", errors="replace") as f:
+                    text = f.read()
+            except OSError:
+                continue
+            lines = text.splitlines()
+            for name, first, last, kind in _defs(text):
+                body = "\n".join(lines[first - 1:min(last, first + 29) if kind == "class" else last])
+                used = {w for w, pat in pats.items() if pat.search(body)}
+                if used or name in pats:
+                    nodes.append((rel, first, kind, name, used))
+    if not nodes:
+        return []
+    total = len(nodes)
+    df = {w: sum(1 for n in nodes if w in n[4] or n[3] == w) for w in wanted}
+    ranked = []
+    for rel, first, kind, name, used in nodes:
+        score = 0.0
+        for w in wanted:
+            if not df[w]:
+                continue
+            idf = math.log((total + 1) / df[w])
+            if name == w:
+                score += 3 * idf
+            elif w in used:
+                score += idf
+        if score > 0:
+            ranked.append((rel, first, kind, name, round(score, 3)))
+    ranked.sort(key=lambda r: (-r[4], is_tooling(r[0]), len(r[0]), r[0], r[1]))
+    return ranked[:limit]
+
+
 def test_files(root, found, top_rel, limit=MAX_TESTS):
     """The test files to run for top_rel, the file changed (#170): ranked by how many of the names they mention,
     its own test_<stem>.py raised by two; then by matches, then the shorter path. Those that mention no name are left
@@ -173,6 +248,209 @@ def root_dir():
     return "/workspace" if os.path.isdir("/workspace") else os.getcwd()
 
 
+# Stopwords and stems used only as generic English; never tuned on a reference patch (#106).
+_BEHAVIOR_STOP = {
+    "the", "and", "for", "that", "with", "this", "from", "have", "been", "were", "when", "what",
+    "which", "where", "there", "their", "about", "into", "also", "than", "then", "them", "they",
+    "would", "could", "should", "will", "just", "like", "some", "such", "only", "over", "after",
+    "before", "between", "under", "again", "further", "once", "here", "both", "each", "few", "more",
+    "most", "other", "same", "than", "too", "very", "can", "did", "does", "doing", "has", "had",
+    "having", "not", "but", "out", "off", "own", "all", "any", "because", "while", "during", "issue",
+    "issues", "bug", "fix", "fixes", "fixed", "error", "errors", "please", "thanks", "http", "https",
+    "github", "com", "www", "pull", "request", "discussion", "discussions", "ref", "refs", "same",
+    "using", "used", "use", "via", "per", "see", "add", "added", "adding", "make", "made", "need",
+    "needs", "want", "wants", "try", "tried", "still", "already", "also", "even", "much", "many",
+}
+
+
+def _stem(word):
+    """Very light suffix stem; stdlib only."""
+    w = word.lower()
+    # scopes→scope, caches→cache (not scop/cach)
+    if len(w) > 5 and w.endswith("es") and w[-3] in "bcdfgkp":
+        return w[:-1]
+    for suf in ("ingly", "edly", "ing", "ers", "ies", "ied", "ed", "ly", "es", "s"):
+        if len(w) > len(suf) + 3 and w.endswith(suf):
+            if suf == "ies":
+                return w[:-3] + "y"
+            return w[: -len(suf)]
+    return w
+
+
+def code_identifier_count(names):
+    """How many NAME args look like code identifiers (not free-text error strings)."""
+    n = 0
+    for raw in names:
+        raw = (raw or "").strip().strip("`'\"")
+        if raw and " " not in raw and re.match(r"^[A-Za-z_][\w.]*$", raw):
+            n += 1
+    return n
+
+
+def issue_literals(issue_text):
+    """Quoted / backticked spans long enough to search as literal strings."""
+    text = issue_text or ""
+    out = []
+    for m in re.finditer(r"[\"']([^\"'\n]{6,120})[\"']|`([^`\n]{6,120})`", text):
+        s = (m.group(1) or m.group(2) or "").strip()
+        if s and s not in out:
+            out.append(s)
+    return out
+
+
+def behavior_words(issue_text):
+    """Stemmed content words from the issue; not code-shaped tokens, not stopwords."""
+    text = issue_text or ""
+    words = []
+    for tok in re.findall(r"[A-Za-z][A-Za-z0-9_]{3,}", text):
+        if "_" in tok or re.search(r"[a-z][A-Z]", tok) or "." in tok:
+            continue
+        low = tok.lower()
+        if low in _BEHAVIOR_STOP or low.startswith("http"):
+            continue
+        stem = _stem(low)
+        if stem in _BEHAVIOR_STOP or len(stem) < 4:
+            continue
+        if stem not in words:
+            words.append(stem)
+    return words[:24]
+
+
+def _option_tokens(line):
+    return re.findall(r"--[a-z][\w-]*|[a-z][\w-]*(?:_|=)[\w-]+", line.lower())
+
+
+def behavior_scan(root, issue_text):
+    """Score files by literals and stemmed behavior words against names, docs, comments and options (#106)."""
+    literals = issue_literals(issue_text)
+    stems = behavior_words(issue_text)
+    if not literals and not stems:
+        return []
+    lit_pats = [(s, re.compile(re.escape(s), re.I)) for s in literals]
+    stem_pats = [(s, re.compile(r"(?<![a-z0-9_])" + re.escape(s) + r"[a-z]*", re.I)) for s in stems]
+    scored = {}
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS and not d.startswith("."))
+        for fn in sorted(filenames):
+            if not fn.endswith(".py"):
+                continue
+            full = os.path.join(dirpath, fn)
+            rel = os.path.relpath(full, root).replace(os.sep, "/")
+            if is_low(rel):
+                continue
+            try:
+                if os.path.getsize(full) > MAX_FILE_BYTES:
+                    continue
+                with open(full, encoding="utf-8", errors="replace") as f:
+                    text = f.read()
+            except OSError:
+                continue
+            lines = text.splitlines()
+            file_score = 0.0
+            best_func, best_func_score, reasons = "", 0.0, []
+            mod = rel[:-3].replace("/", ".").split(".")[-1]
+            for stem, pat in stem_pats:
+                if _stem(mod) == stem or pat.search(mod):
+                    file_score += 4
+                    reasons.append("module~%s" % stem)
+            for lit, pat in lit_pats:
+                if pat.search(text):
+                    file_score += 8
+                    reasons.append("literal")
+                    break
+            for name, first, last, kind in _defs(text):
+                body = "\n".join(lines[first - 1:last])
+                fscore = 0.0
+                why = []
+                for stem, pat in stem_pats:
+                    if _stem(name) == stem or pat.search(name):
+                        fscore += 6
+                        why.append("name~%s" % stem)
+                    elif pat.search(body):
+                        # docstring / comment / option / use in body
+                        hit_doc = False
+                        for no in range(first, min(last, first + 40) + 1):
+                            if no - 1 >= len(lines):
+                                break
+                            line = lines[no - 1]
+                            stripped = line.strip()
+                            if stripped.startswith("#") or stripped.startswith('"""') or stripped.startswith("'''") \
+                                    or '"""' in line or "'''" in line:
+                                if pat.search(line):
+                                    fscore += 3
+                                    why.append("doc/comment~%s" % stem)
+                                    hit_doc = True
+                                    break
+                            for opt in _option_tokens(line):
+                                if pat.search(opt):
+                                    fscore += 3
+                                    why.append("option~%s" % stem)
+                                    hit_doc = True
+                                    break
+                            if hit_doc:
+                                break
+                        if not hit_doc and pat.search(body):
+                            fscore += 1.5
+                            why.append("body~%s" % stem)
+                for lit, pat in lit_pats:
+                    if pat.search(body):
+                        fscore += 5
+                        why.append("literal")
+                        break
+                if fscore > best_func_score:
+                    best_func_score, best_func = fscore, name
+                    if why:
+                        reasons = why[:3]
+                file_score += fscore
+            if file_score > 0:
+                if is_tooling(rel):
+                    file_score -= 2
+                reason = ", ".join(dict.fromkeys(reasons))[:120] or "behavior match"
+                scored[rel] = (file_score, best_func or mod, reason)
+    ranked = sorted(scored.items(), key=lambda kv: (-kv[1][0], is_tooling(kv[0]), len(kv[0]), kv[0]))
+    return [(rel, func, reason, score) for rel, (score, func, reason) in ranked[:MAX_FILES]]
+
+
+def rank_for_issue(root, names, issue_text=""):
+    """Rank files for an issue. With ≤2 code identifiers, merge identifier scan with behavior/literal fallback."""
+    names = [n for n in names if n]
+    if code_identifier_count(names) > 2:
+        found = scan(root, names)
+        main_files = [r for r in found if not r[0]] or found
+        funcs = {(r[0], r[3]): r for r in rank_functions(root, names, limit=40)}
+        out = []
+        for low, neg, rel, lines, nm, nd, hits in main_files[:MAX_FILES]:
+            best = next((funcs[k] for k in funcs if k[0] == rel), None)
+            func = best[3] if best else (lines[0][2].split()[-1] if lines else "")
+            reason = "identifier match (%d names)" % nm
+            out.append((rel, func, reason, -neg))
+        return out
+    id_rows = []
+    if names:
+        found = scan(root, names)
+        main_files = [r for r in found if not r[0]] or found
+        for low, neg, rel, lines, nm, nd, hits in main_files[:MAX_FILES]:
+            id_rows.append((rel, -neg + 2 * nd, "identifier"))
+    beh = behavior_scan(root, issue_text)
+    combined = {}
+    for rel, score, why in [(r[0], r[1], r[2]) for r in id_rows]:
+        combined[rel] = [score, "", why]
+    for rel, func, reason, score in beh:
+        if rel in combined:
+            combined[rel][0] += score
+            combined[rel][1] = func or combined[rel][1]
+            combined[rel][2] = reason
+        else:
+            combined[rel] = [score, func, reason]
+    # attach best function from identifier defs when behavior gave none
+    if names:
+        for rel, first, kind, name, sc in rank_functions(root, names, limit=40):
+            if rel in combined and not combined[rel][1]:
+                combined[rel][1] = name
+    ranked = sorted(combined.items(), key=lambda kv: (-kv[1][0], is_tooling(kv[0]), len(kv[0]), kv[0]))
+    return [(rel, func or "", reason or "match", score) for rel, (score, func, reason) in ranked[:MAX_FILES]]
+
+
 def main(argv=None):
     names = list(sys.argv[1:] if argv is None else argv)
     if not names:
@@ -190,6 +468,34 @@ def main(argv=None):
             return 1
         print("Tests to run: python3 -m pytest %s -x -q" % " ".join(tests))
         return 0
+    issue_text = ""
+    if names and names[0] == "--issue":
+        # Optional: find.py --issue ISSUE.txt NAME...  (behavior fallback when ≤2 identifiers)
+        if len(names) < 2:
+            print(__doc__)
+            return 2
+        try:
+            with open(names[1], encoding="utf-8", errors="replace") as f:
+                issue_text = f.read()
+        except OSError:
+            issue_text = names[1]
+        names = names[2:]
+        ranked = rank_for_issue(root, names, issue_text)
+        if not ranked:
+            label = ", ".join(names) if names else "the issue"
+            print("No Python file contains %s. Try a shorter or different name from the issue." % label)
+            return 1
+        out = []
+        for rel, func, reason, score in ranked:
+            if func:
+                out.append("%s  (%s)  # %s" % (rel, func, reason))
+            else:
+                out.append("%s  # %s" % (rel, reason))
+        text_out = "\n".join(out)
+        if len(text_out) > MAX_CHARS:
+            text_out = text_out[:MAX_CHARS - 20].rsplit("\n", 1)[0] + "\n... (cut)"
+        print(text_out)
+        return 0
     found = scan(root, names)
     if not found:
         print("No Python file contains %s. Try a shorter or different name from the issue." % ", ".join(names))
@@ -198,6 +504,10 @@ def main(argv=None):
     low_count = len(found) - len(main_files)
     shown = (main_files or found)[:MAX_FILES]
     out = []
+    funcs = rank_functions(root, names)
+    if funcs:
+        out.append("Functions to read first:")
+        out.extend("  %s:%d  %s %s" % (rel, line, kind, name) for rel, line, kind, name, _ in funcs)
     for low, neg, rel, lines, nm, nd, hits in shown:
         out.append("%s  (names %d, defines %d)" % (rel, nm, nd))
         out.extend("  %d: %s" % (no, text[:160]) for _, no, text in lines)
