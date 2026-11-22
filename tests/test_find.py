@@ -62,7 +62,9 @@ def test_main_prints_files_with_line_numbers_and_leaves_tests_out(tmp_path, monk
     with contextlib.redirect_stdout(out):
         assert find.main(["add_row"]) == 0
     text = out.getvalue()
-    assert text.splitlines()[0].startswith("pkg/table.py")
+    lines = text.splitlines()
+    assert lines[0] == "Functions to read first:"
+    assert next(line for line in lines if not line.startswith("  ") and line != "Functions to read first:").startswith("pkg/table.py")
     assert "  2: def add_row(self, *cells):" in text
     assert "tests/test_table.py" not in text
 
@@ -194,3 +196,41 @@ def test_the_normal_output_has_no_tests_line(tmp_path, monkeypatch):
     with contextlib.redirect_stdout(out):
         assert find.main(["add_row"]) == 0
     assert "Tests to run" not in out.getvalue()
+
+
+def test_rank_functions_puts_the_function_the_issue_names_first(tmp_path):
+    """#44: the function the issue names (3 x idf) ranks above one that only uses the name (1 x idf)."""
+    ranked = find.rank_functions(str(_repo(tmp_path)), ["add_row"])
+    assert ranked[0][:4] == ("pkg/table.py", 2, "def", "add_row")
+    assert ("pkg/console.py", 3, "def", "render") in [r[:4] for r in ranked]
+
+
+def test_rank_functions_leaves_tests_docs_and_examples_out(tmp_path):
+    ranked = find.rank_functions(str(_repo(tmp_path)), ["add_row", "Table"], limit=10)
+    rels = {r[0] for r in ranked}
+    assert "tests/test_table.py" not in rels and "docs_src/example.py" not in rels
+
+
+def test_rank_functions_returns_at_most_limit_and_nothing_without_a_match(tmp_path):
+    repo = str(_repo(tmp_path))
+    assert len(find.rank_functions(repo, ["add_row", "Table"], limit=1)) == 1
+    assert find.rank_functions(repo, ["no_such_name_here"]) == []
+
+
+def test_main_prints_the_functions_block_first_with_path_line_and_name(tmp_path, monkeypatch):
+    monkeypatch.chdir(_repo(tmp_path))
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        assert find.main(["add_row"]) == 0
+    lines = out.getvalue().splitlines()
+    assert lines[0] == "Functions to read first:"
+    assert lines[1] == "  pkg/table.py:2  def add_row"
+    assert len(out.getvalue()) <= find.MAX_CHARS
+
+
+def test_main_leaves_the_block_out_when_no_function_matches(tmp_path, monkeypatch):
+    monkeypatch.chdir(_repo(tmp_path))
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        assert find.main(["too many cells"]) == 0
+    assert "Functions to read first:" not in out.getvalue()
