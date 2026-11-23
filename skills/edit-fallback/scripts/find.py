@@ -2,6 +2,8 @@
 
 usage: python3 /tmp/h/find.py NAME [NAME ...]
        python3 /tmp/h/find.py --tests FILE_YOU_CHANGED NAME [NAME ...]
+       python3 /tmp/h/find.py --show NAME [NAME ...]      (also prints the top functions' code)
+       python3 /tmp/h/find.py --read FILE:START-END [FILE:START-END ...]   (several ranges in one call)
 
 NAME is a function, class, module or variable name from the issue (`Table.add_row`, `rich.table`, `get_openapi`), or
 a short quoted error message. Tests, docs and examples are left out (they are listed last, only if nothing else
@@ -30,6 +32,9 @@ TEST_DIRS = {"tests", "test", "testing"}
 NOT_TEST_DIRS = {"docs", "docs_src", "doc", "examples", "example"}
 MAX_TESTS = 3
 MAX_FUNCS = 3
+SHOW_FUNC_LINES = 40  # --show: lines of each function's code (#206)
+SHOW_TOTAL_CHARS = 4900  # --show / --read: the whole output, under run_command's 5,000
+SHOW_RANK_CHARS = 1800  # --show: the ranking part, so the code has room
 
 
 def is_low(rel):
@@ -451,12 +456,98 @@ def rank_for_issue(root, names, issue_text=""):
     return [(rel, func or "", reason or "match", score) for rel, (score, func, reason) in ranked[:MAX_FILES]]
 
 
+def function_source(root, rel, name_or_line):
+    """(first, last, lines) of the function or class in REL named NAME, or starting at (or containing) LINE; None if
+    there is none (#206)."""
+    try:
+        with open(os.path.join(root, rel), encoding="utf-8", errors="replace") as f:
+            text = f.read()
+    except OSError:
+        return None
+    lines = text.splitlines()
+    defs = _defs(text)
+    if isinstance(name_or_line, int):
+        exact = [d for d in defs if d[1] == name_or_line]
+        inside = sorted((d for d in defs if d[1] <= name_or_line <= d[2]), key=lambda d: d[2] - d[1])
+        pick = (exact or inside or [None])[0]
+    else:
+        named = [d for d in defs if d[0] == name_or_line]
+        pick = (sorted(named, key=lambda d: d[3] == "class") or [None])[0]
+    if pick is None:
+        return None
+    return pick[1], pick[2], lines
+
+
+def render_code(root, targets, budget):
+    """The code section of --show: each (rel, name_or_line) target's source, line-numbered, at most SHOW_FUNC_LINES
+    lines each and BUDGET characters in all (#206)."""
+    out, used, seen = ["Code of the functions to read first:"], 0, set()
+    used = len(out[0]) + 1
+    for rel, key in targets:
+        src = function_source(root, rel, key)
+        if not src or (rel, src[0]) in seen:
+            continue
+        first, last, lines = src
+        seen.add((rel, first))
+        end = min(last, first + SHOW_FUNC_LINES - 1)
+        block = ["== %s:%d-%d" % (rel, first, last)]
+        block += ["%4d: %s" % (no, lines[no - 1][:200]) for no in range(first, end + 1) if no - 1 < len(lines)]
+        if last > end:
+            block.append("... (%d more lines: --read %s:%d-%d)" % (last - end, rel, end + 1, last))
+        for line in block:
+            if used + len(line) + 1 > budget:
+                out.append("... (cut)")
+                return "\n".join(out)
+            out.append(line)
+            used += len(line) + 1
+    return "\n".join(out) if len(out) > 1 else ""
+
+
+def read_ranges(root, specs):
+    """--read FILE:START-END ...: several ranges in one call, line-numbered, SHOW_TOTAL_CHARS in all (#206)."""
+    out, used = [], 0
+    for spec in specs:
+        m = re.match(r"^(.+):(\d+)-(\d+)$", spec)
+        if not m:
+            msg = "%s: use FILE:START-END" % spec
+            out.append(msg)
+            used += len(msg) + 1
+            continue
+        rel = m.group(1).replace("/workspace/", "").lstrip("./")
+        a, b = int(m.group(2)), int(m.group(3))
+        try:
+            with open(os.path.join(root, rel), encoding="utf-8", errors="replace") as f:
+                lines = f.read().splitlines()
+        except OSError:
+            msg = "%s: no such file" % rel
+            out.append(msg)
+            used += len(msg) + 1
+            continue
+        block = ["== %s:%d-%d" % (rel, a, b)] + ["%4d: %s" % (no, lines[no - 1][:200])
+                                                 for no in range(max(1, a), min(b, len(lines)) + 1)]
+        for line in block:
+            if used + len(line) + 1 > SHOW_TOTAL_CHARS - 12:
+                out.append("... (cut)")
+                return "\n".join(out)
+            out.append(line)
+            used += len(line) + 1
+    return "\n".join(out)
+
+
 def main(argv=None):
     names = list(sys.argv[1:] if argv is None else argv)
+    show = "--show" in names
+    names = [n for n in names if n != "--show"]
     if not names:
         print(__doc__)
         return 2
     root = root_dir()
+    if names[0] == "--read":
+        if len(names) < 2:
+            print(__doc__)
+            return 2
+        print(read_ranges(root, names[1:]))
+        return 0
     if names[0] == "--tests":
         if len(names) < 2:
             print(__doc__)
@@ -492,8 +583,13 @@ def main(argv=None):
             else:
                 out.append("%s  # %s" % (rel, reason))
         text_out = "\n".join(out)
-        if len(text_out) > MAX_CHARS:
-            text_out = text_out[:MAX_CHARS - 20].rsplit("\n", 1)[0] + "\n... (cut)"
+        cap = SHOW_RANK_CHARS if show else MAX_CHARS
+        if len(text_out) > cap:
+            text_out = text_out[:cap - 20].rsplit("\n", 1)[0] + "\n... (cut)"
+        if show:
+            code = render_code(root, [(rel, func) for rel, func, _, _ in ranked if func][:MAX_FUNCS],
+                               SHOW_TOTAL_CHARS - len(text_out) - 1)
+            text_out = text_out + ("\n" + code if code else "")
         print(text_out)
         return 0
     found = scan(root, names)
@@ -517,8 +613,15 @@ def main(argv=None):
     if main_files and low_count:
         out.append("... %d more in tests, docs or examples" % low_count)
     text = "\n".join(out)
-    if len(text) > MAX_CHARS:
-        text = text[:MAX_CHARS - 20].rsplit("\n", 1)[0] + "\n... (cut)"
+    cap = SHOW_RANK_CHARS if show else MAX_CHARS
+    if len(text) > cap:
+        text = text[:cap - 20].rsplit("\n", 1)[0] + "\n... (cut)"
+    if show:
+        targets = [(rel, line) for rel, line, _, _, _ in funcs]
+        if not targets:
+            targets = [(r[2], r[3][0][1]) for r in shown[:MAX_FUNCS] if r[3]]
+        code = render_code(root, targets, SHOW_TOTAL_CHARS - len(text) - 1)
+        text = text + ("\n" + code if code else "")
     print(text)
     return 0
 
